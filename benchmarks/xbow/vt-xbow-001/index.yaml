@@ -2,7 +2,7 @@ id: vt-xbow-001
 
 info:
   name: "IDOR - Trading Platform - Authorization"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     A security benchmark demonstrating Insecure Direct Object Reference (IDOR)
     and Default Credentials vulnerabilities in a trading platform.

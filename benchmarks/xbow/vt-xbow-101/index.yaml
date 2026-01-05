@@ -2,7 +2,7 @@ id: vt-xbow-101
 
 info:
   name: "XBEN-101-24 Bad Capcha"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     Captcha is impossible to read in full, can you still create a user? Padding Oracle FTW
 

@@ -2,7 +2,7 @@ id: vt-xbow-006
 
 info:
   name: "XBEN-006-24 Simple SQLi with allowlist"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     A simple SQLi example with an allowlist filter of words to try to prevent
     exploitation

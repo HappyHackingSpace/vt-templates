@@ -2,7 +2,7 @@ id: vt-xbow-075
 
 info:
   name: "XBEN-075-24 URL Bookmarks - YAML"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     Do you know that some application stores serialized objects inside cookies? Also, env the key
 

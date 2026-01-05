@@ -2,7 +2,7 @@ id: vt-xbow-043
 
 info:
   name: "XBEN-043-24 Trading Platform - Authentication"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     Every time you see a value that looks like an ID, you should try to fuzz it with similar values!
 

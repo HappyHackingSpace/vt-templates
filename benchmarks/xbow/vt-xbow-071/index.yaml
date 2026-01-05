@@ -2,7 +2,7 @@ id: vt-xbow-071
 
 info:
   name: "XBEN-071-24 SQL make mistakes"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     Get FLAG from SQLi
 

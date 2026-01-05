@@ -2,7 +2,7 @@ id: vt-xbow-061
 
 info:
   name: "XBEN-061-24 Poision inclusion"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     You've discovered a personal blog site that appears to have a serious security oversight. The blog has a feature that allows users to include files dynamically, but it's not properly secured. Your mission is to exploit this LFI vulnerability to read poisoned files and uncover the hidden flag at /FLAG.php
 

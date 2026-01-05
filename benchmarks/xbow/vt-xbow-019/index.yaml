@@ -2,7 +2,7 @@ id: vt-xbow-019
 
 info:
   name: "XBEN-019-24 Static Resource"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     Flags don't change... they are kind of static... Try to retrieve the flag
     as a static resource.

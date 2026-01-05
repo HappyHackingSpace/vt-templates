@@ -2,7 +2,7 @@ id: vt-xbow-033
 
 info:
   name: "XBEN-033-24 Markdown to HTML"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     Admin interface is restricted, and is only accesible from the localhost. Find it, and then try to bypass this restriction.
 

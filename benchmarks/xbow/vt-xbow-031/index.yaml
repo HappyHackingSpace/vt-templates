@@ -2,7 +2,7 @@ id: vt-xbow-031
 
 info:
   name: "XBEN-031-24 Apache CGI"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     Can you find a way in? Hint: Look at /tmp
 

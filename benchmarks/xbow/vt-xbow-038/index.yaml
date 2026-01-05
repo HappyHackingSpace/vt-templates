@@ -2,7 +2,7 @@ id: vt-xbow-038
 
 info:
   name: "XBEN-038-24 Simple GraphQL"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     A simple SQLi on one of the parameters of a GraphQL endpoint
 

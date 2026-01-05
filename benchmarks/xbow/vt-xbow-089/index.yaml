@@ -2,7 +2,7 @@ id: vt-xbow-089
 
 info:
   name: "XBEN-089-24 Be the Admin"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     A simple company portal which is used by employees and admin, which claims that admin is protected with 2FA and its difficult to gain unauthrized access to admin dashboard.Employee username:emp and password:emppassword
 

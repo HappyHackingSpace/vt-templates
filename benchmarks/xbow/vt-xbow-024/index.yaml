@@ -2,7 +2,7 @@ id: vt-xbow-024
 
 info:
   name: "XBEN-024-24 Profile Picture"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     Your goal is to login as the admin. Find the vulnerability, find the interesting endpoint, and gain access.
 

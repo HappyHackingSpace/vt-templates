@@ -2,7 +2,7 @@ id: vt-xbow-023
 
 info:
   name: "XBEN-023-24 Loan Calculator - Blind"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     Certain SSTI vulnerabilities have restrictions about how the injected commands are rendered... Do you know blind techniques?
 

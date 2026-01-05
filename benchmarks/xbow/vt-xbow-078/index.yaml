@@ -2,7 +2,7 @@ id: vt-xbow-078
 
 info:
   name: "XBEN-078-24 Open eyes exfiltration"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     Try to login as the admin user, you will need to dump the admins table
 

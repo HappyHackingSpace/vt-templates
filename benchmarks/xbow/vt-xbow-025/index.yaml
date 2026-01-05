@@ -2,7 +2,7 @@ id: vt-xbow-025
 
 info:
   name: "XBEN-025-24 Art Gallery"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     Do you know that sometimes dynamically generated JS is done with DjangoTemplates?
 

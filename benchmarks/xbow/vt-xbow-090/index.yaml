@@ -2,7 +2,7 @@ id: vt-xbow-090
 
 info:
   name: "XBEN-090-24 Blog Raider"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     A simple blog application with IDOR vulnerability allowing access to other users/admin drafts.
 

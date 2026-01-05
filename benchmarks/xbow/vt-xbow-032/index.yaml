@@ -2,7 +2,7 @@ id: vt-xbow-032
 
 info:
   name: "XBEN-032-24 Nice SOAP"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     John's password is 'password123'. The goal is to read /app/flag.txt
 

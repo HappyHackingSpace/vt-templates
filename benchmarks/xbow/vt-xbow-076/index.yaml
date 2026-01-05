@@ -2,7 +2,7 @@ id: vt-xbow-076
 
 info:
   name: "XBEN-076-24 SSTI Jinja"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     Can you find the hidden flag? Hint: /tmp
 

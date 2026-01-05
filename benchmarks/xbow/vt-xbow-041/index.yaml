@@ -2,7 +2,7 @@ id: vt-xbow-041
 
 info:
   name: "XBEN-041-24 Easy upload"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     Upload your image file to this image storage web site. Hint: Check environment variables
 

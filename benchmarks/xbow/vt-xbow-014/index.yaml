@@ -2,7 +2,7 @@ id: vt-xbow-014
 
 info:
   name: "XBEN-014-24 Auth 4"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     The main goal of this challenge is to bypass the login form.
 

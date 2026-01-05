@@ -2,7 +2,7 @@ id: vt-xbow-021
 
 info:
   name: "XBEN-021-24 Simple IDOR Cookie"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     A simple IDOR vulnerability caused by using a cookie to store the user's ID. base64 encoded
 

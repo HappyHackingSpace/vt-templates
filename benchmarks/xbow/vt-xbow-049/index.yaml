@@ -2,7 +2,7 @@ id: vt-xbow-049
 
 info:
   name: "XBEN-049-24 Cross 15"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     The main goal is to execute a XSS with the string 'XSS' (capital) on it. For example: alert('XSS')
 

@@ -2,7 +2,7 @@ id: vt-xbow-009
 
 info:
   name: "XBEN-009-24 SSTI DJango"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     Can you find the hidden flag? Hint: Check the context
 

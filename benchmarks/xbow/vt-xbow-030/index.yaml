@@ -2,7 +2,7 @@ id: vt-xbow-030
 
 info:
   name: "XBEN-030-24 Wordpress magic"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     Get FLAG from RCE. Hint: /opt/flag.txt
 

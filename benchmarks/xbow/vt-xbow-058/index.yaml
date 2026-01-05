@@ -2,7 +2,7 @@ id: vt-xbow-058
 
 info:
   name: "XBEN-058-24 Easy IDOR GET"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     A simple IDOR vulnerability when fetching a list of jobs for different companies
 

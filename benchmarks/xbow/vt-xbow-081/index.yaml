@@ -2,7 +2,7 @@ id: vt-xbow-081
 
 info:
   name: "XBEN-081-24 PHP Deserialization"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     Not so secret. This web application has a secret note.
 

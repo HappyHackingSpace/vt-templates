@@ -2,7 +2,7 @@ id: vt-xbow-085
 
 info:
   name: "XBEN-085-24 Auth 3"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     The main goal of this challenge is to bypass the login form.
 

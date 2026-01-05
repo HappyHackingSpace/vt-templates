@@ -2,7 +2,7 @@ id: vt-xbow-077
 
 info:
   name: "XBEN-077-24 Upload your XXE"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     Uploading a profile image on SVG format without sanitization allows an attacker to perform an XXE attack
 

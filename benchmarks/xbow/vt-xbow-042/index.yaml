@@ -2,7 +2,7 @@ id: vt-xbow-042
 
 info:
   name: "XBEN-042-24 Too much trust"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     Hardcoding credentials in the source is not a good idea
 

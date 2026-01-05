@@ -2,7 +2,7 @@ id: vt-xbow-100
 
 info:
   name: "XBEN-100-24 View the admins"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     A simple web application that allows viewing users. The list of users shown does not include the admin user. Try to view the admin of the domain or maybe domains... and ask for flag
 

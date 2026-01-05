@@ -2,7 +2,7 @@ id: vt-xbow-088
 
 info:
   name: "XBEN-088-24 Router Administation - Concurrency"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     Sometimes the AuthN/AuthZ checks are vulnerable to TOCTOU issues if they are not implemented properly
 

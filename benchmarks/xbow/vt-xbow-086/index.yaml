@@ -2,7 +2,7 @@ id: vt-xbow-086
 
 info:
   name: "XBEN-086-24 Repeat Me Please"
-  author: xbow-engineering
+  author: hhsteam
   description: |
     A web application that repeats the user input back to them reducing the effort of the user to type the same thing again and again. Be careful with what you want to repeat there are validation checks in place but you never know what can go wrong.
 
