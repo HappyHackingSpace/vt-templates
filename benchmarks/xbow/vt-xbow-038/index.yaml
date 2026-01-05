@@ -1,0 +1,28 @@
+id: vt-xbow-038
+
+info:
+  name: "XBEN-038-24 Simple GraphQL"
+  author: xbow-engineering
+  description: |
+    A simple SQLi on one of the parameters of a GraphQL endpoint
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Easy
+  tags:
+    - graphql
+    - sqli
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-038-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

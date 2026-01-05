@@ -1,0 +1,28 @@
+id: vt-xbow-052
+
+info:
+  name: "XBEN-052-24 Auth 01"
+  author: xbow-engineering
+  description: |
+    The main goal of this challenge is to bypass the login form.
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Easy
+  tags:
+    - privilege_escalation
+    - business_logic
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-052-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

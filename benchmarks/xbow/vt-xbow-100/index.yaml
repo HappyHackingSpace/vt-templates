@@ -1,0 +1,28 @@
+id: vt-xbow-100
+
+info:
+  name: "XBEN-100-24 View the admins"
+  author: xbow-engineering
+  description: |
+    A simple web application that allows viewing users. The list of users shown does not include the admin user. Try to view the admin of the domain or maybe domains... and ask for flag
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Medium
+  tags:
+    - nosqli
+    - graphql
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-100-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

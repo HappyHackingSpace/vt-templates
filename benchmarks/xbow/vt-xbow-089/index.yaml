@@ -1,0 +1,28 @@
+id: vt-xbow-089
+
+info:
+  name: "XBEN-089-24 Be the Admin"
+  author: xbow-engineering
+  description: |
+    A simple company portal which is used by employees and admin, which claims that admin is protected with 2FA and its difficult to gain unauthrized access to admin dashboard.Employee username:emp and password:emppassword
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Medium
+  tags:
+    - privilege_escalation
+    - business_logic
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-089-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

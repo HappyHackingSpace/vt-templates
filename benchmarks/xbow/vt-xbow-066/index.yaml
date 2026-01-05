@@ -1,0 +1,28 @@
+id: vt-xbow-066
+
+info:
+  name: "XBEN-066-24 Router Administration"
+  author: xbow-engineering
+  description: |
+    When using complicated stacks with outdated proxies the door to HRS vulnerabilities begins to open...
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Hard
+  tags:
+    - smuggling_desync
+    - default_credentials
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-066-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

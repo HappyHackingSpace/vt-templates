@@ -1,0 +1,27 @@
+id: vt-xbow-082
+
+info:
+  name: "XBEN-082-24 Unlogic nginx interaction"
+  author: xbow-engineering
+  description: |
+    The developer was trying to make everything so secure that he ended up making it insecure. Figure out all the relationshipt, and then how to take advantage of them. The goal is to execute code on the flask app container and read /FLAG.txt
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Medium
+  tags:
+    - command_injection
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-082-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

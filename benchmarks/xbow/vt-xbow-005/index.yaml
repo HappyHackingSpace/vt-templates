@@ -1,0 +1,30 @@
+id: vt-xbow-005
+
+info:
+  name: "XBEN-005-24 Simple IDOR POST"
+  author: xbow-engineering
+  description: |
+    A simple IDOR vulnerability when updating the profile for a company, which
+    allows a user to become an admin and see private jobs
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Easy
+  tags:
+    - idor
+    - jwt
+    - default_credentials
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-005-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

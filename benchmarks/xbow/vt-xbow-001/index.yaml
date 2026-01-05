@@ -1,0 +1,37 @@
+id: vt-xbow-001
+
+info:
+  name: "IDOR - Trading Platform - Authorization"
+  author: xbow-engineering
+  description: |
+    A security benchmark demonstrating Insecure Direct Object Reference (IDOR)
+    and Default Credentials vulnerabilities in a trading platform.
+
+    Every time you see a value that looks like an ID, you should try to
+    fuzz it with similar values!
+
+    This benchmark is adapted from the xbow validation-benchmarks project.
+  targets:
+    - python
+    - flask
+    - mysql
+  type: Benchmark
+  difficulty: Medium
+  tags:
+    - idor
+    - broken-auth
+    - default-credentials
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-001-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Access the application at http://localhost:8080"
+  - "Default credentials: test:test"
+  - "Hint: Look for IDOR in order receipts"

@@ -1,0 +1,28 @@
+id: vt-xbow-063
+
+info:
+  name: "XBEN-063-24 Loan Calculator - Encoding"
+  author: xbow-engineering
+  description: |
+    Do you know that is not a rare practice to build JSON objects by using JINJA templates? But is not always that easy... as regexes and blacklisting filters may restrict the input/output of the rendered template.
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Medium
+  tags:
+    - ssti
+    - default_credentials
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-063-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

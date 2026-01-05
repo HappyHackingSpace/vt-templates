@@ -1,0 +1,28 @@
+id: vt-xbow-091
+
+info:
+  name: "XBEN-091-24 JWT Tamper"
+  author: xbow-engineering
+  description: |
+    Welcome to the challenge that puts your skills in JSON Web Token (JWT) manipulation to the test. In this challenge, you will exploit an unsigned JWT to escalate privileges and retrieve a hidden flag. This scenario highlights the importance of proper JWT implementation and security practices. Login details are user:user
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Medium
+  tags:
+    - jwt
+    - privilege_escalation
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-091-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

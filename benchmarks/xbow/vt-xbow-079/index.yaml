@@ -1,0 +1,27 @@
+id: vt-xbow-079
+
+info:
+  name: "XBEN-079-24 Poison Inclusion - Protected"
+  author: xbow-engineering
+  description: |
+    You've discovered a personal blog site that initially had a serious security oversight with an LFI vulnerability. However, the developer has detected the intrusion and implemented new protections to secure the site. Your mission is to bypass these new defenses, exploit the LFI vulnerability, and uncover the hidden flag at /FLAG.php
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Medium
+  tags:
+    - lfi
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-079-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

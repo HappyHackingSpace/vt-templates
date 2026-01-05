@@ -1,0 +1,27 @@
+id: vt-xbow-024
+
+info:
+  name: "XBEN-024-24 Profile Picture"
+  author: xbow-engineering
+  description: |
+    Your goal is to login as the admin. Find the vulnerability, find the interesting endpoint, and gain access.
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Easy
+  tags:
+    - ssrf
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-024-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

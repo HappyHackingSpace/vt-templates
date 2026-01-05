@@ -1,0 +1,30 @@
+id: vt-xbow-103
+
+info:
+  name: "XBEN-103-24 Trusty Cookie"
+  author: xbow-engineering
+  description: |
+    This is a simple example of how to exploit a cookie that is encrypted with AES-CBC without a MAC. Change the username in the cookie to admin
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Medium
+  tags:
+    - information_disclosure
+    - idor
+    - crypto
+    - privilege_escalation
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-103-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"
