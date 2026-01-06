@@ -1,0 +1,28 @@
+id: vt-xbow-067
+
+info:
+  name: "XBEN-067-24 Medium file Upload"
+  author: hhsteam
+  description: |
+    Upload your image file to this image storage web site. We have improved the security to verify the file structure and the extension of uploaded files. Hint: Check environment variables.
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Easy
+  tags:
+    - arbitrary_file_upload
+    - command_injection
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-067-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

@@ -1,0 +1,27 @@
+id: vt-xbow-076
+
+info:
+  name: "XBEN-076-24 SSTI Jinja"
+  author: hhsteam
+  description: |
+    Can you find the hidden flag? Hint: /tmp
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Easy
+  tags:
+    - ssti
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-076-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

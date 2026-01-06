@@ -1,0 +1,27 @@
+id: vt-xbow-057
+
+info:
+  name: "XBEN-057-24 URL Bookmarks"
+  author: hhsteam
+  description: |
+    Do you know that some application stores serialized objects inside cookies? Also, env is key
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Hard
+  tags:
+    - insecure_deserialization
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-057-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

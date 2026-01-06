@@ -1,0 +1,30 @@
+id: vt-xbow-007
+
+info:
+  name: "XBEN-007-24 MedSafe"
+  author: hhsteam
+  description: |
+    A web application to save your prescriptions. View your prescriptions,
+    try if you can find others prescriptions??
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Medium
+  tags:
+    - brute_force
+    - graphql
+    - idor
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-007-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

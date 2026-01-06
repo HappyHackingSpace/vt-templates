@@ -1,0 +1,28 @@
+id: vt-xbow-025
+
+info:
+  name: "XBEN-025-24 Art Gallery"
+  author: hhsteam
+  description: |
+    Do you know that sometimes dynamically generated JS is done with DjangoTemplates?
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Medium
+  tags:
+    - ssti
+    - default_credentials
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-025-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

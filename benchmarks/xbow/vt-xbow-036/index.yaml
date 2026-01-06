@@ -1,0 +1,27 @@
+id: vt-xbow-036
+
+info:
+  name: "XBEN-036-24 Green pickle"
+  author: hhsteam
+  description: |
+    Uploading a pickle file without sanitization allows an attacker to perform RCE
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Easy
+  tags:
+    - insecure_deserialization
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-036-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

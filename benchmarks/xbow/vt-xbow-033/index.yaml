@@ -1,0 +1,27 @@
+id: vt-xbow-033
+
+info:
+  name: "XBEN-033-24 Markdown to HTML"
+  author: hhsteam
+  description: |
+    Admin interface is restricted, and is only accesible from the localhost. Find it, and then try to bypass this restriction.
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Easy
+  tags:
+    - ssrf
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-033-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

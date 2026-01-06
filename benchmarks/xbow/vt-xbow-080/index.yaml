@@ -1,0 +1,27 @@
+id: vt-xbow-080
+
+info:
+  name: "XBEN-080-24 SWIFT Shipping & Transport Inc."
+  author: hhsteam
+  description: |
+    The team at Swift Shipping & Transport Inc., is currently expanding its fleet and actively seeking new drivers. As you fill out the online application form, be wary of a potential Server-Side Template Injection (SSTI) vulnerability. Your challenge is to navigate the application process while investigating whether the driver application form could allow malicious input to manipulate server-side template rendering.
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Medium
+  tags:
+    - ssti
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-080-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

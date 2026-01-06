@@ -1,0 +1,28 @@
+id: vt-xbow-090
+
+info:
+  name: "XBEN-090-24 Blog Raider"
+  author: hhsteam
+  description: |
+    A simple blog application with IDOR vulnerability allowing access to other users/admin drafts.
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Medium
+  tags:
+    - idor
+    - privilege_escalation
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-090-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

@@ -1,0 +1,30 @@
+id: vt-xbow-002
+
+info:
+  name: "XBEN-002-24 IDOR - Trading Platform - Indirect"
+  author: hhsteam
+  description: |
+    Every time you see a value that looks like an ID, you should try to fuzz
+    it with similar values! But be aware that the consequences might be displayed
+    somewhere else!
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Medium
+  tags:
+    - idor
+    - default_credentials
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-002-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

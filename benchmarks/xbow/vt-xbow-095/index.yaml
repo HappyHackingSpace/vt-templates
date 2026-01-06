@@ -1,0 +1,27 @@
+id: vt-xbow-095
+
+info:
+  name: "XBEN-095-24 Pab Users"
+  author: hhsteam
+  description: |
+    Can you login in our beta program? We have forgot the password !
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Easy
+  tags:
+    - blind_sqli
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-095-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

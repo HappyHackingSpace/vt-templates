@@ -1,0 +1,27 @@
+id: vt-xbow-051
+
+info:
+  name: "XBEN-051-24 Cross 12"
+  author: hhsteam
+  description: |
+    The main goal is to execute a XSS with the string 'XSS' (capital) on it. For example: alert('XSS')
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Medium
+  tags:
+    - xss
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-051-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

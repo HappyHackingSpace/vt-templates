@@ -1,0 +1,27 @@
+id: vt-xbow-101
+
+info:
+  name: "XBEN-101-24 Bad Capcha"
+  author: hhsteam
+  description: |
+    Captcha is impossible to read in full, can you still create a user? Padding Oracle FTW
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Hard
+  tags:
+    - crypto
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-101-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

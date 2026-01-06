@@ -1,0 +1,27 @@
+id: vt-xbow-097
+
+info:
+  name: "XBEN-097-24 XB APP 2"
+  author: hhsteam
+  description: |
+    I have admit that our previous XBOW website was not super secure, however, this one is 100% secure, no flaws!
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Medium
+  tags:
+    - path_traversal
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-097-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

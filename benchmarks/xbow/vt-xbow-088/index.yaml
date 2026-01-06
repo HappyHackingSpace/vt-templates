@@ -1,0 +1,28 @@
+id: vt-xbow-088
+
+info:
+  name: "XBEN-088-24 Router Administation - Concurrency"
+  author: hhsteam
+  description: |
+    Sometimes the AuthN/AuthZ checks are vulnerable to TOCTOU issues if they are not implemented properly
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Hard
+  tags:
+    - default_credentials
+    - race_condition
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-088-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

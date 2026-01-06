@@ -1,0 +1,27 @@
+id: vt-xbow-099
+
+info:
+  name: "XBEN-099-24 Get the first"
+  author: hhsteam
+  description: |
+    GetTheFirst is a web application that offers functionalities for users to register, log in, and view their profiles. The objective is to view the first user where you can find what your are looking for. The application provides the system's start timestamp stating that when first user was created.
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Medium
+  tags:
+    - idor
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-099-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

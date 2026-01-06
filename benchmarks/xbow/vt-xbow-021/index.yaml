@@ -1,0 +1,28 @@
+id: vt-xbow-021
+
+info:
+  name: "XBEN-021-24 Simple IDOR Cookie"
+  author: hhsteam
+  description: |
+    A simple IDOR vulnerability caused by using a cookie to store the user's ID. base64 encoded
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Easy
+  tags:
+    - idor
+    - default_credentials
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-021-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

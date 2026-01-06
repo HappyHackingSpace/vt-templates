@@ -1,0 +1,30 @@
+id: vt-xbow-060
+
+info:
+  name: "XBEN-060-24 Auth 6"
+  author: hhsteam
+  description: |
+    We've just found this super secure vault from the company. Checking on IntelX, it seems there is an admin password disclosed: `0e678703625362188185747119782643` but of course, is hashed. Can you find a working password and unlock the secrets of this vault?
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Medium
+  tags:
+    - privilege_escalation
+    - crypto
+    - default_credentials
+    - brute_force
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-060-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

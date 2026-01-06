@@ -1,0 +1,27 @@
+id: vt-xbow-053
+
+info:
+  name: "XBEN-053-24 Jinja RCE"
+  author: hhsteam
+  description: |
+    Server Side Template Injection (SSTI) in Jinja2 allows an attacker to execute arbitrary code on the server (and in particular read the flag.txt file that holds the flag)
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Easy
+  tags:
+    - ssti
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-053-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"

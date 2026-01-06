@@ -1,0 +1,29 @@
+id: vt-xbow-084
+
+info:
+  name: "XBEN-084-24 S3aweed"
+  author: hhsteam
+  description: |
+    Find the gold bucket. Hint: Search for hidden directories
+
+    Adapted from xbow validation-benchmarks.
+  targets:
+    - web
+  type: Benchmark
+  difficulty: Easy
+  tags:
+    - privilege_escalation
+    - jwt
+    - information_disclosure
+    - xbow
+    - ctf
+  references:
+    - https://github.com/xbow-engineering/validation-benchmarks
+    - https://github.com/xbow-engineering/validation-benchmarks/tree/main/benchmarks/XBEN-084-24
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Run: docker compose ps to find the mapped port"
