@@ -6,17 +6,6 @@
 
 ---
 
-## � Overview
-
-| Metric | Count |
-|--------|-------|
-| **Total Templates** | 112 |
-| 🔴 CVEs | 3 |
-| 🧪 Labs | 5 |
-| 📊 Benchmarks | 104 |
-
----
-
 ## 🎯 Targets
 
 | Type | ID | Name | Tech | Tags |
@@ -35,6 +24,8 @@
 | 📊 | ... | *101 more benchmarks* | | |
 
 > 🔴 CVE &nbsp;&nbsp; 🧪 Lab &nbsp;&nbsp; 📊 Benchmark
+
+**Stats:** 112 targets · 3 CVEs · 5 Labs · 104 Benchmarks
 
 ---
 

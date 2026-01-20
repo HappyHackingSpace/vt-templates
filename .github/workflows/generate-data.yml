@@ -176,11 +176,9 @@ jobs:
           with open('README.md', 'r') as f:
               readme = f.read()
 
-          # Update metrics
-          readme = re.sub(r'\| \*\*Total Templates\*\* \| \d+ \|', f'| **Total Templates** | {total} |', readme)
-          readme = re.sub(r'\| 🔴 CVEs \| \d+ \|', f'| 🔴 CVEs | {len(cves)} |', readme)
-          readme = re.sub(r'\| 🧪 Labs \| \d+ \|', f'| 🧪 Labs | {len(labs)} |', readme)
-          readme = re.sub(r'\| 📊 Benchmarks \| \d+ \|', f'| 📊 Benchmarks | {len(benchmarks)} |', readme)
+          # Update stats line
+          stats_line = f"**Stats:** {total} targets · {len(cves)} CVEs · {len(labs)} Labs · {len(benchmarks)} Benchmarks"
+          readme = re.sub(r'\*\*Stats:\*\*.*?Benchmarks', stats_line, readme)
 
           # Update targets section
           if '## 🎯 Targets' in readme:
