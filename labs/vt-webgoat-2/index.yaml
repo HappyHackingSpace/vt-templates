@@ -1,0 +1,17 @@
+id: vt-webgoat-2
+info:
+  name: "WebGoat 2 - Extended"
+  author: omarkurt
+  description: |
+    Extended WebGoat lab for advanced security training.
+    Tests the GitHub Actions workflow trigger.
+  targets:
+    - java
+    - spring
+  type: Lab
+  tags:
+    - owasp
+    - web
+    - training
+  references:
+    - "https://owasp.org/www-project-webgoat/"
