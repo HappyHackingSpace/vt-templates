@@ -19,4 +19,4 @@ pymongo==4.7.3
 Rx==1.6.3
 singledispatch==4.1.0
 six==1.16.0
-Werkzeug==3.0.3
+Werkzeug==3.1.5
