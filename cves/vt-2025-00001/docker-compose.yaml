@@ -1,0 +1,6 @@
+services:
+  app:
+    image: python:3.11-slim
+    ports:
+      - "8080:8080"
+    command: python -c "print('Test CVE environment')"

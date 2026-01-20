@@ -168,7 +168,7 @@ jobs:
 
 {table}
 
-> 🔴 CVE &nbsp;&nbsp; 🧪 Lab &nbsp;&nbsp; 📊 Benchmark
+> **Type Legend:** 🔴 **CVE** - Real-world vulnerabilities &nbsp;│&nbsp; 🧪 **Lab** - Training environments &nbsp;│&nbsp; 📊 **Benchmark** - Security challenges
 
 ---"""
 
