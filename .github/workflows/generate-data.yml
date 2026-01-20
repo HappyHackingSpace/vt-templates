@@ -122,6 +122,11 @@ jobs:
           labs.sort(key=lambda x: x.get('id', ''), reverse=True)
           benchmarks.sort(key=lambda x: x.get('id', ''), reverse=True)
 
+          def format_tags(tags, limit=2):
+              """Format tags as backtick-wrapped strings"""
+              filtered = [t for t in tags if t not in ['cve', 'xbow', 'ctf', 'training']]
+              return ' '.join(f'`{t}`' for t in filtered[:limit])
+
           # Build targets table
           lines = []
 
@@ -131,7 +136,8 @@ jobs:
               info = t.get('info', {})
               name = info.get('name', '')
               tech = ', '.join(info.get('targets', []))
-              lines.append(f"| 🔴 | [{tid}](cves/{tid}) | {name} | {tech} |")
+              tags = format_tags(info.get('tags', []))
+              lines.append(f"| 🔴 | [{tid}](cves/{tid}) | {name} | {tech} | {tags} |")
 
           # Add Labs
           for t in labs:
@@ -139,20 +145,24 @@ jobs:
               info = t.get('info', {})
               name = info.get('name', '')
               tech = ', '.join(info.get('targets', []))
-              lines.append(f"| 🧪 | [{tid}](labs/{tid}) | {name} | {tech} |")
+              tags = format_tags(info.get('tags', []))
+              lines.append(f"| 🧪 | [{tid}](labs/{tid}) | {name} | {tech} | {tags} |")
 
           # Add Benchmarks (show first 3, then summary)
           for t in benchmarks[:3]:
               tid = t.get('id', '')
               info = t.get('info', {})
-              name = info.get('name', '').replace('XBEN-', '').split(' ', 1)[-1] if 'XBEN-' in info.get('name', '') else info.get('name', '')
-              tech = ', '.join(info.get('targets', [])[:2])
-              lines.append(f"| 📊 | [{tid}](benchmarks/xbow/{tid}) | {name} | {tech} |")
+              name = info.get('name', '')
+              if 'XBEN-' in name:
+                  name = name.split(' ', 1)[-1] if ' ' in name else name
+              tech = ', '.join(info.get('targets', []))
+              tags = format_tags(info.get('tags', []))
+              lines.append(f"| 📊 | [{tid}](benchmarks/xbow/{tid}) | {name} | {tech} | {tags} |")
 
           if len(benchmarks) > 3:
-              lines.append(f"| 📊 | ... | *{len(benchmarks) - 3} more benchmarks* | |")
+              lines.append(f"| 📊 | ... | *{len(benchmarks) - 3} more benchmarks* | | |")
 
-          table = "| Type | ID | Name | Tech |\n|:----:|-----|------|------|\n" + "\n".join(lines)
+          table = "| Type | ID | Name | Tech | Tags |\n|:----:|-----|------|------|------|\n" + "\n".join(lines)
 
           targets_section = f"""## 🎯 Targets
 

@@ -19,59 +19,26 @@
 
 ## 🎯 Targets
 
-| Type | ID | Name | Tech |
-|:----:|-----|------|------|
-| 🔴 | [vt-2025-64459](cves/vt-2025-64459) | Django Parameter Injection | django, python |
-| 🔴 | [vt-2025-29927](cves/vt-2025-29927) | Next.js Middleware Bypass | web-application |
-| 🔴 | [vt-2024-53995](cves/vt-2024-53995) | SickChill Open Redirect | python, media server |
-| 🧪 | [vt-webgoat](labs/vt-webgoat) | WebGoat | java |
-| 🧪 | [vt-mutillidae-ii](labs/vt-mutillidae-ii) | OWASP Mutillidae II | php, mysql |
-| 🧪 | [vt-juice-shop](labs/vt-juice-shop) | OWASP Juice Shop | nodejs, angular |
-| 🧪 | [vt-dvwa](labs/vt-dvwa) | Damn Vulnerable Web App | mysql, php |
-| 🧪 | [vt-bwapp](labs/vt-bwapp) | bWAPP | php, mysql |
-| 📊 | [vt-xbow-104](benchmarks/xbow/vt-xbow-104) | Loan Calculator - Simple | python, flask |
-| 📊 | [vt-xbow-103](benchmarks/xbow/vt-xbow-103) | Trusty Cookie | python, flask |
-| 📊 | [vt-xbow-102](benchmarks/xbow/vt-xbow-102) | Email updates | python, flask |
-| 📊 | ... | *104 more benchmarks* | |
+| Type | ID | Name | Tech | Tags |
+|:----:|-----|------|------|------|
+| 🔴 | [vt-2025-64459](cves/vt-2025-64459) | Django Parameter Injection | django, python | `injection` `sqli-like` |
+| 🔴 | [vt-2025-29927](cves/vt-2025-29927) | Next.js Middleware Bypass | web-application | `nextjs` `auth-bypass` |
+| 🔴 | [vt-2024-53995](cves/vt-2024-53995) | SickChill Open Redirect | python, media server | `open-redirect` `redirect` |
+| 🧪 | [vt-webgoat](labs/vt-webgoat) | WebGoat | java | `owasp` `web` |
+| 🧪 | [vt-mutillidae-ii](labs/vt-mutillidae-ii) | OWASP Mutillidae II | php, mysql | `owasp` `web` |
+| 🧪 | [vt-juice-shop](labs/vt-juice-shop) | OWASP Juice Shop | nodejs, angular | `owasp` `web` |
+| 🧪 | [vt-dvwa](labs/vt-dvwa) | Damn Vulnerable Web App | mysql, php | `dvwa` `php` |
+| 🧪 | [vt-bwapp](labs/vt-bwapp) | bWAPP | php, mysql | `owasp` `web` |
+| 📊 | [vt-xbow-104](benchmarks/xbow/vt-xbow-104) | Loan Calculator - Simple | web | `ssti` `default_credentials` |
+| 📊 | [vt-xbow-103](benchmarks/xbow/vt-xbow-103) | Trusty Cookie | web | `information_disclosure` `idor` |
+| 📊 | [vt-xbow-102](benchmarks/xbow/vt-xbow-102) | Email updates | web | `default_credentials` `business_logic` |
+| 📊 | ... | *101 more benchmarks* | | |
 
 > 🔴 CVE &nbsp;&nbsp; 🧪 Lab &nbsp;&nbsp; 📊 Benchmark
 
 ---
 
-## 🏷️ Vulnerability Tags
-
-<table>
-<tr><td>
-
-**Injection**
-- `sqli` `blind_sqli` `nosqli`
-- `command_injection` `ssti`
-- `xxe` `lfi` `path_traversal`
-
-**Authentication**
-- `auth-bypass` `broken-auth`
-- `jwt` `privilege_escalation`
-- `default_credentials` `brute_force`
-
-</td><td>
-
-**Client-Side**
-- `xss` `open-redirect`
-- `ssrf` `smuggling_desync`
-
-**Other**
-- `idor` `race_condition`
-- `arbitrary_file_upload`
-- `insecure_deserialization`
-- `information_disclosure`
-- `business_logic` `crypto`
-
-</td></tr>
-</table>
-
----
-
-## � Assets
+## 📦 Assets
 
 Template data is auto-generated via GitHub Actions and available at:
 
