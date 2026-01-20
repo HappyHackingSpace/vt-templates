@@ -1,5 +1,0 @@
-services:
-  webgoat:
-    image: webgoat/webgoat:latest
-    ports:
-      - "8080:8080"
