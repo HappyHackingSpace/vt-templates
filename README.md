@@ -23,7 +23,7 @@
 | 📊 | [vt-xbow-102](benchmarks/xbow/vt-xbow-102) | Email updates | web | `default_credentials` `business_logic` |
 | 📊 | ... | *101 more benchmarks* | | |
 
-> 🔴 CVE &nbsp;&nbsp; 🧪 Lab &nbsp;&nbsp; 📊 Benchmark
+> **Type Legend:** 🔴 **CVE** - Real-world vulnerabilities &nbsp;│&nbsp; 🧪 **Lab** - Training environments &nbsp;│&nbsp; 📊 **Benchmark** - Security challenges
 
 **Stats:** 112 targets · 3 CVEs · 5 Labs · 104 Benchmarks
 
