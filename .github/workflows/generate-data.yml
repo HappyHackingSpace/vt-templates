@@ -1,0 +1,204 @@
+name: Generate Templates Data
+
+on:
+  push:
+    paths:
+      - 'cves/**/index.yaml'
+      - 'benchmarks/**/index.yaml'
+      - 'labs/**/index.yaml'
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: pip install pyyaml
+      
+      - name: Generate templates.json
+        run: |
+          python << 'EOF'
+          import json
+          import yaml
+          import subprocess
+          from pathlib import Path
+          from datetime import datetime
+
+          def get_git_date(file_path):
+              """Get the first commit date of a file (when it was added)"""
+              try:
+                  result = subprocess.run(
+                      ['git', 'log', '--diff-filter=A', '--follow', '--format=%aI', '--', str(file_path)],
+                      capture_output=True, text=True, check=True
+                  )
+                  dates = result.stdout.strip().split('\n')
+                  if dates and dates[-1]:
+                      return dates[-1]  # First commit date (oldest)
+              except:
+                  pass
+              # Fallback: get last commit date
+              try:
+                  result = subprocess.run(
+                      ['git', 'log', '-1', '--format=%aI', '--', str(file_path)],
+                      capture_output=True, text=True, check=True
+                  )
+                  return result.stdout.strip()
+              except:
+                  return None
+
+          templates = []
+
+          for index_file in Path('.').rglob('**/index.yaml'):
+              if '.git' in str(index_file):
+                  continue
+              try:
+                  with open(index_file, 'r') as f:
+                      data = yaml.safe_load(f)
+                      if data and 'id' in data:
+                          # Add category based on path
+                          parts = str(index_file).split('/')
+                          if len(parts) > 1:
+                              data['category'] = parts[0]
+                          # Add git date
+                          git_date = get_git_date(index_file)
+                          if git_date:
+                              data['added_date'] = git_date
+                          templates.append(data)
+              except Exception as e:
+                  print(f"Error parsing {index_file}: {e}")
+
+          # Sort by date (newest first), then by id
+          def sort_key(x):
+              date = x.get('added_date', '1970-01-01')
+              return (date, x.get('id', ''))
+
+          templates.sort(key=sort_key, reverse=True)
+
+          with open('assets/templates.json', 'w') as f:
+              json.dump(templates, f, indent=2)
+
+          print(f"Generated {len(templates)} templates")
+          EOF
+
+      - name: Update README with targets
+        run: |
+          python << 'EOF'
+          import json
+          import re
+
+          # Load templates
+          with open('assets/templates.json', 'r') as f:
+              templates = json.load(f)
+
+          # Separate by category
+          cves = [t for t in templates if t.get('category') == 'cves']
+          labs = [t for t in templates if t.get('category') == 'labs']
+          benchmarks = [t for t in templates if t.get('category') == 'benchmarks']
+          total = len(templates)
+
+          # Sort CVEs by CVE ID (newest first)
+          def cve_sort_key(t):
+              cve_id = t.get('info', {}).get('cve', '') or ''
+              parts = cve_id.replace('CVE-', '').split('-')
+              if len(parts) >= 2:
+                  try:
+                      return (int(parts[0]), int(parts[1]))
+                  except:
+                      pass
+              return (0, 0)
+          cves.sort(key=cve_sort_key, reverse=True)
+
+          # Sort labs and benchmarks by id
+          labs.sort(key=lambda x: x.get('id', ''), reverse=True)
+          benchmarks.sort(key=lambda x: x.get('id', ''), reverse=True)
+
+          def format_tags(tags, limit=2):
+              """Format tags as backtick-wrapped strings"""
+              filtered = [t for t in tags if t not in ['cve', 'xbow', 'ctf', 'training']]
+              return ' '.join(f'`{t}`' for t in filtered[:limit])
+
+          # Build targets table
+          lines = []
+
+          # Add CVEs
+          for t in cves:
+              tid = t.get('id', '')
+              info = t.get('info', {})
+              name = info.get('name', '')
+              tech = ', '.join(info.get('targets', []))
+              tags = format_tags(info.get('tags', []))
+              lines.append(f"| 🔴 | [{tid}](cves/{tid}) | {name} | {tech} | {tags} |")
+
+          # Add Labs
+          for t in labs:
+              tid = t.get('id', '')
+              info = t.get('info', {})
+              name = info.get('name', '')
+              tech = ', '.join(info.get('targets', []))
+              tags = format_tags(info.get('tags', []))
+              lines.append(f"| 🧪 | [{tid}](labs/{tid}) | {name} | {tech} | {tags} |")
+
+          # Add Benchmarks (show first 3, then summary)
+          for t in benchmarks[:3]:
+              tid = t.get('id', '')
+              info = t.get('info', {})
+              name = info.get('name', '')
+              if 'XBEN-' in name:
+                  name = name.split(' ', 1)[-1] if ' ' in name else name
+              tech = ', '.join(info.get('targets', []))
+              tags = format_tags(info.get('tags', []))
+              lines.append(f"| 📊 | [{tid}](benchmarks/xbow/{tid}) | {name} | {tech} | {tags} |")
+
+          if len(benchmarks) > 3:
+              lines.append(f"| 📊 | ... | *{len(benchmarks) - 3} more benchmarks* | | |")
+
+          table = "| Type | ID | Name | Tech | Tags |\n|:----:|-----|------|------|------|\n" + "\n".join(lines)
+
+          targets_section = f"""## 🎯 Targets
+
+{table}
+
+> **Type Legend:** 🔴 **CVE** - Real-world vulnerabilities &nbsp;│&nbsp; 🧪 **Lab** - Training environments &nbsp;│&nbsp; 📊 **Benchmark** - Security challenges
+
+---"""
+
+          # Read README
+          with open('README.md', 'r') as f:
+              readme = f.read()
+
+          # Update stats line
+          stats_line = f"**Stats:** {total} targets · {len(cves)} CVEs · {len(labs)} Labs · {len(benchmarks)} Benchmarks"
+          readme = re.sub(r'\*\*Stats:\*\*.*?Benchmarks', stats_line, readme)
+
+          # Update targets section
+          if '## 🎯 Targets' in readme:
+              readme = re.sub(
+                  r'## 🎯 Targets.*?(?=\n---\n\n## )',
+                  targets_section,
+                  readme,
+                  flags=re.DOTALL
+              )
+
+          with open('README.md', 'w') as f:
+              f.write(readme)
+
+          print(f"Updated README: {total} total, {len(cves)} CVEs, {len(labs)} labs, {len(benchmarks)} benchmarks")
+          EOF
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add assets/templates.json README.md
+          git diff --staged --quiet || git commit -m "chore: update templates.json and README"
+          git push
