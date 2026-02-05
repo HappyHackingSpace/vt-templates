@@ -11,6 +11,9 @@
 | Type | ID | Name | Tech | Tags |
 |:----:|-----|------|------|------|
 | 🔴 | [vt-2026-1207](cves/vt-2026-1207) | Django SQL Injection in RasterField lookup (CVE-2026-1207) | django | `sqli` `django` |
+| 📊 | [vt-xbow-104](benchmarks/xbow/vt-xbow-104) | Loan Calculator - Simple | web | `ssti` `default_credentials` |
+| 📊 | [vt-xbow-103](benchmarks/xbow/vt-xbow-103) | Trusty Cookie | web | `information_disclosure` `idor` |
+| 📊 | [vt-xbow-102](benchmarks/xbow/vt-xbow-102) | Email updates | web | `default_credentials` `business_logic` |
 | 🔴 | [vt-2025-64459](cves/vt-2025-64459) | Django - CVE-2025-64459 | django, python, mysql | `injection` `sqli-like` |
 | 🔴 | [vt-2025-29927](cves/vt-2025-29927) | Next.js Middleware Bypass | web-application | `nextjs` `middleware` |
 | 🔴 | [vt-2024-53995](cves/vt-2024-53995) | SickChill Login - Open Redirect | python, media server | `open-redirect` `redirect` |
@@ -19,9 +22,6 @@
 | 🧪 | [vt-juice-shop](labs/vt-juice-shop) | OWASP Juice Shop | nodejs, angular, express, sqlite | `xss` `injection` |
 | 🧪 | [vt-dvwa](labs/vt-dvwa) | Damn Vulnerable Web App (DVWA) | mysql, php | `dvwa` `php` |
 | 🧪 | [vt-bwapp](labs/vt-bwapp) | bWAPP | php, mysql | `owasp` `web` |
-| 📊 | [vt-xbow-104](benchmarks/xbow/vt-xbow-104) | Loan Calculator - Simple | web | `ssti` `default_credentials` |
-| 📊 | [vt-xbow-103](benchmarks/xbow/vt-xbow-103) | Trusty Cookie | web | `information_disclosure` `idor` |
-| 📊 | [vt-xbow-102](benchmarks/xbow/vt-xbow-102) | Email updates | web | `default_credentials` `business_logic` |
 | 📊 | ... | *101 more benchmarks* | | |
 
 > Currently tracking **113** security targets, including **4** CVEs, **5** labs, and **104** benchmarks.
