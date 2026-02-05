@@ -30,7 +30,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-103",
@@ -65,7 +65,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-102",
@@ -98,7 +98,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-101",
@@ -130,7 +130,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-100",
@@ -163,7 +163,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-099",
@@ -195,7 +195,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-098",
@@ -229,7 +229,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-097",
@@ -261,7 +261,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-096",
@@ -293,7 +293,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-095",
@@ -325,7 +325,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-094",
@@ -357,7 +357,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-093",
@@ -389,7 +389,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-092",
@@ -422,7 +422,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-091",
@@ -455,7 +455,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-090",
@@ -488,7 +488,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-089",
@@ -521,7 +521,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-088",
@@ -554,7 +554,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-087",
@@ -586,7 +586,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-086",
@@ -618,7 +618,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-085",
@@ -651,7 +651,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-084",
@@ -685,7 +685,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-083",
@@ -717,7 +717,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-082",
@@ -749,7 +749,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-081",
@@ -781,7 +781,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-080",
@@ -813,7 +813,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-079",
@@ -845,7 +845,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-078",
@@ -877,7 +877,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-077",
@@ -910,7 +910,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-076",
@@ -942,7 +942,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-075",
@@ -974,7 +974,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-074",
@@ -1006,7 +1006,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-073",
@@ -1038,7 +1038,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-072",
@@ -1072,7 +1072,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-071",
@@ -1104,7 +1104,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-070",
@@ -1136,7 +1136,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-069",
@@ -1169,7 +1169,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-068",
@@ -1201,7 +1201,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-067",
@@ -1234,7 +1234,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-066",
@@ -1267,7 +1267,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-065",
@@ -1299,7 +1299,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-064",
@@ -1331,7 +1331,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-063",
@@ -1364,7 +1364,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-062",
@@ -1396,7 +1396,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-061",
@@ -1428,7 +1428,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-060",
@@ -1463,7 +1463,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-059",
@@ -1495,7 +1495,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-058",
@@ -1527,7 +1527,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-057",
@@ -1559,7 +1559,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-056",
@@ -1592,7 +1592,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-055",
@@ -1625,7 +1625,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-054",
@@ -1659,7 +1659,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-053",
@@ -1691,7 +1691,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-052",
@@ -1724,7 +1724,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-051",
@@ -1756,7 +1756,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-050",
@@ -1788,7 +1788,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-049",
@@ -1820,7 +1820,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-048",
@@ -1852,7 +1852,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-047",
@@ -1884,7 +1884,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-046",
@@ -1916,7 +1916,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-045",
@@ -1948,7 +1948,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-044",
@@ -1980,7 +1980,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-043",
@@ -2013,7 +2013,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-042",
@@ -2046,7 +2046,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-041",
@@ -2079,7 +2079,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-040",
@@ -2111,7 +2111,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-039",
@@ -2144,7 +2144,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-038",
@@ -2177,7 +2177,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-037",
@@ -2209,7 +2209,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-036",
@@ -2241,7 +2241,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-035",
@@ -2273,7 +2273,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-034",
@@ -2305,7 +2305,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-033",
@@ -2337,7 +2337,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-032",
@@ -2370,7 +2370,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-031",
@@ -2404,7 +2404,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-030",
@@ -2437,7 +2437,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-029",
@@ -2470,7 +2470,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-028",
@@ -2503,7 +2503,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-027",
@@ -2536,7 +2536,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-026",
@@ -2570,7 +2570,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-025",
@@ -2603,7 +2603,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-024",
@@ -2635,7 +2635,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-023",
@@ -2668,7 +2668,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-022",
@@ -2702,7 +2702,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-021",
@@ -2735,7 +2735,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-020",
@@ -2767,7 +2767,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-019",
@@ -2800,7 +2800,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-018",
@@ -2832,7 +2832,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-017",
@@ -2864,7 +2864,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-016",
@@ -2896,7 +2896,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-015",
@@ -2928,7 +2928,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-014",
@@ -2961,7 +2961,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-013",
@@ -2993,7 +2993,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-012",
@@ -3025,7 +3025,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-011",
@@ -3057,7 +3057,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-010",
@@ -3089,7 +3089,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-009",
@@ -3121,7 +3121,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-008",
@@ -3153,7 +3153,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-007",
@@ -3187,7 +3187,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-006",
@@ -3220,7 +3220,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-005",
@@ -3254,7 +3254,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-004",
@@ -3286,7 +3286,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-003",
@@ -3319,7 +3319,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-002",
@@ -3352,7 +3352,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-xbow-001",
@@ -3390,7 +3390,7 @@
       "Hint: Look for IDOR in order receipts"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-webgoat",
@@ -3418,7 +3418,7 @@
       }
     },
     "category": "labs",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-mutillidae-ii",
@@ -3446,7 +3446,7 @@
       }
     },
     "category": "labs",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-juice-shop",
@@ -3479,7 +3479,7 @@
       }
     },
     "category": "labs",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-dvwa",
@@ -3509,7 +3509,7 @@
       }
     },
     "category": "labs",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-bwapp",
@@ -3546,7 +3546,7 @@
       "Enjoy hacking!"
     ],
     "category": "labs",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-2025-64459",
@@ -3588,7 +3588,7 @@
       "Test exploit: ?status=private&title__icontains=Area"
     ],
     "category": "cves",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-2025-29927",
@@ -3641,7 +3641,7 @@
       "http://localhost:3000"
     ],
     "category": "cves",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   },
   {
     "id": "vt-2024-53995",
@@ -3691,6 +3691,6 @@
       }
     },
     "category": "cves",
-    "added_date": "2026-01-20T16:43:46+03:00"
+    "added_date": "2026-01-20T13:44:06Z"
   }
 ]
