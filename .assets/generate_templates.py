@@ -29,6 +29,17 @@ def get_git_date(file_path):
 
 
 def main():
+    # Load existing dates to prevent churn
+    existing_dates = {}
+    try:
+        with open('.assets/templates.json', 'r') as f:
+            existing_data = json.load(f)
+            for t in existing_data:
+                if 'id' in t and 'added_date' in t:
+                    existing_dates[t['id']] = t['added_date']
+    except (FileNotFoundError, json.JSONDecodeError):
+        pass
+
     templates = []
 
     for index_file in Path('.').rglob('**/index.yaml'):
@@ -41,9 +52,16 @@ def main():
                     parts = str(index_file).split('/')
                     if len(parts) > 1:
                         data['category'] = parts[0]
-                    git_date = get_git_date(index_file)
-                    if git_date:
-                        data['added_date'] = git_date
+                    
+                    # Use existing date if available, otherwise fetch from git
+                    tid = data['id']
+                    if tid in existing_dates:
+                        data['added_date'] = existing_dates[tid]
+                    else:
+                        git_date = get_git_date(index_file)
+                        if git_date:
+                            data['added_date'] = git_date
+                            
                     templates.append(data)
         except Exception as e:
             print(f"Error parsing {index_file}: {e}")
