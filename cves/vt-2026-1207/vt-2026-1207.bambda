@@ -1,0 +1,55 @@
+id: vt-2026-1207-sqli
+name: Django RasterField SQL Injection (CVE-2026-1207)
+function: SCAN_CHECK_ACTIVE_PER_INSERTION_POINT
+location: SCANNER
+source: |
+  /**
+   * Detects SQL Injection in Django RasterField band index parameter.
+   * @author omarkurt
+   * CVE: CVE-2026-1207
+   **/
+
+  if (insertionPoint == null)
+  {
+      return AuditResult.auditResult();
+  }
+
+  var payloads = new String[]{"1) AND 1=CAST((SELECT version()) AS INT) --", "1'", "1\""};
+
+  var sqlErrors = new String[]{
+      "invalid input syntax for type integer",
+      "PostgreSQL",
+      "SQL syntax",
+      "syntax error"
+  };
+
+  for (var payload : payloads)
+  {
+      var rr = http.sendRequest(insertionPoint.buildHttpRequestWithPayload(ByteArray.byteArray(payload)));
+      if (rr.hasResponse())
+      {
+          var body = rr.response().body().toString();
+          for (var error : sqlErrors)
+          {
+              if (body.contains(error))
+              {
+                  return AuditResult.auditResult(
+                      AuditIssue.auditIssue(
+                          "Django RasterField SQL Injection (CVE-2026-1207)",
+                          "SQL error detected with payload: <code>" + api().utilities().htmlUtils().encode(payload) + "</code>. Error: " + error,
+                          "Upgrade Django to 6.0.2, 5.2.11, or 4.2.28.",
+                          rr.request().url(),
+                          AuditIssueSeverity.HIGH,
+                          AuditIssueConfidence.FIRM,
+                          "",
+                          "",
+                          AuditIssueSeverity.HIGH,
+                          rr
+                      )
+                  );
+              }
+          }
+      }
+  }
+
+  return AuditResult.auditResult();

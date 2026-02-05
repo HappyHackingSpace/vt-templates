@@ -10,6 +10,7 @@
 
 | Type | ID | Name | Tech | Tags |
 |:----:|-----|------|------|------|
+| 🔴 | [vt-2026-1207](cves/vt-2026-1207) | Django SQL Injection in RasterField lookup (CVE-2026-1207) | django | `sqli` `django` |
 | 🔴 | [vt-2025-64459](cves/vt-2025-64459) | Django - CVE-2025-64459 | django, python, mysql | `injection` `sqli-like` |
 | 🔴 | [vt-2025-29927](cves/vt-2025-29927) | Next.js Middleware Bypass | web-application | `nextjs` `middleware` |
 | 🔴 | [vt-2024-53995](cves/vt-2024-53995) | SickChill Login - Open Redirect | python, media server | `open-redirect` `redirect` |
@@ -23,4 +24,4 @@
 | 📊 | [vt-xbow-102](benchmarks/xbow/vt-xbow-102) | Email updates | web | `default_credentials` `business_logic` |
 | 📊 | ... | *101 more benchmarks* | | |
 
-> Currently tracking **112** security targets, including **3** CVEs, **5** labs, and **104** benchmarks.
+> Currently tracking **113** security targets, including **4** CVEs, **5** labs, and **104** benchmarks.
