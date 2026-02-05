@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  groupoffice:
+    image: ghcr.io/happyhackingspace/vt-2026-25512:latest
+    container_name: vt-2026-25512-groupoffice
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    depends_on:
+      - db
+    volumes:
+      - godata:/var/lib/groupoffice:cached
+      - goetc:/etc/groupoffice:cached
+    environment:
+      - MYSQL_USER=groupoffice
+      - MYSQL_PASSWORD=groupoffice
+      - MYSQL_DATABASE=groupoffice
+      - MYSQL_HOST=db
+    networks:
+      - vuln-net
+    labels:
+      - "vuln.cve=CVE-2026-25512"
+      - "vuln.type=OS Command Injection"
+      - "vuln.severity=critical"
+      - "vuln.product=Group-Office"
+      - "vuln.version=26.0.4"
+      - "vuln.endpoint=/api/email/message/tnefAttachmentFromTempFile"
+
+  db:
+    image: mariadb:11.1.2
+    container_name: vt-2026-25512-db
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=groupoffice
+      - MYSQL_USER=groupoffice
+      - MYSQL_PASSWORD=groupoffice
+      - MYSQL_DATABASE=groupoffice
+      - MARIADB_AUTO_UPGRADE=1
+    volumes:
+      - dbdata:/var/lib/mysql:cached
+    networks:
+      - vuln-net
+
+volumes:
+  godata:
+    driver: local
+  goetc:
+    driver: local
+  dbdata:
+    driver: local
+
+networks:
+  vuln-net:
+    driver: bridge

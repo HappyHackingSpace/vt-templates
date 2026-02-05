@@ -1,0 +1,64 @@
+id: 5f3ecc47-7534-4709-978a-c644239ece8e
+name: tnefAttachmentFromTempFile - OS Command Injection Detection (CVE-2026-25512)
+function: SCAN_CHECK_ACTIVE_PER_INSERTION_POINT
+location: SCANNER
+source: |
+  /**
+   * Detects OS Command Injection by checking for command output.
+   * @author omarkurt
+   * CVE: CVE-2026-25512
+   **/
+  
+  if (insertionPoint == null)
+  {
+      return AuditResult.auditResult();
+  }
+  
+  var payloads = new String[]{
+      ";id",
+      "|id",
+      "`id`",
+      "$(id)",
+      ";cat /etc/passwd",
+      "|cat /etc/passwd"
+  };
+  
+  var cmdIndicators = new String[]{
+      "uid=",
+      "gid=",
+      "groups=",
+      "root:x:0:0",
+      "www-data"
+  };
+  
+  for (var payload : payloads)
+  {
+      var rr = http.sendRequest(insertionPoint.buildHttpRequestWithPayload(ByteArray.byteArray(payload)));
+      if (rr.hasResponse())
+      {
+          var body = rr.response().body().toString();
+          for (var indicator : cmdIndicators)
+          {
+              if (body.contains(indicator))
+              {
+                  return AuditResult.auditResult(
+                      AuditIssue.auditIssue(
+                          "OS Command Injection",
+                          "Command output detected. Payload: <code>" + api().utilities().htmlUtils().encode(payload) + "</code>",
+                          "Never pass user input to system commands. Use language-specific APIs instead.",
+                          rr.request().url(),
+                          AuditIssueSeverity.HIGH,
+                          AuditIssueConfidence.FIRM,
+                          "",
+                          "",
+                          AuditIssueSeverity.HIGH,
+                          rr
+                      )
+                  );
+              }
+          }
+      }
+  }
+  
+  return AuditResult.auditResult();
+  
