@@ -10,6 +10,7 @@
 
 | Type | ID | Name | Tech | Tags |
 |:----:|-----|------|------|------|
+| 🔴 | [vt-2026-25512](cves/vt-2026-25512) | Group-Office - Remote Code Execution (OS Command Injection) | group-office, php | `groupoffice` `php` |
 | 🔴 | [vt-2026-1207](cves/vt-2026-1207) | Django SQL Injection in RasterField lookup (CVE-2026-1207) | django | `sqli` `django` |
 | 📊 | [vt-xbow-104](benchmarks/xbow/vt-xbow-104) | Loan Calculator - Simple | web | `ssti` `default_credentials` |
 | 📊 | [vt-xbow-103](benchmarks/xbow/vt-xbow-103) | Trusty Cookie | web | `information_disclosure` `idor` |
@@ -24,4 +25,4 @@
 | 🧪 | [vt-bwapp](labs/vt-bwapp) | bWAPP | php, mysql | `owasp` `web` |
 | 📊 | ... | *101 more benchmarks* | | |
 
-> Currently tracking **113** security targets, including **4** CVEs, **5** labs, and **104** benchmarks.
+> Currently tracking **114** security targets, including **5** CVEs, **5** labs, and **104** benchmarks.

