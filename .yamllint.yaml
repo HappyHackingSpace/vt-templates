@@ -1,0 +1,22 @@
+extends: default
+
+rules:
+  line-length: disable
+  document-start: disable
+  trailing-spaces: disable
+  new-line-at-end-of-file: disable
+  empty-lines: disable
+  comments:
+    min-spaces-from-content: 1
+  commas:
+    min-spaces-after: 0
+    max-spaces-after: -1
+    max-spaces-before: -1
+
+  truthy:
+    check-keys: false
+
+ignore: |
+  .git/
+  node_modules/
+  vendor/
