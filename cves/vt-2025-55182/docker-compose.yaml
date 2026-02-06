@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  vt-2025-55182:
+    image: ghcr.io/happyhackingspace/vt-2025-55182:latest
+    ports:
+      - "3000:3000"
+    restart: always
