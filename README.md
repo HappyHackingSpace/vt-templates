@@ -10,6 +10,7 @@
 
 | Type | ID | Name | Tech | Tags |
 |:----:|-----|------|------|------|
+| 🔴 | [vt-2026-23829](cves/vt-2026-23829) | mailpit - Mailpit has an SMTP Header Injection via Regex Bypass | mailpit, web, SMTP | `go` `medium` |
 | 🔴 | [vt-2026-25512](cves/vt-2026-25512) | Group-Office - Remote Code Execution (OS Command Injection) | group-office, php | `groupoffice` `php` |
 | 🔴 | [vt-2026-1207](cves/vt-2026-1207) | Django SQL Injection in RasterField lookup (CVE-2026-1207) | django | `sqli` `django` |
 | 📊 | [vt-xbow-104](benchmarks/xbow/vt-xbow-104) | Loan Calculator - Simple | web | `ssti` `default_credentials` |
@@ -25,4 +26,4 @@
 | 🧪 | [vt-bwapp](labs/vt-bwapp) | bWAPP | php, mysql | `owasp` `web` |
 | 📊 | ... | *101 more benchmarks* | | |
 
-> Currently tracking **114** security targets, including **5** CVEs, **5** labs, and **104** benchmarks.
+> Currently tracking **115** security targets, including **6** CVEs, **5** labs, and **104** benchmarks.

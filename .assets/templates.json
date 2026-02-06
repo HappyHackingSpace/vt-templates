@@ -1,5 +1,80 @@
 [
   {
+    "id": "vt-2026-23829",
+    "info": {
+      "name": "mailpit - Mailpit has an SMTP Header Injection via Regex Bypass",
+      "author": "omarkurt",
+      "description": "Mailpit is an email testing tool and API for developers. Prior to version 1.28.3, Mailpit's SMTP server is vulnerable to Header Injection due to an insufficient Regular Expression used to validate `RCPT TO` and `MAIL FROM` addresses. An attacker can inject arbitrary SMTP headers (or corrupt existing ones) by including carriage return characters (`\\r`) in the email address. This header injection occurs because the regex intended to filter control characters fails to exclude `\\r` and `\\n` when used inside a character class. Version 1.28.3 fixes this issue.\n",
+      "targets": [
+        "mailpit",
+        "web",
+        "SMTP"
+      ],
+      "type": "CVE",
+      "cve": "CVE-2026-23829",
+      "cwe": "CWE-150",
+      "cvss": {
+        "score": 5.3,
+        "severity": "medium"
+      },
+      "affected_versions": [
+        "<= 1.28.2"
+      ],
+      "tags": [
+        "go",
+        "medium",
+        "cve-2026",
+        "mailpit",
+        "header-injection",
+        "smtp",
+        "network"
+      ],
+      "references": [
+        "https://github.com/axllent/mailpit/commit/36cc06c125954dec6673219dafa084e13cc14534",
+        "https://github.com/axllent/mailpit/releases/tag/v1.28.3",
+        "https://github.com/axllent/mailpit/security/advisories/GHSA-54wq-72mp-cq7c",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-23829",
+        "https://github.com/advisories/GHSA-54wq-72mp-cq7c",
+        "https://vulnerabletarget.com/VT-2026-23829"
+      ]
+    },
+    "vulnerabilities": {
+      "endpoint": "SMTP",
+      "method": "MAIL FROM / RCPT TO",
+      "request": "EHLO example.com\nMAIL FROM:<attacker@example.com>\nRCPT TO:<victim\\rX-Injected:true@example.com>\nDATA\n...\n",
+      "response": "250 Ok\n(Header injected in received email)\n"
+    },
+    "technical": "SMTP Header Injection via insufficient regex in address validation.\nFile: internal/smtp/session.go\n\nThe regex pattern used to validate MAIL FROM and RCPT TO addresses:\n  var (\n    addressRegex = regexp.MustCompile(`[^\\x00-\\x1f]+`)  // Flawed regex\n  )\n\nThe regex fails to properly exclude carriage return (\\r, 0x0D) and\nline feed (\\n, 0x0A) characters when used inside a negated character class.\nThis allows an attacker to inject arbitrary SMTP headers by including\nbare CR characters in the email address.\n\nPayload: MAIL FROM:<attacker\\rX-Pwned:injected>\nThe \\r (0x0D) breaks out of the address and injects a new header line.\n",
+    "impact": "Attackers can inject arbitrary SMTP headers into emails processed by Mailpit.\nThis could lead to:\n- Email spoofing and phishing attacks\n- Bypassing spam filters\n- Corrupting email metadata\n- Potential email routing manipulation\n",
+    "remedy": "Update Mailpit to version 1.28.3 or later.\nThe fix properly validates email addresses using RFC-compliant parsing\ninstead of a flawed regex pattern.\n",
+    "poc": {
+      "nuclei": [
+        "vt-2026-23829-inject.yaml",
+        "vt-2026-23829-verify.yaml",
+        "vt-2026-23829-workflow.yaml"
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml",
+        "ports": [
+          1025,
+          8025
+        ]
+      }
+    },
+    "post-install": [
+      "Access Mailpit UI at http://localhost:8025",
+      "SMTP Service available at localhost:1025",
+      "No authentication required",
+      "Use vt-2026-23829-inject.yaml to send a test email with header injection payload",
+      "Use vt-2026-23829-verify.yaml to check for the injected header in the received email",
+      "or run vt-2026-23829-workflow.yaml to execute both steps in sequence"
+    ],
+    "category": "cves",
+    "added_date": "2026-02-06T10:58:52+03:00"
+  },
+  {
     "id": "vt-2026-25512",
     "info": {
       "name": "Group-Office - Remote Code Execution (OS Command Injection)",
