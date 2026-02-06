@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  vt-2025-24963:
+    image: ghcr.io/happyhackingspace/vt-2025-24963:latest
+    ports:
+      - "63315:63315"
+    environment:
+      - VITEST_BROWSER_HEADLESS=true
