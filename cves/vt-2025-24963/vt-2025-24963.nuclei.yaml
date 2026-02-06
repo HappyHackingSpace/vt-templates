@@ -41,5 +41,5 @@ http:
         dsl:
           - "status_code == 200"
           - "contains(content_type,'image/png')"
-          - "contains_all(body, ':*:') || contains(body, ':x:')"
+          - "contains_all(body,'root',':*:','/bin/') || contains_all(body,'root',':x:','/bin/')"
         condition: and
