@@ -1,0 +1,16 @@
+id: vt-2026-23829-workflow
+
+info:
+  name: Mailpit CVE-2026-23829 - Full Exploit Chain
+  author: omarkurt
+  severity: medium
+  description: |
+    Workflow that runs SMTP Header Injection followed by API Verification. The verification step only runs if the injection step succeeds.
+  reference:
+    - https://github.com/axllent/mailpit/security/advisories/GHSA-54wq-72mp-cq7c
+    - https://nvd.nist.gov/vuln/detail/CVE-2026-23829
+  tags: cve,cve-2026,mailpit,workflow,header-injection
+
+workflows:
+  - template: vt-2026-23829-inject.yaml
+  - template: vt-2026-23829-verify.yaml

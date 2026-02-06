@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  mailpit:
+    image: ghcr.io/happyhackingspace/vt-2026-23829:latest
+    container_name: vt-2026-23829
+    environment:
+      - MP_MAX_RECIPIENTS=5
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - vuln-net
+    restart: unless-stopped
+    labels:
+      - "vuln.cve=CVE-2026-23829"
+      - "vuln.type=Header Injection"
+      - "vuln.severity=medium"
+      - "vuln.product=Mailpit"
+
+networks:
+  vuln-net:
+    driver: bridge
