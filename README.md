@@ -10,6 +10,8 @@
 
 | Type | ID | Name | Tech | Tags |
 |:----:|-----|------|------|------|
+| 🔴 | [vt-2026-23829](cves/vt-2026-23829) | mailpit - Mailpit has an SMTP Header Injection via Regex Bypass | mailpit, web, SMTP | `go` `medium` |
+| 🔴 | [vt-2025-55182](cves/vt-2025-55182) | React Server Components - Remote Code Execution | react-server-components, nextjs | `rce` `deserialization` |
 | 🔴 | [vt-2025-24963](cves/vt-2025-24963) | Vitest Browser Mode API Exposure (LFI & RCE) (CVE-2025-24963) | vitest | `lfi` `rce` |
 | 🔴 | [vt-2026-25512](cves/vt-2026-25512) | Group-Office - Remote Code Execution (OS Command Injection) | group-office, php | `groupoffice` `php` |
 | 🔴 | [vt-2026-23829](cves/vt-2026-23829) | mailpit - Mailpit has an SMTP Header Injection via Regex Bypass | mailpit, web, SMTP | `go` `medium` |
