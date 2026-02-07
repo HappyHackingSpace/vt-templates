@@ -16,24 +16,25 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    
+      actions: write
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
+
       - name: Install dependencies
         run: pip install pyyaml
-      
+
       - name: Generate templates.json
         run: python .assets/generate_templates.py
-      
+
       - name: Update README
         run: python .assets/update_readme.py
-      
+
       - name: Commit changes
         run: |
           git config --local user.email "action@github.com"
@@ -41,3 +42,11 @@ jobs:
           git add .assets/templates.json README.md
           git diff --staged --quiet || git commit -m "chore: update templates.json and README"
           git push
+
+      - name: Trigger vt-site deployment
+        if: success()
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.G_TOKEN }}
+          repository: HappyHackingSpace/vt-site
+          event-type: templates-updated
