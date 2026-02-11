@@ -2,7 +2,7 @@ cachelib==0.10.2
 captcha==0.4
 cffi==1.15.1
 click==8.1.7
-cryptography==42.0.5
+cryptography==46.0.5
 Flask==2.2.5
 Flask-Session==0.6.0
 Flask-WTF==1.1.1
