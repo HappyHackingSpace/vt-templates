@@ -1,0 +1,91 @@
+services:
+  web:
+    image: ghcr.io/happyhackingspace/vt-2026-1357:latest
+    container_name: vt-2026-1357-web
+    ports:
+      - "8321:80"
+    environment:
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=wordpress
+      - WORDPRESS_DB_NAME=wordpress
+    volumes:
+      - wp_data:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - vt-net
+
+  db:
+    image: mysql:8.0
+    container_name: vt-2026-1357-db
+    environment:
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=wordpress
+      - MYSQL_PASSWORD=wordpress
+      - MYSQL_ROOT_PASSWORD=rootpassword
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - vt-net
+
+  setup:
+    image: wordpress:cli-2.11-php8.2
+    container_name: vt-2026-1357-setup
+    user: "33:33"
+    depends_on:
+      - web
+    environment:
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=wordpress
+      - WORDPRESS_DB_NAME=wordpress
+    volumes:
+      - wp_data:/var/www/html
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        echo "[*] Waiting for WordPress..."
+        sleep 15
+        wp core install \
+          --url="http://localhost:8321" \
+          --title="VT Lab - CVE-2026-1357" \
+          --admin_user=admin \
+          --admin_password=admin \
+          --admin_email=admin@lab.local \
+          --skip-email
+        wp plugin install wpvivid-backuprestore --version=0.9.123 --activate
+        echo "[*] Generating migration key..."
+        wp eval '
+          include ABSPATH . "wp-content/plugins/wpvivid-backuprestore/vendor/autoload.php";
+          $$rsa = new Crypt_RSA();
+          $$keys = $$rsa->createKey(2048);
+          $$options = array(
+            "public_key" => base64_encode($$keys["publickey"]),
+            "private_key" => base64_encode($$keys["privatekey"]),
+            "expires" => 0,
+            "domain" => home_url()
+          );
+          update_option("wpvivid_api_token", $$options);
+          echo "Key generated\n";
+        '
+        wp plugin list
+        echo "[+] Ready: http://localhost:8321 (admin/admin)"
+    networks:
+      - vt-net
+
+volumes:
+  wp_data:
+  db_data:
+
+networks:
+  vt-net:
+    driver: bridge
