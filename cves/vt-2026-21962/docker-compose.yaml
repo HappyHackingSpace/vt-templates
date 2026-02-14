@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  weblogic:
+    image: ghcr.io/happyhackingspace/vt-2026-21962:latest
+    container_name: vt-2026-21962
+    ports:
+      - "8090:8021"
+    networks:
+      - vuln-net
+    restart: unless-stopped
+    labels:
+      - "vuln.cve=CVE-2026-21962"
+      - "vuln.type=Authentication Bypass"
+      - "vuln.severity=critical"
+      - "vuln.product=Oracle WebLogic Server Proxy Plug-in"
+      - "vuln.cvss=10.0"
+
+networks:
+  vuln-net:
+    driver: bridge

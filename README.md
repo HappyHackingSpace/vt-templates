@@ -10,7 +10,7 @@
 
 | Type | ID | Name | Tech | Tags |
 |:----:|-----|------|------|------|
-| 🔴 | [vt-2026-1357](cves/vt-2026-1357) | WPvivid Backup & Migration - Unauthenticated Arbitrary File Upload to RCE | wordpress, wpvivid-backuprestore, php | `wordpress` `wpvivid` |
+| 🔴 | [vt-2026-21962](cves/vt-2026-21962) | Oracle WebLogic Server Proxy Plug-in - Authentication Bypass | oracle-weblogic, oracle-http-server, weblogic-proxy-plugin | `oracle` `weblogic` |
 | 🔴 | [vt-2025-24963](cves/vt-2025-24963) | Vitest Browser Mode API Exposure (LFI & RCE) (CVE-2025-24963) | vitest | `lfi` `rce` |
 | 🔴 | [vt-2026-25512](cves/vt-2026-25512) | Group-Office - Remote Code Execution (OS Command Injection) | group-office, php | `groupoffice` `php` |
 | 🔴 | [vt-2026-23829](cves/vt-2026-23829) | mailpit - Mailpit has an SMTP Header Injection via Regex Bypass | mailpit, web, SMTP | `go` `medium` |

