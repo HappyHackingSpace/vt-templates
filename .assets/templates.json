@@ -37,7 +37,8 @@
         "https://www.cve.org/CVERecord?id=CVE-2026-21962",
         "https://arcticwolf.com/resources/blog/cve-2026-21962/",
         "https://www.sangfor.com/farsight-labs-threat-intelligence/cybersecurity/cve-2026-21962-oracle-weblogic-proxy-auth-bypass",
-        "https://www.imperva.com/blog/imperva-customers-protected-against-cve-2026-21962-in-oracle-http-and-weblogic/"
+        "https://www.imperva.com/blog/imperva-customers-protected-against-cve-2026-21962-in-oracle-http-and-weblogic/",
+        "https://vulnerabletarget.com/VT-2026-21962"
       ]
     },
     "vulnerabilities": [
