@@ -158,7 +158,8 @@
         "response": "HTTP/1.1 200 OK\n\n<title>Proxy Servlet</title>\n<pre>cmd:id</pre>\n",
         "highlight": [
           "cmd:id",
-          "127.0.0.1;Y21kOmlk"
+          "127.0.0.1;Y21kOmlk",
+          "Proxy Servlet"
         ]
       },
       {
