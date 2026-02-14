@@ -188,6 +188,7 @@ vulnerabilities:
     highlight:
       - "cmd:id"
       - "127.0.0.1;Y21kOmlk"
+      - "Proxy Servlet"
 
   - id: 6
     name: "Normal Request - Should Fail"
