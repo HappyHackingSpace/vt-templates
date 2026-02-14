@@ -1,5 +1,97 @@
 [
   {
+    "id": "vt-2026-1357",
+    "info": {
+      "name": "WPvivid Backup & Migration - Unauthenticated Arbitrary File Upload to RCE",
+      "author": "omarkurt",
+      "description": "The Migration, Backup, Staging - WPvivid Backup & Migration plugin for\nWordPress is vulnerable to unauthenticated arbitrary file upload in versions\nup to and including 0.9.123. The vulnerability stems from improper error\nhandling in the RSA decryption process combined with a lack of path\nsanitization when writing uploaded files. When openssl_private_decrypt()\nfails, execution continues and passes a boolean false value to phpseclib's\nAES cipher initialization, which interprets it as null bytes. This allows\nattackers to encrypt malicious payloads using a predictable null-byte key.\nCombined with unsanitized filenames that permit directory traversal,\nattackers can upload arbitrary PHP files to publicly accessible directories\nand achieve Remote Code Execution via the wpvivid_action=send_to_site\nparameter.\n",
+      "targets": [
+        "wordpress",
+        "wpvivid-backuprestore",
+        "php"
+      ],
+      "type": "CVE",
+      "cve": "CVE-2026-1357",
+      "cwe": "CWE-434",
+      "cvss": {
+        "score": 9.8,
+        "severity": "critical",
+        "metrics": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+      },
+      "affected_versions": [
+        "<= 0.9.123"
+      ],
+      "patched_versions": [
+        "0.9.124"
+      ],
+      "tags": [
+        "wordpress",
+        "wpvivid",
+        "php",
+        "cve-2026",
+        "file-upload",
+        "rce",
+        "unauthenticated",
+        "critical",
+        "path-traversal",
+        "crypto-fail-open"
+      ],
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-1357",
+        "https://www.wordfence.com/threat-intel/vulnerabilities/id/e5af0317-ef46-4744-9752-74ce228b5f37",
+        "https://github.com/LucasM0ntes/POC-CVE-2026-1357",
+        "https://github.com/microcyberr/CVE-2026-1357",
+        "https://vulnerabletarget.com/VT-2026-1357"
+      ]
+    },
+    "vulnerabilities": {
+      "endpoint": "/",
+      "method": "POST",
+      "param": "wpvivid_content",
+      "auth_required": false,
+      "precondition": "wpvivid_api_token must exist in DB (migration key generated in plugin settings)",
+      "request": "POST / HTTP/1.1\nHost: {{target}}\nContent-Type: application/x-www-form-urlencoded\n\nwpvivid_action=send_to_site&wpvivid_content={{payload_base64}}\n",
+      "response": "HTTP/1.1 200 OK\n\n{\"result\":\"success\",\"op\":\"finished\"}\n",
+      "payload_details": "Payload is a binary packet: [3-char hex RSA key length][fake RSA key][16-char hex ciphertext length][AES-128-CBC encrypted JSON]\n- Fake RSA key (e.g. \"ABC\") triggers openssl_private_decrypt() failure -> returns false\n- phpseclib treats false as 16 null bytes (\\x00*16) for AES key\n- Attacker encrypts JSON with same null key: AES-128-CBC(key=\\x00*16, iv=\\x00*16)\n- JSON contains path traversal in \"name\" field: \"../uploads/shell.php\"\n- File written to wp-content/uploads/ bypassing .htaccess protected backup dir\n"
+    },
+    "technical": "The vulnerability exists in the WPvivid plugin's remote site migration\nfeature (wpvivid_action=send_to_site). Two bugs chain together:\n\n**Bug 1 - Cryptographic Fail-Open (class-wpvivid-crypt.php):**\nIn decrypt_message(), RSA decryption failure returns false. The code does NOT\ncheck this return value and passes false to phpseclib's Crypt_Rijndael->setKey().\nphpseclib casts false to empty string, padded with null bytes to 16 bytes.\nAttacker encrypts payload with known null key: AES-128-CBC(key=\\x00*16, iv=\\x00*16).\n\n**Bug 2 - Path Traversal (class-wpvivid-send-to-site.php):**\nIn send_to_site(), the $params['name'] from decrypted JSON is used unsanitized:\n  $file_path = WP_CONTENT_DIR . '/' . $dir . '/' . str_replace('wpvivid','wpvivid_temp',$params['name']);\nUsing \"../uploads/file.php\" escapes the backup directory to wp-content/uploads/.\n\n**Exploit Chain:**\n1. Send fake RSA key (\"ABC\") -> openssl_private_decrypt() fails -> returns false\n2. phpseclib uses false as key -> becomes \\x00*16\n3. Attacker encrypts JSON payload with \\x00*16 key -> server decrypts successfully\n4. JSON name=\"../uploads/shell.php\" -> path traversal writes to public directory\n5. Uploaded PHP file is accessible -> RCE achieved\n",
+    "owasp": {
+      "category": "A03:2021",
+      "name": "Injection"
+    },
+    "impact": "Successful exploitation allows unauthenticated remote attackers to upload\narbitrary PHP files to the WordPress web root, achieving full Remote Code\nExecution (RCE) on the server. This can lead to complete site takeover,\ndata exfiltration, backdoor installation, lateral movement within the\nhosting environment, and use of the compromised server for further attacks.\n",
+    "remedy": "Update the WPvivid Backup & Migration plugin to version 0.9.124 or later.\nAudit the server for any unauthorized PHP files in publicly accessible\ndirectories. Review server access logs for suspicious requests to the\nwpvivid_action=send_to_site endpoint.\n",
+    "remediation": [
+      "Upgrade WPvivid Backup & Migration plugin to version 0.9.124 or later",
+      "Audit wp-content/uploads/ for unauthorized PHP files",
+      "Review access logs for POST requests with wpvivid_action=send_to_site",
+      "Consider disabling the migration key when not actively migrating",
+      "Implement WAF rules to block wpvivid_action=send_to_site from external sources"
+    ],
+    "poc": {
+      "nuclei": [
+        "vt-2026-1357.nuclei.yaml"
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml",
+        "port": 8321
+      }
+    },
+    "post-install": [
+      "Start lab: docker compose up -d",
+      "Wait for setup container to complete (~30 seconds)",
+      "Access WordPress: http://localhost:8321",
+      "Admin login: admin / admin",
+      "WPvivid 0.9.123 is pre-installed and active with migration key generated",
+      "Run nuclei: nuclei -t vt-2026-1357.nuclei.yaml -u http://localhost:8321",
+      "Verify upload: curl http://localhost:8321/wp-content/uploads/vt-nuclei-test.txt"
+    ],
+    "category": "cves",
+    "added_date": "2026-02-14T09:10:51+03:00"
+  },
+  {
     "id": "vt-2026-21962",
     "info": {
       "name": "Oracle WebLogic Server Proxy Plug-in - Authentication Bypass",
