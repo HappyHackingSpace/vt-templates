@@ -74,9 +74,9 @@ vulnerabilities:
       HTTP/1.1 200 OK
       Server: WebLogic Server 14.1.1.0.0
 
-      <title>Proxy Servlet</title>
-      <h1>BEA WebLogic Server Proxy Servlet</h1>
-      <p>Mode: <span style="color: red">VULNERABLE (CVE-2026-21962)</span></p>
+      Proxy Servlet
+      BEA WebLogic Server Proxy Servlet
+      Mode: VULNERABLE (CVE-2026-21962)
     highlight:
       - "VULNERABLE (CVE-2026-21962)"
       - "127.0.0.1;Y21kOndob2FtaQ=="
@@ -105,9 +105,9 @@ vulnerabilities:
     response: |
       HTTP/1.1 200 OK
 
-      <title>Proxy Servlet</title>
-      <h1>BEA WebLogic Server Proxy Servlet</h1>
-      <p>Mode: <span style="color: red">VULNERABLE (CVE-2026-21962)</span></p>
+      Proxy Servlet
+      BEA WebLogic Server Proxy Servlet
+      Mode: VULNERABLE (CVE-2026-21962)
 
   - id: 3
     name: "Single Header Bypass"
@@ -127,8 +127,8 @@ vulnerabilities:
     response: |
       HTTP/1.1 200 OK
 
-      <title>Proxy Servlet</title>
-      <h1>BEA WebLogic Server Proxy Servlet</h1>
+      Proxy Servlet
+      BEA WebLogic Server Proxy Servlet
 
   - id: 4
     name: "Console Path Traversal"
@@ -154,7 +154,7 @@ vulnerabilities:
     response: |
       HTTP/1.1 200 OK
 
-      <title>Proxy Servlet</title>
+      Proxy Servlet
     highlight:
       - "console/..;/bea_wls_internal"
       - "127.0.0.1;Y21kOndob2FtaQ=="
@@ -183,8 +183,8 @@ vulnerabilities:
     response: |
       HTTP/1.1 200 OK
 
-      <title>Proxy Servlet</title>
-      <pre>cmd:id</pre>
+      Proxy Servlet
+      cmd:id
     highlight:
       - "cmd:id"
       - "127.0.0.1;Y21kOmlk"
@@ -206,8 +206,8 @@ vulnerabilities:
       HTTP/1.1 401 Unauthorized
       WWW-Authenticate: Basic realm="WebLogic Server"
 
-      <title>401 Unauthorized</title>
-      <h1>401 Unauthorized</h1>
+      401 Unauthorized
+      401 Unauthorized
     highlight:
       - "401 Unauthorized"
 
