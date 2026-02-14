@@ -77,6 +77,9 @@ vulnerabilities:
       <title>Proxy Servlet</title>
       <h1>BEA WebLogic Server Proxy Servlet</h1>
       <p>Mode: <span style="color: red">VULNERABLE (CVE-2026-21962)</span></p>
+    highlight:
+      - "VULNERABLE (CVE-2026-21962)"
+      - "127.0.0.1;Y21kOndob2FtaQ=="
 
   - id: 2
     name: "Direct ProxyServlet Access"
@@ -152,6 +155,9 @@ vulnerabilities:
       HTTP/1.1 200 OK
 
       <title>Proxy Servlet</title>
+    highlight:
+      - "console/..;/bea_wls_internal"
+      - "127.0.0.1;Y21kOndob2FtaQ=="
 
   - id: 5
     name: "Different Payload - Reverse Shell Command"
@@ -179,6 +185,9 @@ vulnerabilities:
 
       <title>Proxy Servlet</title>
       <pre>cmd:id</pre>
+    highlight:
+      - "cmd:id"
+      - "127.0.0.1;Y21kOmlk"
 
   - id: 6
     name: "Normal Request - Should Fail"
@@ -198,6 +207,8 @@ vulnerabilities:
 
       <title>401 Unauthorized</title>
       <h1>401 Unauthorized</h1>
+    highlight:
+      - "401 Unauthorized"
 
 technical: |
   The vulnerability exists in the WebLogic Server Proxy Plug-in's request handling mechanism.
