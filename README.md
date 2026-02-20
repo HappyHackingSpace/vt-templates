@@ -10,7 +10,7 @@
 
 | Type | ID | Name | Tech | Tags |
 |:----:|-----|------|------|------|
-| 📊 | [vt-dagu-rce](http/vt-dagu-rce) | Dagu Workflow Engine - Unauthenticated Remote Code Execution | dagu, dagu-workflow-engine | `dagu` `rce` |
+| 📊 | [vt-dagu](http/vt-dagu) | Dagu Workflow Engine - Unauthenticated Remote Code Execution | dagu, dagu-workflow-engine | `dagu` `rce` |
 | 📊 | [vt-vlife](http/vt-vlife) | Vlife FastJSON Deserialization to RCE (GHSL-2024-300) | vlife | `deserialization` `fastjson` |
 | 🔴 | [vt-2023-3452](cves/vt-2023-3452) | WordPress Canto Plugin Unauthenticated Remote File Inclusion (CVE-2023-3452) | wordpress, canto | `rfi` `rce` |
 | 🔴 | [vt-2026-1357](cves/vt-2026-1357) | WPvivid Backup & Migration - Unauthenticated Arbitrary File Upload to RCE | wordpress, wpvivid-backuprestore, php | `wordpress` `wpvivid` |

