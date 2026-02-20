@@ -78,6 +78,7 @@ references:
   - "https://github.com/wwwlike/vlife"
   - "https://github.com/wwwlike/vlife/pull/4"
   - "https://cwe.mitre.org/data/definitions/502.html"
+  - "https://vulnerabletarget.com/vt-vlife"
 
 poc:
   nuclei:
@@ -102,5 +103,6 @@ poc:
 
 providers:
   docker-compose:
-    path: "docker-compose.yaml"
+    path: "docker-compose.yaml"  
     port: 8288
+
