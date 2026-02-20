@@ -1,6 +1,6 @@
 services:
   app:
-    build: 
+    build:
       context: ./app
       args:
         - FLAG
@@ -11,4 +11,3 @@ services:
       timeout: 1s
       retries: 5
       interval: 10s
-

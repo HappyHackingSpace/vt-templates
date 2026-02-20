@@ -2,9 +2,9 @@ services:
   app:
     build:
       context: ./app
-      dockerfile: Dockerfile 
+      dockerfile: Dockerfile
     ports:
-      - "4567:4567" 
+      - "4567:4567"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4567"]
       interval: 30s
