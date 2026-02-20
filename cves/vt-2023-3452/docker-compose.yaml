@@ -1,0 +1,46 @@
+services:
+  web:
+    image: ghcr.io/happyhackingspace/vt-2023-3452:latest
+    container_name: vt-2023-3452-web
+    ports:
+      - "8022:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wp
+      WORDPRESS_DB_PASSWORD: wp
+    volumes:
+      - wp_data:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - vt-net
+
+  db:
+    image: mariadb:10.11
+    container_name: vt-2023-3452-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wp
+      MYSQL_PASSWORD: wp
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -proot || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - vt-net
+
+volumes:
+  wp_data:
+  db_data:
+
+networks:
+  vt-net:
+    driver: bridge
