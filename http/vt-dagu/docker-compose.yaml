@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  dagu:
+    image: ghcr.io/happyhackingspace/vt-dagu-rce:1.30.3
+    container_name: vt-dagu-rce
+    command: dagu start-all
+    environment:
+      - DAGU_HOST=0.0.0.0
+      - DAGU_PORT=8080
+    ports:
+      - "2121:8080"
+    networks:
+      - vuln-net
+    restart: unless-stopped
+    labels:
+      - "vuln.ghsa=GHSA-6qr9-g2xw-cw92"
+      - "vuln.type=Remote Code Execution"
+      - "vuln.severity=critical"
+      - "vuln.product=Dagu Workflow Engine"
+      - "vuln.cvss=9.8"
+
+networks:
+  vuln-net:
+    driver: bridge
