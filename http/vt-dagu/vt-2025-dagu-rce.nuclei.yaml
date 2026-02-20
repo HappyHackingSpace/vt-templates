@@ -12,7 +12,7 @@ info:
   reference:
     - https://github.com/advisories/GHSA-6qr9-g2xw-cw92
     - https://github.com/dagu-org/dagu
-    - https://vulnerabletarget.com/VT-2025-dagu-rce
+    - https://vulnerabletarget.com/vt-dagu
   remediation: |
     Enable authentication by setting DAGU_AUTH_MODE=builtin and configuring credentials.
     Do not expose Dagu to the internet without authentication.

@@ -1,4 +1,4 @@
-id: vt-dagu-rce
+id: vt-dagu
 
 info:
   name: "Dagu Workflow Engine - Unauthenticated Remote Code Execution"
@@ -40,6 +40,7 @@ info:
   references:
     - https://github.com/advisories/GHSA-6qr9-g2xw-cw92
     - https://github.com/dagu-org/dagu
+    - https://vulnerabletarget.com/vt-dagu
 
 vulnerabilities:
   - id: 1
