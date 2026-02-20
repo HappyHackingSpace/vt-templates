@@ -1,0 +1,48 @@
+services:
+  vlife-app:
+    image: ghcr.io/happyhackingspace/vt-vlife:latest
+    container_name: vt-vlife
+    ports:
+      - "8288:8288"
+    environment:
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
+      - SPRING_DATASOURCE_URL=jdbc:mysql://vlife-db:3306/vlife?useUnicode=true&characterEncoding=utf8&allowPublicKeyRetrieval=true&useSSL=false
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=vlife123
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_DATABASE=mysql
+      - SPRING_JPA_SHOW_SQL=false
+    depends_on:
+      vlife-db:
+        condition: service_healthy
+    networks:
+      - vlife-network
+    restart: unless-stopped
+
+  vlife-db:
+    image: mysql:8.0
+    container_name: vt-vlife-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=vlife123
+      - MYSQL_DATABASE=vlife
+      - MYSQL_CHARACTER_SET_SERVER=utf8mb4
+      - MYSQL_COLLATION_SERVER=utf8mb4_unicode_ci
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+    networks:
+      - vlife-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pvlife123"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+    restart: unless-stopped
+
+volumes:
+  mysql-data:
+    driver: local
+
+networks:
+  vlife-network:
+    driver: bridge
