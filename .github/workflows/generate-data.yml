@@ -6,6 +6,7 @@ on:
       - 'cves/**/index.yaml'
       - 'benchmarks/**/index.yaml'
       - 'labs/**/index.yaml'
+      - 'http/**/index.yaml'
       - '.assets/**'
       - 'README.md'
       - '.github/workflows/generate-data.yml'
