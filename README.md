@@ -10,6 +10,7 @@
 
 | Type | ID | Name | Tech | Tags |
 |:----:|-----|------|------|------|
+| 🔴 | [vt-2026-1357](cves/vt-2026-1357) | WPvivid Backup & Migration - Unauthenticated Arbitrary File Upload to RCE | wordpress, wpvivid-backuprestore, php | `wordpress` `wpvivid` |
 | 🔴 | [vt-2026-21962](cves/vt-2026-21962) | Oracle WebLogic Server Proxy Plug-in - Authentication Bypass | oracle-weblogic, oracle-http-server, weblogic-proxy-plugin | `oracle` `weblogic` |
 | 🔴 | [vt-2025-24963](cves/vt-2025-24963) | Vitest Browser Mode API Exposure (LFI & RCE) (CVE-2025-24963) | vitest | `lfi` `rce` |
 | 🔴 | [vt-2026-25512](cves/vt-2026-25512) | Group-Office - Remote Code Execution (OS Command Injection) | group-office, php | `groupoffice` `php` |
@@ -29,4 +30,4 @@
 | 📊 | [vt-xbow-102](benchmarks/xbow/vt-xbow-102) | Email updates | web | `default_credentials` `business_logic` |
 | 📊 | ... | *101 more benchmarks* | | |
 
-> Currently tracking **118** security targets, including **9** CVEs, **5** labs, and **104** benchmarks.
+> Currently tracking **119** security targets, including **10** CVEs, **5** labs, and **104** benchmarks.
