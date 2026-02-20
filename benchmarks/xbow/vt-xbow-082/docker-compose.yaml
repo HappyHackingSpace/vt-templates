@@ -1,6 +1,6 @@
 services:
   nginx:
-    build: 
+    build:
       context: ./nginx
     depends_on:
       flask_app:
@@ -17,7 +17,7 @@ services:
       - 8081
 
   flask_app:
-    build: 
+    build:
       context: ./app
       args:
         - FLAG
@@ -30,7 +30,7 @@ services:
       - 8080
 
   flask_api:
-    build: 
+    build:
       context: ./api
     healthcheck:
       test: ["CMD", "curl", "-f", "http://127.0.0.1:8081/healthcheck"]
@@ -39,4 +39,3 @@ services:
       interval: 10s
     expose:
       - 8081
-

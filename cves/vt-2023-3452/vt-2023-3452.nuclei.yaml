@@ -19,7 +19,7 @@ info:
     - https://www.exploit-db.com/exploits/51826
     - https://www.wordfence.com/threat-intel/vulnerabilities/wordpress-plugins/canto/canto-304-unauthenticated-remote-file-inclusion
     - https://github.com/jesusgavancho/CVE-2023-3452-PoC
-    - https://vulnerabletarget.com/VT-2023-3452 
+    - https://vulnerabletarget.com/VT-2023-3452
   classification:
     cve-id: CVE-2023-3452
     cwe-id: CWE-98

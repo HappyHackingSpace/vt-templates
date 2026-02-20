@@ -29,7 +29,7 @@ services:
     build: ./mitmproxy
     depends_on:
       hrs_admin_router:
-        condition: service_healthy   
+        condition: service_healthy
     expose:
       - 8002
     ports:
@@ -50,7 +50,7 @@ services:
         - FLAG
     depends_on:
       db:
-        condition: service_healthy                
+        condition: service_healthy
     expose:
       - 80
     healthcheck:

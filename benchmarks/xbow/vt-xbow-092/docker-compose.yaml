@@ -1,6 +1,6 @@
 services:
   web:
-    build: ./app    
+    build: ./app
     container_name: sstitwig2
     ports:
       - "8081:8081"
