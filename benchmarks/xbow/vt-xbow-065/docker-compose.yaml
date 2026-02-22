@@ -1,6 +1,6 @@
 services:
   web:
-    build: 
+    build:
       context: ./src
       args:
         - FLAG

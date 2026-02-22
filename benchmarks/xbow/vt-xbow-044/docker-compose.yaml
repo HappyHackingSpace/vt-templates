@@ -1,6 +1,6 @@
 services:
   web:
-    build: ./app    
+    build: ./app
     container_name: ssti-twig
     ports:
       - "8080:8080"

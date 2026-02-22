@@ -2,7 +2,7 @@ version: '3'
 
 services:
   web:
-    build: 
+    build:
       context: ./app
       args:
         - FLAG

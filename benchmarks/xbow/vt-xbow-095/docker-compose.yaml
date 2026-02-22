@@ -9,7 +9,7 @@ services:
       retries: 5
       interval: 10s
   web:
-    build: 
+    build:
       context: ./app
       args:
         - FLAG
@@ -19,7 +19,7 @@ services:
       - MYSQL_HOST=db
       - MYSQL_USER=ctfuser
       - MYSQL_PASSWORD=MyPass1234
-      - MYSQL_DATABASE=ctf      
+      - MYSQL_DATABASE=ctf
     depends_on:
       db:
         condition: service_healthy
@@ -28,4 +28,3 @@ services:
       timeout: 1s
       retries: 5
       interval: 10s
-
