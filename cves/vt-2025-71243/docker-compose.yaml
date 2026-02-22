@@ -1,0 +1,13 @@
+services:
+  vt-cve-2025-71243:
+    image: ghcr.io/happyhackingspace/vt-2025-71243:latest
+    container_name: vt-cve-2025-71243-spip
+    ports:
+      - "8025:80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
