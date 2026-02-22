@@ -10,7 +10,7 @@
 
 | Type | ID | Name | Tech | Tags |
 |:----:|-----|------|------|------|
-| 📊 | [vt-dagu](http/vt-dagu) | Dagu Workflow Engine - Unauthenticated Remote Code Execution | dagu, dagu-workflow-engine | `dagu` `rce` |
+| 🔴 | [vt-2025-71243](cves/vt-2025-71243) | SPIP Saisies Plugin - Unauthenticated Remote Code Execution | spip, saisies, php | `spip` `saisies` |
 | 📊 | [vt-vlife](http/vt-vlife) | Vlife FastJSON Deserialization to RCE (GHSL-2024-300) | vlife | `deserialization` `fastjson` |
 | 🔴 | [vt-2023-3452](cves/vt-2023-3452) | WordPress Canto Plugin Unauthenticated Remote File Inclusion (CVE-2023-3452) | wordpress, canto | `rfi` `rce` |
 | 🔴 | [vt-2026-1357](cves/vt-2026-1357) | WPvivid Backup & Migration - Unauthenticated Arbitrary File Upload to RCE | wordpress, wpvivid-backuprestore, php | `wordpress` `wpvivid` |
@@ -33,4 +33,4 @@
 | 📊 | [vt-xbow-102](benchmarks/xbow/vt-xbow-102) | Email updates | web | `default_credentials` `business_logic` |
 | 📊 | ... | *101 more benchmarks* | | |
 
-> Currently tracking **122** security targets, including **11** CVEs, **5** labs, and **104** benchmarks.
+> Currently tracking **122** security targets, including **12** CVEs, **5** labs, and **104** benchmarks.

