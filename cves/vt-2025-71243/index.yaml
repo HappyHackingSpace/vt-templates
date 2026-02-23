@@ -43,7 +43,7 @@ references:
   - https://chocapikk.com/posts/2026/spip-saisies-rce/
   - https://github.com/Chocapikk/CVE-2025-71243
   - https://www.vulncheck.com/advisories/spip-saisies-plugin-remote-code-execution
-
+  - https://vulnerabletarget.com/VT-2025-71243
 vulnerabilities:
   - id: spip-saisies-rce
     name: "SPIP Saisies _anciennes_valeurs PHP Code Injection"
