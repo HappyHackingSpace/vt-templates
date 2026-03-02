@@ -1,8 +1,8 @@
 {
-  "total": 123,
+  "total": 124,
   "categories": {
+    "cves": 13,
     "http": 2,
-    "cves": 12,
     "benchmarks": 104,
     "labs": 5
   },
@@ -24,6 +24,7 @@
     "crypto-fail-open",
     "ctf",
     "cve",
+    "cve-2025",
     "cve-2025-71243",
     "cve-2026",
     "dagu",
@@ -54,6 +55,7 @@
     "mysql",
     "network",
     "nextjs",
+    "nodejs",
     "nosqli",
     "open-redirect",
     "oracle",
@@ -90,6 +92,7 @@
     "vitest",
     "vulnerabilities",
     "web",
+    "web-check",
     "weblogic",
     "wordpress",
     "workflow-engine",
@@ -98,5 +101,5 @@
     "xss",
     "xxe"
   ],
-  "updated_at": "2026-03-02T00:59:30Z"
+  "updated_at": "2026-03-02T08:46:09Z"
 }
