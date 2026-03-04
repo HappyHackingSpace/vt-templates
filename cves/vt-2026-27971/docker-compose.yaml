@@ -1,0 +1,6 @@
+services:
+  qwik-app:
+    image: ghcr.io/happyhackingspace/vt-2026-27971:latest
+    network_mode: host
+    environment:
+      - PORT=3000
