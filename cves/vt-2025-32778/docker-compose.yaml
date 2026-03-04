@@ -1,0 +1,13 @@
+services:
+  web-check:
+    container_name: web-check-vuln
+    image: ghcr.io/happyhackingspace/vt-2025-32778:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - CHROME_PATH=/usr/bin/chromium
+      - PORT=3000
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    restart: unless-stopped
