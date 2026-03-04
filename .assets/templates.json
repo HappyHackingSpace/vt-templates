@@ -1,5 +1,78 @@
 [
   {
+    "id": "vt-2025-32778",
+    "info": {
+      "name": "Web-Check - Command Injection via Screenshot API",
+      "author": "omarkurt",
+      "description": "Web-Check versions prior to 2.0.1 contain a command injection vulnerability\nin the /api/screenshot endpoint. The directChromiumScreenshot() function uses\nchild_process.exec() with unsanitized user input from the url query parameter,\nallowing unauthenticated attackers to execute arbitrary system commands on the\nunderlying host. The vulnerability was patched by replacing exec() with execFile()\nwhich avoids shell interpretation and properly isolates arguments.\n",
+      "type": "CVE",
+      "targets": [
+        "web-check"
+      ],
+      "cve": "CVE-2025-32778",
+      "cwe": "CWE-78",
+      "cvss": {
+        "score": 9.3,
+        "severity": "critical",
+        "metrics": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
+      },
+      "affected_versions": [
+        "< 2.0.1"
+      ],
+      "fixed_version": "2.0.1",
+      "tags": [
+        "rce",
+        "command-injection",
+        "unauthenticated",
+        "web-check",
+        "cve-2025",
+        "nodejs"
+      ],
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-32778",
+        "https://github.com/Lissy93/web-check/security/advisories/GHSA-5qg5-g7c2-pfx8",
+        "https://github.com/Lissy93/web-check/commit/0e4958aa10b2650d32439a799f6fc83a7cd46cef",
+        "https://github.com/rapid7/metasploit-framework/pull/20791"
+      ]
+    },
+    "vulnerabilities": [
+      {
+        "id": "screenshot_cmdi",
+        "name": "Command Injection via Screenshot API URL Parameter",
+        "description": "The /api/screenshot endpoint passes the url query parameter directly into\na shell command using child_process.exec() without sanitization. An attacker\ncan inject arbitrary OS commands via shell metacharacters in the URL parameter.\n",
+        "endpoint": "/api/screenshot",
+        "method": "GET",
+        "param": "url",
+        "request": "GET /api/screenshot?url=http://example.com?a=\";sleep+5;\" HTTP/1.1\nHost: {{Hostname}}\n",
+        "response": "HTTP/1.1 500 Internal Server Error\n(Response delayed ~5 seconds due to sleep command execution)\n"
+      }
+    ],
+    "technical": "The vulnerability exists in api/screenshot.js within the directChromiumScreenshot\nfunction. User-controlled input (url) is interpolated directly into a shell command\nstring passed to child_process.exec():\n\n  const command = `${chromePath} --headless --disable-gpu --no-sandbox --screenshot=${screenshotPath} \"${url}\"`;\n  exec(command, async (error, stdout, stderr) => { ... });\n\nAn attacker can break out of the quoted URL argument using shell metacharacters\n(e.g., \";command;\") to execute arbitrary commands as the application user (typically root\nin the Docker container).\n",
+    "impact": "Unauthenticated remote code execution. Attackers can execute arbitrary system commands\non the server, read sensitive files, establish reverse shells, and fully compromise\nthe host. The application runs as root in the default Docker configuration.\n",
+    "remediation": [
+      "Update to Web-Check version 2.0.1 or later",
+      "Apply patch commit 0e4958aa10b2650d32439a799f6fc83a7cd46cef",
+      "Use execFile() instead of exec() for subprocess execution"
+    ],
+    "poc": {
+      "nuclei": [
+        "vt-2025-32778.nuclei.yaml"
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml"
+      }
+    },
+    "post-install": [
+      "Wait ~60 seconds for the application to build and start",
+      "Access the application at http://localhost:3000",
+      "Test endpoint: /api/screenshot?url=http://example.com"
+    ],
+    "category": "cves",
+    "added_date": "2026-03-04T14:47:30+03:00"
+  },
+  {
     "id": "vt-2026-27971",
     "info": {
       "name": "Qwik - Unauthenticated RCE via server$ Deserialization",

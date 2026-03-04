@@ -1,7 +1,7 @@
 {
-  "total": 124,
+  "total": 125,
   "categories": {
-    "cves": 13,
+    "cves": 14,
     "http": 2,
     "benchmarks": 104,
     "labs": 5
@@ -67,6 +67,7 @@
     "postgis",
     "privilege_escalation",
     "proxy",
+    "qwik",
     "race_condition",
     "rce",
     "react",
@@ -101,5 +102,5 @@
     "xss",
     "xxe"
   ],
-  "updated_at": "2026-03-04T00:58:07Z"
+  "updated_at": "2026-03-04T11:47:47Z"
 }
