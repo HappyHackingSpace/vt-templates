@@ -1,7 +1,7 @@
 {
-  "total": 125,
+  "total": 126,
   "categories": {
-    "cves": 14,
+    "cves": 15,
     "http": 2,
     "benchmarks": 104,
     "labs": 5
@@ -11,6 +11,7 @@
     "arbitrary_file_upload",
     "auth-bypass",
     "authenticated",
+    "backup",
     "blind_sqli",
     "broken-auth",
     "brute_force",
@@ -42,6 +43,7 @@
     "header-injection",
     "http_method_tamper",
     "idor",
+    "information-disclosure",
     "information_disclosure",
     "injection",
     "insecure_deserialization",
@@ -55,6 +57,7 @@
     "mysql",
     "network",
     "nextjs",
+    "nginx-ui",
     "nodejs",
     "nosqli",
     "open-redirect",
@@ -102,5 +105,5 @@
     "xss",
     "xxe"
   ],
-  "updated_at": "2026-03-08T01:00:16Z"
+  "updated_at": "2026-03-08T20:30:29Z"
 }
