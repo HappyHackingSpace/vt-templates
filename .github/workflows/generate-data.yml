@@ -10,6 +10,8 @@ on:
       - '.assets/**'
       - 'README.md'
       - '.github/workflows/generate-data.yml'
+  schedule:
+    - cron: '0 0 * * *'
   workflow_dispatch:
 
 jobs:
@@ -36,11 +38,14 @@ jobs:
       - name: Update README
         run: python .assets/update_readme.py
 
+      - name: Generate stats.json
+        run: python .assets/generate_stats.py
+
       - name: Commit changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add .assets/templates.json README.md
+          git add .assets/templates.json .assets/stats.json README.md
           git diff --staged --quiet || git commit -m "chore: update templates.json and README"
           git push
 

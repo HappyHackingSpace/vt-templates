@@ -1,0 +1,22 @@
+name: Validate Templates
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: .assets/validate/go.mod
+          cache-dependency-path: .assets/validate/go.sum
+
+      - name: Validate templates
+        working-directory: .assets/validate
+        run: go run main.go
