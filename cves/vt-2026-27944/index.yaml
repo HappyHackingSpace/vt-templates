@@ -9,8 +9,7 @@ info:
     is accessible without authentication and discloses the AES encryption key and initialization 
     vector (IV) in the X-Backup-Security HTTP response header. This allows an unauthenticated 
     attacker to download a full system backup containing sensitive data including admin credentials, 
-    session tokens, SSL private keys, and complete Nginx configurations. The backup can then be 
-    decrypted immediately using the exposed encryption keys.
+    session tokens, SSL private keys, and complete Nginx configurations.
   targets:
     - nginx-ui
   type: CVE
@@ -18,7 +17,6 @@ info:
   cwe: CWE-306
   cvss:
     score: 9.8
-    severity: critical
     metrics: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
   affected_versions:
     - "< 2.3.3"
