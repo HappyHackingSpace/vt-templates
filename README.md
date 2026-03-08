@@ -10,6 +10,8 @@
 
 | Type | ID | Name | Tech | Tags |
 |:----:|-----|------|------|------|
+| 🔴 | [vt-2026-27971](cves/vt-2026-27971) | Qwik - Unauthenticated RCE via server$ Deserialization | qwik | `rce` `deserialization` |
+| 🔴 | [vt-2026-27944](cves/vt-2026-27944) | Nginx UI - Unauthenticated Backup Download with Encryption Key Disclosure | nginx-ui | `nginx-ui` `backup` |
 | 📊 | [vt-dagu](http/vt-dagu) | Dagu Workflow Engine - Unauthenticated Remote Code Execution | dagu, dagu-workflow-engine | `dagu` `rce` |
 | 🔴 | [vt-2025-71243](cves/vt-2025-71243) | SPIP Saisies Plugin - Unauthenticated Remote Code Execution | spip, saisies, php | `spip` `saisies` |
 | 📊 | [vt-vlife](http/vt-vlife) | Vlife FastJSON Deserialization to RCE (GHSL-2024-300) | vlife | `deserialization` `fastjson` |
@@ -34,4 +36,4 @@
 | 📊 | [vt-xbow-102](benchmarks/xbow/vt-xbow-102) | Email updates | web | `default_credentials` `business_logic` |
 | 📊 | ... | *101 more benchmarks* | | |
 
-> Currently tracking **123** security targets, including **12** CVEs, **5** labs, and **104** benchmarks.
+> Currently tracking **125** security targets, including **14** CVEs, **5** labs, and **104** benchmarks.

