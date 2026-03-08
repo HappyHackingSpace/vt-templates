@@ -1,0 +1,26 @@
+services:
+  nginx-ui:
+    image: ghcr.io/happyhackingspace/vt-2026-27944:latest
+    container_name: vt-2026-27944-nginx-ui
+    restart: unless-stopped
+    ports:
+      - "9099:9000"
+    volumes:
+      - ./nginx:/etc/nginx
+      - ./nginx-ui:/etc/nginx-ui
+      - ./data:/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      # Port configuration
+      - NGINX_UI_SERVER_PORT=9000
+      # Skip installation wizard (bypass 10-min setup window)
+      - NGINX_UI_NODE_SKIP_INSTALLATION=true
+      # Predefined admin user (auto-created on first start)
+      - NGINX_UI_PREDEFINED_USER_NAME=admin
+      - NGINX_UI_PREDEFINED_USER_PASSWORD=admin123
+    networks:
+      - vt-2026-27944-network
+
+networks:
+  vt-2026-27944-network:
+    driver: bridge
