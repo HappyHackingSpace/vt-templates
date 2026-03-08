@@ -1,153 +1,10 @@
 [
   {
-    "id": "vt-2025-32778",
-    "info": {
-      "name": "Web-Check - Command Injection via Screenshot API",
-      "author": "omarkurt",
-      "description": "Web-Check versions prior to 2.0.1 contain a command injection vulnerability\nin the /api/screenshot endpoint. The directChromiumScreenshot() function uses\nchild_process.exec() with unsanitized user input from the url query parameter,\nallowing unauthenticated attackers to execute arbitrary system commands on the\nunderlying host. The vulnerability was patched by replacing exec() with execFile()\nwhich avoids shell interpretation and properly isolates arguments.\n",
-      "type": "CVE",
-      "targets": [
-        "web-check"
-      ],
-      "cve": "CVE-2025-32778",
-      "cwe": "CWE-78",
-      "cvss": {
-        "score": 9.3,
-        "severity": "critical",
-        "metrics": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
-      },
-      "affected_versions": [
-        "< 2.0.1"
-      ],
-      "fixed_version": "2.0.1",
-      "tags": [
-        "rce",
-        "command-injection",
-        "unauthenticated",
-        "web-check",
-        "cve-2025",
-        "nodejs"
-      ],
-      "references": [
-        "https://nvd.nist.gov/vuln/detail/CVE-2025-32778",
-        "https://github.com/Lissy93/web-check/security/advisories/GHSA-5qg5-g7c2-pfx8",
-        "https://github.com/Lissy93/web-check/commit/0e4958aa10b2650d32439a799f6fc83a7cd46cef",
-        "https://github.com/rapid7/metasploit-framework/pull/20791"
-      ]
-    },
-    "vulnerabilities": [
-      {
-        "id": "screenshot_cmdi",
-        "name": "Command Injection via Screenshot API URL Parameter",
-        "description": "The /api/screenshot endpoint passes the url query parameter directly into\na shell command using child_process.exec() without sanitization. An attacker\ncan inject arbitrary OS commands via shell metacharacters in the URL parameter.\n",
-        "endpoint": "/api/screenshot",
-        "method": "GET",
-        "param": "url",
-        "request": "GET /api/screenshot?url=http://example.com?a=\";sleep+5;\" HTTP/1.1\nHost: {{Hostname}}\n",
-        "response": "HTTP/1.1 500 Internal Server Error\n(Response delayed ~5 seconds due to sleep command execution)\n"
-      }
-    ],
-    "technical": "The vulnerability exists in api/screenshot.js within the directChromiumScreenshot\nfunction. User-controlled input (url) is interpolated directly into a shell command\nstring passed to child_process.exec():\n\n  const command = `${chromePath} --headless --disable-gpu --no-sandbox --screenshot=${screenshotPath} \"${url}\"`;\n  exec(command, async (error, stdout, stderr) => { ... });\n\nAn attacker can break out of the quoted URL argument using shell metacharacters\n(e.g., \";command;\") to execute arbitrary commands as the application user (typically root\nin the Docker container).\n",
-    "impact": "Unauthenticated remote code execution. Attackers can execute arbitrary system commands\non the server, read sensitive files, establish reverse shells, and fully compromise\nthe host. The application runs as root in the default Docker configuration.\n",
-    "remediation": [
-      "Update to Web-Check version 2.0.1 or later",
-      "Apply patch commit 0e4958aa10b2650d32439a799f6fc83a7cd46cef",
-      "Use execFile() instead of exec() for subprocess execution"
-    ],
-    "poc": {
-      "nuclei": [
-        "vt-2025-32778.nuclei.yaml"
-      ]
-    },
-    "providers": {
-      "docker-compose": {
-        "path": "docker-compose.yaml"
-      }
-    },
-    "post-install": [
-      "Wait ~60 seconds for the application to build and start",
-      "Access the application at http://localhost:3000",
-      "Test endpoint: /api/screenshot?url=http://example.com"
-    ],
-    "category": "cves",
-    "added_date": "2026-03-08T23:30:12+03:00"
-  },
-  {
-    "id": "vt-2026-27971",
-    "info": {
-      "name": "Qwik - Unauthenticated RCE via server$ Deserialization",
-      "author": "omarkurt",
-      "description": "Qwik framework versions 1.19.0 and prior contain an unsafe deserialization\nvulnerability in the server$ RPC mechanism. The importSymbol function in the\nserver platform falls back to using require() with a user-controlled URL path\nwhen a QRL symbol is not found in the pre-registered symbols map. This allows\nany unauthenticated attacker to execute arbitrary code on the server with a\nsingle HTTP request. Affects any deployment where require() is available at\nruntime (standard Node.js).\n",
-      "type": "CVE",
-      "targets": [
-        "qwik"
-      ],
-      "cve": "CVE-2026-27971",
-      "cwe": "CWE-502",
-      "cvss": {
-        "score": 9.2,
-        "severity": "critical",
-        "metrics": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
-      },
-      "affected_versions": [
-        "<= 1.19.0"
-      ],
-      "fixed_version": "1.19.1",
-      "tags": [
-        "rce",
-        "deserialization",
-        "qwik",
-        "cve-2026",
-        "unauthenticated",
-        "nodejs"
-      ],
-      "references": [
-        "https://github.com/QwikDev/qwik/security/advisories/GHSA-p9x5-jp3h-96mm",
-        "https://nvd.nist.gov/vuln/detail/CVE-2026-27971",
-        "https://vulnerabletarget.com/VT-2026-27971"
-      ]
-    },
-    "vulnerabilities": [
-      {
-        "id": "server_rce",
-        "name": "RCE via server$ QRL Deserialization",
-        "description": "The server$ RPC endpoint deserializes QRL objects from application/qwik-json\nPOST requests. The importSymbol function uses require() with attacker-controlled\nmodule paths, allowing arbitrary module loading and code execution.\n",
-        "endpoint": "/",
-        "method": "POST",
-        "param": "qfunc",
-        "request": "POST /?qfunc=sync HTTP/1.1\nHost: {{Hostname}}\nContent-Type: application/qwik-json\nX-QRL: sync\nOrigin: http://{{Hostname}}\n\n{\"_objs\":[\"\\u0002./node_modules/cross-spawn/index#sync\",\"cat\",\"/etc/passwd\",[\"2\"],[\"0\",\"1\",\"3\"]],\"_entry\":\"4\"}\n",
-        "response": "HTTP/1.1 200 OK\nContent-Type: application/qwik-json\n\n{\"result\":\"root:x:0:0:root:/root:/bin/sh\\nbin:x:1:1:bin:/bin:/sbin/nologin:\\n\"}\n"
-      }
-    ],
-    "technical": "The vulnerability exists in packages/qwik/src/server/platform.ts in the\nimportSymbol function. When a QRL references a symbol not found in the\npre-registered symbols map (__qwik_reg_symbols), the code falls back to\nrequire() with the attacker-controlled URL from the QRL. The server$\nRPC mechanism deserializes QRL objects from POST requests with\nContent-Type: application/qwik-json, allowing an attacker to craft a\nQRL pointing to any Node.js module (e.g., child_process) and invoke\nany exported function (e.g., execSync) with arbitrary arguments.\nThe fix in 1.19.1 removes the require() fallback and throws an error\ninstead when a symbol is not pre-registered.\n",
-    "impact": "An unauthenticated attacker can achieve Remote Code Execution on any\nQwik application running on Node.js. This allows full server compromise\nincluding data theft, lateral movement, and service disruption.\n",
-    "remediation": [
-      "Upgrade @builder.io/qwik to version 1.19.1 or later",
-      "Deploy on edge runtimes without require() (Cloudflare Workers, Deno) as mitigation"
-    ],
-    "poc": {
-      "nuclei": [
-        "vt-2026-27971.nuclei.yaml"
-      ]
-    },
-    "providers": {
-      "docker-compose": {
-        "path": "docker-compose.yaml"
-      }
-    },
-    "post-install": [
-      "Access the application at http://localhost:3000",
-      "The Qwik app runs in SSR dev mode with server$ RPC enabled"
-    ],
-    "category": "cves",
-    "added_date": "2026-03-08T23:21:31+03:00"
-  },
-  {
     "id": "vt-2026-27944",
     "info": {
       "name": "Nginx UI - Unauthenticated Backup Download with Encryption Key Disclosure",
       "author": "omarkurt",
-      "description": "Nginx UI is a web user interface for managing Nginx web servers. Versions prior to \n2.3.3 contain a critical information disclosure vulnerability. The /api/backup endpoint \nis accessible without authentication and discloses the AES encryption key and initialization \nvector (IV) in the X-Backup-Security HTTP response header. This allows an unauthenticated \nattacker to download a full system backup containing sensitive data including admin credentials, \nsession tokens, SSL private keys, and complete Nginx configurations.\n",
+      "description": "Nginx UI is a web user interface for managing Nginx web servers. Versions prior to \n2.3.3 contain a critical information disclosure vulnerability. The /api/backup endpoint \nis accessible without authentication and discloses the AES encryption key and initialization \nvector (IV) in the X-Backup-Security HTTP response header. This allows an unauthenticated \nattacker to download a full system backup containing sensitive data including admin credentials, \nsession tokens, SSL private keys, and complete Nginx configurations. The backup can then be \ndecrypted immediately using the exposed encryption keys.\n",
       "targets": [
         "nginx-ui"
       ],
@@ -156,6 +13,7 @@
       "cwe": "CWE-306",
       "cvss": {
         "score": 9.8,
+        "severity": "critical",
         "metrics": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
       },
       "affected_versions": [

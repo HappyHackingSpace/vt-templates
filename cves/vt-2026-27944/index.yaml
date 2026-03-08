@@ -26,29 +26,116 @@ info:
     - backup
     - information-disclosure
     - unauthenticated
+    - encryption-key-exposure
+    - critical
+  references:
+    - "https://nvd.nist.gov/vuln/detail/CVE-2026-27944"
+    - "https://github.com/advisories/GHSA-4x88-6m79-q5g5"
+    - "https://www.tenable.com/security/research/tra-2026-17"
+    - "https://www.thehackerwire.com/nginx-ui-unauthenticated-backup-disclosure-cve-2026-27944/"
+    - "https://github.com/0xJacky/nginx-ui/releases/tag/v2.3.3"
+    - "https://vulnerabletarget.com/VT-2026-27944"
 
-references:
-  - https://nvd.nist.gov/vuln/detail/CVE-2026-27944
-  - https://github.com/advisories/GHSA-4x88-6m79-q5g5
-  - https://www.tenable.com/security/research/tra-2026-17
-  - https://www.thehackerwire.com/nginx-ui-unauthenticated-backup-disclosure-cve-2026-27944/
-  - https://github.com/0xJacky/nginx-ui/releases/tag/v2.3.3
-  - https://vulnerabletarget.com/VT-2026-27944
+vulnerabilities:
+  - id: unauth-backup-download
+    name: "Unauthenticated Backup Download with Key Disclosure"
+    description: |
+      The /api/backup endpoint allows unauthenticated users to download encrypted backups.
+      The response includes X-Backup-Security header containing the AES key and IV needed
+      to decrypt the backup archive.
+    endpoint: /api/backup
+    method: GET
+    authentication:
+      type: none
+      required: false
+    request: |
+      GET /api/backup HTTP/1.1
+      Host: {{Hostname}}
+      Accept: */*
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/octet-stream
+      Content-Disposition: attachment; filename=nginx-ui-backup.tar.gz
+      X-Backup-Security: {"key":"base64_encoded_aes_key","iv":"base64_encoded_iv"}
 
-poc:
-  nuclei:
-    - "vt-2026-27944.nuclei.yaml"
+  - id: sensitive-data-exposure
+    name: "Sensitive Data in Backup Archive"
+    description: |
+      The downloaded backup contains SQLite database with admin credentials and 2FA secrets,
+      SSL private keys for all managed domains, session tokens, and complete Nginx configs.
+    endpoint: /api/backup
+    method: GET
+    authentication:
+      type: none
+      required: false
+
+  - id: aes-key-exposure
+    name: "AES Encryption Key Exposure in Response Header"
+    description: |
+      The X-Backup-Security response header contains base64-encoded AES encryption key and IV
+      that can be used to decrypt the downloaded backup immediately.
+    endpoint: /api/backup
+    method: GET
+    authentication:
+      type: none
+      required: false
+
+technical: |
+  The vulnerability exists in the backup API handler of Nginx UI. The /api/backup endpoint
+  lacks proper authentication middleware, allowing unauthenticated HTTP requests to trigger
+  a full system backup. The backup generation process creates an encrypted archive using
+  AES encryption, but the encryption key and initialization vector are then exposed in the
+  X-Backup-Security response header as a JSON object with "key" and "iv" fields.
+  
+  Root Cause:
+  - Missing authentication check on /api/backup endpoint
+  - Encryption keys transmitted alongside encrypted data (key escrow anti-pattern)
+  - No rate limiting on backup generation endpoint
+  
+  Affected Components:
+  - Backup API handler (internal/router/backup.go)
+  - Encryption wrapper that generates X-Backup-Security header
+  - Authentication middleware that should protect backup endpoints
+
+impact: |
+  Successful exploitation allows complete system compromise:
+  
+  Information Disclosure:
+  - Admin credentials from SQLite database
+  - 2FA/TOTP secrets for admin accounts
+  - SSL private keys for all managed domains
+  - Active session tokens for authenticated users
+  - Full Nginx configuration files
+  - Internal network information from upstream configurations
+  
+  Privilege Escalation:
+  - Decrypt backup → Extract admin credentials → Login as admin
+  - Session token theft allows account takeover
+  
+  Further Attack Vectors:
+  - SSL private keys enable SSL/TLS impersonation attacks
+  - Nginx configs reveal internal infrastructure topology
+  - Admin panel access may allow configuration modifications
 
 remediation:
   - "Upgrade to Nginx UI version 2.3.3 or later immediately"
   - "Implement authentication middleware on /api/backup endpoint"
   - "Do not transmit encryption keys in HTTP response headers"
   - "Use proper key management (KMS, HSM, or separate secure key storage)"
+  - "Implement rate limiting on backup generation endpoints"
+  - "Rotate all credentials, SSL keys, and session tokens if compromise suspected"
+  - "Monitor access logs for suspicious /api/backup requests"
+
+poc:
+  nuclei:
+    - "vt-2026-27944.nuclei.yaml"
 
 providers:
   docker-compose:
     path: "docker-compose.yaml"
 
 post-install:
-  - "http://localhost:9000"
-
+  - "Access Nginx UI at http://localhost:9000/"
+  - "Login with default credentials and complete initial setup"
+  - "Test exploit: curl -i http://localhost:9000/api/backup"
+  - "Look for X-Backup-Security header in response"
