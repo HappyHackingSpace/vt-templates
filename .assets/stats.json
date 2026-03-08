@@ -34,6 +34,7 @@
     "deserialization",
     "django",
     "dvwa",
+    "encryption-key-exposure",
     "fastjson",
     "file-upload",
     "ghsa-2025",
@@ -105,5 +106,5 @@
     "xss",
     "xxe"
   ],
-  "updated_at": "2026-03-08T20:30:29Z"
+  "updated_at": "2026-03-08T20:45:47Z"
 }

@@ -1,10 +1,153 @@
 [
   {
+    "id": "vt-2026-27971",
+    "info": {
+      "name": "Qwik - Unauthenticated RCE via server$ Deserialization",
+      "author": "omarkurt",
+      "description": "Qwik framework versions 1.19.0 and prior contain an unsafe deserialization\nvulnerability in the server$ RPC mechanism. The importSymbol function in the\nserver platform falls back to using require() with a user-controlled URL path\nwhen a QRL symbol is not found in the pre-registered symbols map. This allows\nany unauthenticated attacker to execute arbitrary code on the server with a\nsingle HTTP request. Affects any deployment where require() is available at\nruntime (standard Node.js).\n",
+      "type": "CVE",
+      "targets": [
+        "qwik"
+      ],
+      "cve": "CVE-2026-27971",
+      "cwe": "CWE-502",
+      "cvss": {
+        "score": 9.2,
+        "severity": "critical",
+        "metrics": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
+      },
+      "affected_versions": [
+        "<= 1.19.0"
+      ],
+      "fixed_version": "1.19.1",
+      "tags": [
+        "rce",
+        "deserialization",
+        "qwik",
+        "cve-2026",
+        "unauthenticated",
+        "nodejs"
+      ],
+      "references": [
+        "https://github.com/QwikDev/qwik/security/advisories/GHSA-p9x5-jp3h-96mm",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-27971",
+        "https://vulnerabletarget.com/VT-2026-27971"
+      ]
+    },
+    "vulnerabilities": [
+      {
+        "id": "server_rce",
+        "name": "RCE via server$ QRL Deserialization",
+        "description": "The server$ RPC endpoint deserializes QRL objects from application/qwik-json\nPOST requests. The importSymbol function uses require() with attacker-controlled\nmodule paths, allowing arbitrary module loading and code execution.\n",
+        "endpoint": "/",
+        "method": "POST",
+        "param": "qfunc",
+        "request": "POST /?qfunc=sync HTTP/1.1\nHost: {{Hostname}}\nContent-Type: application/qwik-json\nX-QRL: sync\nOrigin: http://{{Hostname}}\n\n{\"_objs\":[\"\\u0002./node_modules/cross-spawn/index#sync\",\"cat\",\"/etc/passwd\",[\"2\"],[\"0\",\"1\",\"3\"]],\"_entry\":\"4\"}\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/qwik-json\n\n{\"result\":\"root:x:0:0:root:/root:/bin/sh\\nbin:x:1:1:bin:/bin:/sbin/nologin:\\n\"}\n"
+      }
+    ],
+    "technical": "The vulnerability exists in packages/qwik/src/server/platform.ts in the\nimportSymbol function. When a QRL references a symbol not found in the\npre-registered symbols map (__qwik_reg_symbols), the code falls back to\nrequire() with the attacker-controlled URL from the QRL. The server$\nRPC mechanism deserializes QRL objects from POST requests with\nContent-Type: application/qwik-json, allowing an attacker to craft a\nQRL pointing to any Node.js module (e.g., child_process) and invoke\nany exported function (e.g., execSync) with arbitrary arguments.\nThe fix in 1.19.1 removes the require() fallback and throws an error\ninstead when a symbol is not pre-registered.\n",
+    "impact": "An unauthenticated attacker can achieve Remote Code Execution on any\nQwik application running on Node.js. This allows full server compromise\nincluding data theft, lateral movement, and service disruption.\n",
+    "remediation": [
+      "Upgrade @builder.io/qwik to version 1.19.1 or later",
+      "Deploy on edge runtimes without require() (Cloudflare Workers, Deno) as mitigation"
+    ],
+    "poc": {
+      "nuclei": [
+        "vt-2026-27971.nuclei.yaml"
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml"
+      }
+    },
+    "post-install": [
+      "Access the application at http://localhost:3000",
+      "The Qwik app runs in SSR dev mode with server$ RPC enabled"
+    ],
+    "category": "cves",
+    "added_date": "2026-03-08T23:45:30+03:00"
+  },
+  {
+    "id": "vt-2025-32778",
+    "info": {
+      "name": "Web-Check - Command Injection via Screenshot API",
+      "author": "omarkurt",
+      "description": "Web-Check versions prior to 2.0.1 contain a command injection vulnerability\nin the /api/screenshot endpoint. The directChromiumScreenshot() function uses\nchild_process.exec() with unsanitized user input from the url query parameter,\nallowing unauthenticated attackers to execute arbitrary system commands on the\nunderlying host. The vulnerability was patched by replacing exec() with execFile()\nwhich avoids shell interpretation and properly isolates arguments.\n",
+      "type": "CVE",
+      "targets": [
+        "web-check"
+      ],
+      "cve": "CVE-2025-32778",
+      "cwe": "CWE-78",
+      "cvss": {
+        "score": 9.3,
+        "severity": "critical",
+        "metrics": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
+      },
+      "affected_versions": [
+        "< 2.0.1"
+      ],
+      "fixed_version": "2.0.1",
+      "tags": [
+        "rce",
+        "command-injection",
+        "unauthenticated",
+        "web-check",
+        "cve-2025",
+        "nodejs"
+      ],
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2025-32778",
+        "https://github.com/Lissy93/web-check/security/advisories/GHSA-5qg5-g7c2-pfx8",
+        "https://github.com/Lissy93/web-check/commit/0e4958aa10b2650d32439a799f6fc83a7cd46cef",
+        "https://github.com/rapid7/metasploit-framework/pull/20791"
+      ]
+    },
+    "vulnerabilities": [
+      {
+        "id": "screenshot_cmdi",
+        "name": "Command Injection via Screenshot API URL Parameter",
+        "description": "The /api/screenshot endpoint passes the url query parameter directly into\na shell command using child_process.exec() without sanitization. An attacker\ncan inject arbitrary OS commands via shell metacharacters in the URL parameter.\n",
+        "endpoint": "/api/screenshot",
+        "method": "GET",
+        "param": "url",
+        "request": "GET /api/screenshot?url=http://example.com?a=\";sleep+5;\" HTTP/1.1\nHost: {{Hostname}}\n",
+        "response": "HTTP/1.1 500 Internal Server Error\n(Response delayed ~5 seconds due to sleep command execution)\n"
+      }
+    ],
+    "technical": "The vulnerability exists in api/screenshot.js within the directChromiumScreenshot\nfunction. User-controlled input (url) is interpolated directly into a shell command\nstring passed to child_process.exec():\n\n  const command = `${chromePath} --headless --disable-gpu --no-sandbox --screenshot=${screenshotPath} \"${url}\"`;\n  exec(command, async (error, stdout, stderr) => { ... });\n\nAn attacker can break out of the quoted URL argument using shell metacharacters\n(e.g., \";command;\") to execute arbitrary commands as the application user (typically root\nin the Docker container).\n",
+    "impact": "Unauthenticated remote code execution. Attackers can execute arbitrary system commands\non the server, read sensitive files, establish reverse shells, and fully compromise\nthe host. The application runs as root in the default Docker configuration.\n",
+    "remediation": [
+      "Update to Web-Check version 2.0.1 or later",
+      "Apply patch commit 0e4958aa10b2650d32439a799f6fc83a7cd46cef",
+      "Use execFile() instead of exec() for subprocess execution"
+    ],
+    "poc": {
+      "nuclei": [
+        "vt-2025-32778.nuclei.yaml"
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml"
+      }
+    },
+    "post-install": [
+      "Wait ~60 seconds for the application to build and start",
+      "Access the application at http://localhost:3000",
+      "Test endpoint: /api/screenshot?url=http://example.com"
+    ],
+    "category": "cves",
+    "added_date": "2026-03-08T23:45:30+03:00"
+  },
+  {
     "id": "vt-2026-27944",
     "info": {
       "name": "Nginx UI - Unauthenticated Backup Download with Encryption Key Disclosure",
       "author": "omarkurt",
-      "description": "Nginx UI is a web user interface for managing Nginx web servers. Versions prior to \n2.3.3 contain a critical information disclosure vulnerability. The /api/backup endpoint \nis accessible without authentication and discloses the AES encryption key and initialization \nvector (IV) in the X-Backup-Security HTTP response header. This allows an unauthenticated \nattacker to download a full system backup containing sensitive data including admin credentials, \nsession tokens, SSL private keys, and complete Nginx configurations. The backup can then be \ndecrypted immediately using the exposed encryption keys.\n",
+      "description": "Nginx UI is a web user interface for managing Nginx web servers. Versions prior to \n2.3.3 contain a critical information disclosure vulnerability. The /api/backup endpoint \nis accessible without authentication and discloses the AES encryption key and initialization \nvector (IV) in the X-Backup-Security HTTP response header. This allows an unauthenticated \nattacker to download a full system backup containing sensitive data including admin credentials, \nsession tokens, SSL private keys, and complete Nginx configurations.\n",
       "targets": [
         "nginx-ui"
       ],
@@ -13,7 +156,6 @@
       "cwe": "CWE-306",
       "cvss": {
         "score": 9.8,
-        "severity": "critical",
         "metrics": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
       },
       "affected_versions": [
@@ -24,35 +166,82 @@
         "nginx-ui",
         "backup",
         "information-disclosure",
-        "unauthenticated"
+        "unauthenticated",
+        "encryption-key-exposure",
+        "critical"
+      ],
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-27944",
+        "https://github.com/advisories/GHSA-4x88-6m79-q5g5",
+        "https://www.tenable.com/security/research/tra-2026-17",
+        "https://www.thehackerwire.com/nginx-ui-unauthenticated-backup-disclosure-cve-2026-27944/",
+        "https://github.com/0xJacky/nginx-ui/releases/tag/v2.3.3",
+        "https://vulnerabletarget.com/VT-2026-27944"
       ]
     },
-    "references": [
-      "https://nvd.nist.gov/vuln/detail/CVE-2026-27944",
-      "https://github.com/advisories/GHSA-4x88-6m79-q5g5",
-      "https://www.tenable.com/security/research/tra-2026-17",
-      "https://www.thehackerwire.com/nginx-ui-unauthenticated-backup-disclosure-cve-2026-27944/",
-      "https://github.com/0xJacky/nginx-ui/releases/tag/v2.3.3",
-      "https://vulnerabletarget.com/VT-2026-27944"
+    "vulnerabilities": [
+      {
+        "id": "unauth-backup-download",
+        "name": "Unauthenticated Backup Download with Key Disclosure",
+        "description": "The /api/backup endpoint allows unauthenticated users to download encrypted backups.\nThe response includes X-Backup-Security header containing the AES key and IV needed\nto decrypt the backup archive.\n",
+        "endpoint": "/api/backup",
+        "method": "GET",
+        "authentication": {
+          "type": "none",
+          "required": false
+        },
+        "request": "GET /api/backup HTTP/1.1\nHost: {{Hostname}}\nAccept: */*\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/octet-stream\nContent-Disposition: attachment; filename=nginx-ui-backup.tar.gz\nX-Backup-Security: {\"key\":\"base64_encoded_aes_key\",\"iv\":\"base64_encoded_iv\"}\n"
+      },
+      {
+        "id": "sensitive-data-exposure",
+        "name": "Sensitive Data in Backup Archive",
+        "description": "The downloaded backup contains SQLite database with admin credentials and 2FA secrets,\nSSL private keys for all managed domains, session tokens, and complete Nginx configs.\n",
+        "endpoint": "/api/backup",
+        "method": "GET",
+        "authentication": {
+          "type": "none",
+          "required": false
+        }
+      },
+      {
+        "id": "aes-key-exposure",
+        "name": "AES Encryption Key Exposure in Response Header",
+        "description": "The X-Backup-Security response header contains base64-encoded AES encryption key and IV\nthat can be used to decrypt the downloaded backup immediately.\n",
+        "endpoint": "/api/backup",
+        "method": "GET",
+        "authentication": {
+          "type": "none",
+          "required": false
+        }
+      }
+    ],
+    "technical": "The vulnerability exists in the backup API handler of Nginx UI. The /api/backup endpoint\nlacks proper authentication middleware, allowing unauthenticated HTTP requests to trigger\na full system backup. The backup generation process creates an encrypted archive using\nAES encryption, but the encryption key and initialization vector are then exposed in the\nX-Backup-Security response header as a JSON object with \"key\" and \"iv\" fields.\n\nRoot Cause:\n- Missing authentication check on /api/backup endpoint\n- Encryption keys transmitted alongside encrypted data (key escrow anti-pattern)\n- No rate limiting on backup generation endpoint\n\nAffected Components:\n- Backup API handler (internal/router/backup.go)\n- Encryption wrapper that generates X-Backup-Security header\n- Authentication middleware that should protect backup endpoints\n",
+    "impact": "Successful exploitation allows complete system compromise:\n\nInformation Disclosure:\n- Admin credentials from SQLite database\n- 2FA/TOTP secrets for admin accounts\n- SSL private keys for all managed domains\n- Active session tokens for authenticated users\n- Full Nginx configuration files\n- Internal network information from upstream configurations\n\nPrivilege Escalation:\n- Decrypt backup \u2192 Extract admin credentials \u2192 Login as admin\n- Session token theft allows account takeover\n\nFurther Attack Vectors:\n- SSL private keys enable SSL/TLS impersonation attacks\n- Nginx configs reveal internal infrastructure topology\n- Admin panel access may allow configuration modifications\n",
+    "remediation": [
+      "Upgrade to Nginx UI version 2.3.3 or later immediately",
+      "Implement authentication middleware on /api/backup endpoint",
+      "Do not transmit encryption keys in HTTP response headers",
+      "Use proper key management (KMS, HSM, or separate secure key storage)",
+      "Implement rate limiting on backup generation endpoints",
+      "Rotate all credentials, SSL keys, and session tokens if compromise suspected",
+      "Monitor access logs for suspicious /api/backup requests"
     ],
     "poc": {
       "nuclei": [
         "vt-2026-27944.nuclei.yaml"
       ]
     },
-    "remediation": [
-      "Upgrade to Nginx UI version 2.3.3 or later immediately",
-      "Implement authentication middleware on /api/backup endpoint",
-      "Do not transmit encryption keys in HTTP response headers",
-      "Use proper key management (KMS, HSM, or separate secure key storage)"
-    ],
     "providers": {
       "docker-compose": {
         "path": "docker-compose.yaml"
       }
     },
     "post-install": [
-      "http://localhost:9000"
+      "Access Nginx UI at http://localhost:9000/",
+      "Login with default credentials and complete initial setup",
+      "Test exploit: curl -i http://localhost:9000/api/backup",
+      "Look for X-Backup-Security header in response"
     ],
     "category": "cves",
     "added_date": "2026-03-08T23:21:31+03:00"
