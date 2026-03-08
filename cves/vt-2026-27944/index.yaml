@@ -33,6 +33,7 @@ references:
   - https://www.tenable.com/security/research/tra-2026-17
   - https://www.thehackerwire.com/nginx-ui-unauthenticated-backup-disclosure-cve-2026-27944/
   - https://github.com/0xJacky/nginx-ui/releases/tag/v2.3.3
+  - https://vulnerabletarget.com/VT-2026-27944
 
 poc:
   nuclei:
