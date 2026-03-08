@@ -50,3 +50,4 @@ providers:
 
 post-install:
   - "http://localhost:9000"
+
