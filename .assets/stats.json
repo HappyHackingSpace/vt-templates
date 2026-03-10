@@ -1,7 +1,7 @@
 {
-  "total": 126,
+  "total": 127,
   "categories": {
-    "cves": 15,
+    "cves": 16,
     "http": 2,
     "benchmarks": 104,
     "labs": 5
@@ -69,6 +69,7 @@
     "php",
     "plugin",
     "postgis",
+    "privilege-escalation",
     "privilege_escalation",
     "proxy",
     "qwik",
@@ -101,10 +102,11 @@
     "weblogic",
     "wordpress",
     "workflow-engine",
+    "wp-plugin",
     "wpvivid",
     "xbow",
     "xss",
     "xxe"
   ],
-  "updated_at": "2026-03-10T00:55:22Z"
+  "updated_at": "2026-03-10T19:53:26Z"
 }
