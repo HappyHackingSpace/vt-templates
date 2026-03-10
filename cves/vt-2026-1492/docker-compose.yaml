@@ -1,0 +1,44 @@
+services:
+  wordpress:
+    image: ghcr.io/happyhackingspace/vt-2026-1492:latest
+    container_name: vt-2026-1492-wp
+    ports:
+      - "9090:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wp_data:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - vt-network
+
+  db:
+    image: mysql:8.0
+    container_name: vt-2026-1492-db
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+      MYSQL_ROOT_PASSWORD: root123
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vt-network
+
+volumes:
+  wp_data:
+  db_data:
+
+networks:
+  vt-network:
+    driver: bridge
