@@ -1,4 +1,4 @@
-id: vt-2026-1492-exploit
+id: vt-2026-1492
 
 info:
   name: WordPress User Registration Plugin - Privilege Escalation (CVE-2026-1492)
@@ -18,7 +18,7 @@ info:
   metadata:
     max-request: 3
     verified: true
-  tags: cve,cve2026,wordpress,wp-plugin,user-registration,privilege-escalation
+  tags: vt,cve,cve2026,wordpress,wp-plugin,user-registration,privilege-escalation
 
 variables:
   username: "{{to_lower(rand_base(8))}}"
