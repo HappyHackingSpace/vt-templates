@@ -22,7 +22,7 @@ MarkupSafe==2.1.5
 mdurl==0.1.2
 orjson==3.10.3
 passlib==1.7.4
-pyasn1==0.6.0
+pyasn1==0.6.3
 pydantic==2.7.1
 pydantic_core==2.18.2
 Pygments==2.18.0
