@@ -1,0 +1,11 @@
+id: vt-pb-0001
+info:
+  name: Full Lab Suite
+  description: Runs all vulnerable web application labs — bWAPP, DVWA, Juice Shop, Mutillidae II, and WebGoat.
+  author: hhsteam
+templates:
+  - vt-bwapp
+  - vt-dvwa
+  - vt-juice-shop
+  - vt-mutillidae-ii
+  - vt-webgoat
