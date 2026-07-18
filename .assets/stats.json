@@ -1,7 +1,7 @@
 {
-  "total": 127,
+  "total": 128,
   "categories": {
-    "cves": 16,
+    "cves": 17,
     "http": 2,
     "benchmarks": 104,
     "labs": 5
@@ -12,6 +12,7 @@
     "auth-bypass",
     "authenticated",
     "backup",
+    "batch",
     "blind_sqli",
     "broken-auth",
     "brute_force",
@@ -28,6 +29,8 @@
     "cve-2025",
     "cve-2025-71243",
     "cve-2026",
+    "cve-2026-60137",
+    "cve-2026-63030",
     "dagu",
     "default-credentials",
     "default_credentials",
@@ -77,6 +80,7 @@
     "rce",
     "react",
     "redirect",
+    "rest-api",
     "rfi",
     "saisies",
     "security-misconfiguration",
@@ -103,10 +107,11 @@
     "wordpress",
     "workflow-engine",
     "wp-plugin",
+    "wp2shell",
     "wpvivid",
     "xbow",
     "xss",
     "xxe"
   ],
-  "updated_at": "2026-07-18T01:12:00Z"
+  "updated_at": "2026-07-18T13:24:27Z"
 }

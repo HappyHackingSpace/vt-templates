@@ -10,6 +10,7 @@
 
 | Type | ID | Name | Tech | Tags |
 |:----:|-----|------|------|------|
+| 🔴 | [vt-2026-63030](cves/vt-2026-63030) | WordPress Core - REST Batch Route Confusion to SQLi (wp2shell) | wordpress | `sqli` `rce` |
 | 🔴 | [vt-2026-1492](cves/vt-2026-1492) | WordPress User Registration & Membership - Unauthenticated Privilege Escalation | wordpress | `privilege-escalation` `unauthenticated` |
 | 🔴 | [vt-2026-27971](cves/vt-2026-27971) | Qwik - Unauthenticated RCE via server$ Deserialization | qwik | `rce` `deserialization` |
 | 🔴 | [vt-2025-32778](cves/vt-2025-32778) | Web-Check - Command Injection via Screenshot API | web-check | `rce` `command-injection` |
@@ -38,4 +39,4 @@
 | 📊 | [vt-xbow-102](benchmarks/xbow/vt-xbow-102) | Email updates | web | `default_credentials` `business_logic` |
 | 📊 | ... | *101 more benchmarks* | | |
 
-> Currently tracking **127** security targets, including **16** CVEs, **5** labs, and **104** benchmarks.
+> Currently tracking **128** security targets, including **17** CVEs, **5** labs, and **104** benchmarks.
