@@ -1,4 +1,4 @@
-id: CVE-2026-63030
+id: vt-2026-63030
 
 info:
   name: WordPress Core 6.9-7.0.1 - Pre-Auth Blind SQL Injection (Batch-Route Confusion)
