@@ -1,0 +1,120 @@
+# =============================================================================
+# vt-2026-63030 — WordPress 7.0.1 wp2shell lab (CVE-2026-63030 + CVE-2026-60137)
+# =============================================================================
+# VULNERABLE intentionally. Local lab only. Do not expose publicly.
+# Host port 8630 avoids clash with the 7.0.2 audit lab on :8080.
+#
+# App image: ghcr.io/happyhackingspace/vt-2026-63030:latest
+# (WordPress 7.0.1 php8.2-apache; MySQL remains official mysql:8.0)
+# =============================================================================
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: vt-2026-63030-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+      MYSQL_ROOT_PASSWORD: rootpass
+    volumes:
+      - vt_2026_63030_db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    networks:
+      - vt-net
+
+  wordpress:
+    image: ghcr.io/happyhackingspace/vt-2026-63030:latest
+    pull_policy: always
+    container_name: vt-2026-63030-wp
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8630:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_TABLE_PREFIX: wp_
+      WORDPRESS_DEBUG: "0"
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_ENVIRONMENT_TYPE', 'local' );
+        define( 'DISALLOW_FILE_EDIT', false );
+        define( 'DISALLOW_FILE_MODS', false );
+    volumes:
+      - vt_2026_63030_wp:/var/www/html
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1/"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+      start_period: 30s
+    networks:
+      - vt-net
+    labels:
+      - "vuln.cve=CVE-2026-63030"
+      - "vuln.cve.related=CVE-2026-60137"
+      - "vuln.product=wordpress"
+      - "vuln.severity=critical"
+      - "vuln.name=wp2shell"
+      - "org.opencontainers.image.source=https://github.com/HappyHackingSpace/vt-templates"
+      - "org.opencontainers.image.title=vt-2026-63030"
+
+  # One-shot installer: creates admin + flushes rewrite (REST via rest_route works without pretty perms)
+  wpcli-init:
+    image: wordpress:cli-php8.2
+    container_name: vt-2026-63030-init
+    depends_on:
+      wordpress:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_TABLE_PREFIX: wp_
+    volumes:
+      - vt_2026_63030_wp:/var/www/html
+    user: "33:33"
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        set -e
+        if ! wp core is-installed --allow-root 2>/dev/null; then
+          wp core install \
+            --url="http://127.0.0.1:8630" \
+            --title="vt-2026-63030 wp2shell lab" \
+            --admin_user="admin" \
+            --admin_password="AdminPass!234" \
+            --admin_email="admin@example.local" \
+            --skip-email \
+            --allow-root
+          wp rewrite structure '/%postname%/' --allow-root || true
+          wp rewrite flush --hard --allow-root || true
+          wp option update blog_public 0 --allow-root
+          wp post create --post_title='Hello Lab' --post_status=publish --allow-root || true
+          echo "INSTALL_OK"
+        else
+          echo "ALREADY_INSTALLED"
+        fi
+    networks:
+      - vt-net
+    restart: "no"
+
+volumes:
+  vt_2026_63030_db:
+  vt_2026_63030_wp:
+
+networks:
+  vt-net:
+    driver: bridge
