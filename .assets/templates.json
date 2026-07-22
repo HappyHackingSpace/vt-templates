@@ -1,5 +1,85 @@
 [
   {
+    "id": "vt-2026-56139",
+    "info": {
+      "name": "Apache Camel camel-undertow - Rest DSL muteException Stack Trace Disclosure",
+      "author": "omarkurt",
+      "description": "Apache Camel's camel-undertow component (versions 4.0.0-4.14.7,\n4.15.0-4.18.2, 4.19.0-4.20.x) creates the Rest DSL consumer's\nRestUndertowHttpBinding with muteException hard-coded to false and never\ncopies the endpoint's configured value onto it. As a result,\ncamel.component.undertow.mute-exception=true is silently ignored for\nroutes reachable through the undertow Rest DSL: an unhandled processing\nexception returns the full Java stack trace to an unauthenticated\nclient, while a plain (non-Rest-DSL) undertow endpoint with the same\nsetting correctly returns an empty body. Disclosed details can include\nbackend hostnames, database connection strings, credential/vault\nreferences, file paths, and library versions (CWE-209). Fixed together\nwith the related CVE-2026-49365 under CAMEL-23651. Fixed in 4.14.8,\n4.18.3, and 4.21.0.\n",
+      "type": "CVE",
+      "targets": [
+        "apache-camel",
+        "camel-undertow"
+      ],
+      "cve": "CVE-2026-56139",
+      "cwe": "CWE-209",
+      "cvss": {
+        "score": 5.3,
+        "severity": "medium",
+        "metrics": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N"
+      },
+      "affected_versions": [
+        "Apache Camel camel-undertow 4.0.0 - 4.14.7",
+        "Apache Camel camel-undertow 4.15.0 - 4.18.2",
+        "Apache Camel camel-undertow 4.19.0 - 4.20.x"
+      ],
+      "fixed_version": "4.14.8 / 4.18.3 / 4.21.0",
+      "tags": [
+        "info-disclosure",
+        "stack-trace",
+        "unauthenticated",
+        "apache-camel",
+        "camel-undertow",
+        "cwe-209",
+        "cve-2026",
+        "cve-2026-56139"
+      ],
+      "references": [
+        "https://camel.apache.org/security/CVE-2026-56139.html",
+        "https://github.com/oscerd/CVE-2026-56139",
+        "https://github.com/apache/camel/pull/23913",
+        "https://vulnerabletarget.com/VT-2026-56139"
+      ]
+    },
+    "vulnerabilities": [
+      {
+        "id": "undertow_restdsl_muteexception_bypass",
+        "name": "Rest DSL consumer ignores muteException and leaks Java stack trace",
+        "description": "GET /api/orders is served by an undertow Rest DSL consumer configured\nwith muteException=true. The underlying RestUndertowHttpBinding is\ncreated without copying that setting (it stays hard-coded to false),\nso an unhandled exception in the route returns HTTP 500 with the full\nJava stack trace, including internal connection details. A plain\nundertow endpoint with the identical setting (GET /plain/orders on a\nseparate port in this lab) correctly returns an empty body, proving\nthe Rest DSL path is the defective one.\n",
+        "endpoint": "/api/orders",
+        "method": "GET",
+        "param": "",
+        "request": "GET /api/orders HTTP/1.1\nHost: {{Hostname}}\n",
+        "response": "HTTP/1.1 500 Internal Server Error\nContent-Type: text/plain\n\njava.lang.IllegalStateException: Inventory lookup failed: cannot connect to\njdbc:postgresql://prod-db.internal:5432/inventory (user=svc_inventory,\npassword from vault secret 'inventory/db') \u2014 backend host 10.20.30.40 unreachable\n  at com.example.FailingProcessor.process(FailingProcessor.java:15)\n  at org.apache.camel.component.undertow.UndertowConsumer.handleRequest(UndertowConsumer.java:219)\n  ...\n"
+      }
+    ],
+    "technical": "UndertowComponent creates the Rest DSL binding as:\n\n  if (!map.containsKey(\"undertowHttpBinding\")) {\n      endpoint.setUndertowHttpBinding(new RestUndertowHttpBinding(endpoint.isUseStreaming()));\n  }\n\nRestUndertowHttpBinding's muteException defaults to false and this call\nsite never copies endpoint.getMuteException() onto it. Because\nUndertowEndpoint.getUndertowHttpBinding() now returns a non-null binding,\nthe branch that would otherwise copy the endpoint's muteException value\nis skipped entirely \u2014 so any muteException configuration (global property\nor per-endpoint) has no effect on undertow Rest DSL consumers. Plain\n(non-Rest-DSL) undertow endpoints go through a different binding path\nthat does copy the value, so they behave correctly, which is what makes\nthe discrepancy easy to demonstrate.\n\nFixed by CAMEL-23651: the Rest DSL binding path now copies\nendpoint.getMuteException() into RestUndertowHttpBinding, and the\ndefault for undertow/netty-http muteException was corrected to true\n(companion fix CVE-2026-49365).\n",
+    "impact": "An unauthenticated client can trigger any unhandled exception on a\nvulnerable route and receive the full Java stack trace in the response,\neven though the application explicitly enabled muteException to prevent\nexactly that. Disclosed data can include backend hostnames, database\nconnection strings, credential or secret-manager hints, internal file\npaths, and library/framework versions \u2014 information that materially aids\nfurther targeted attacks.\n",
+    "remediation": [
+      "Upgrade camel-undertow to 4.14.8, 4.18.3, or 4.21.0 (CAMEL-23651)",
+      "Until upgraded, add a global onException(...).handled(true) handler that returns a generic error body instead of relying on muteException for Rest DSL consumers",
+      "Audit undertow Rest DSL routes for exceptions that may carry sensitive connection or credential details"
+    ],
+    "poc": {
+      "nuclei": [
+        "vt-2026-56139.nuclei.yaml"
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml"
+      }
+    },
+    "post-install": [
+      "docker compose up -d  # pulls ghcr.io/happyhackingspace/vt-2026-56139:latest",
+      "Vulnerable (leaks): GET http://localhost:8561/api/orders",
+      "Control (muted, same setting): GET http://localhost:8562/plain/orders",
+      "Built-in demonstrator: GET http://localhost:8563/exploit/attack",
+      "nuclei -t vt-2026-56139.nuclei.yaml -u http://localhost:8561"
+    ],
+    "category": "cves",
+    "added_date": "2026-07-22T23:23:57+03:00"
+  },
+  {
     "id": "vt-2026-63030",
     "info": {
       "name": "WordPress Core - REST Batch Route Confusion to SQLi (wp2shell)",

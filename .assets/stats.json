@@ -1,12 +1,13 @@
 {
-  "total": 128,
+  "total": 129,
   "categories": {
-    "cves": 17,
+    "cves": 18,
     "http": 2,
     "benchmarks": 104,
     "labs": 5
   },
   "tags": [
+    "apache-camel",
     "api-exposure",
     "arbitrary_file_upload",
     "auth-bypass",
@@ -17,6 +18,7 @@
     "broken-auth",
     "brute_force",
     "business_logic",
+    "camel-undertow",
     "canto",
     "code-injection",
     "command-injection",
@@ -29,8 +31,10 @@
     "cve-2025",
     "cve-2025-71243",
     "cve-2026",
+    "cve-2026-56139",
     "cve-2026-60137",
     "cve-2026-63030",
+    "cwe-209",
     "dagu",
     "default-credentials",
     "default_credentials",
@@ -47,6 +51,7 @@
     "header-injection",
     "http_method_tamper",
     "idor",
+    "info-disclosure",
     "information-disclosure",
     "information_disclosure",
     "injection",
@@ -95,6 +100,7 @@
     "ssh",
     "ssrf",
     "ssti",
+    "stack-trace",
     "template-injection",
     "training",
     "unauth",
@@ -113,5 +119,5 @@
     "xss",
     "xxe"
   ],
-  "updated_at": "2026-07-22T01:16:05Z"
+  "updated_at": "2026-07-22T20:24:17Z"
 }
