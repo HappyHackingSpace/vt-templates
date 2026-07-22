@@ -1,0 +1,128 @@
+id: vt-2026-56139
+
+info:
+  name: "Apache Camel camel-undertow - Rest DSL muteException Stack Trace Disclosure"
+  author: omarkurt
+  description: |
+    Apache Camel's camel-undertow component (versions 4.0.0-4.14.7,
+    4.15.0-4.18.2, 4.19.0-4.20.x) creates the Rest DSL consumer's
+    RestUndertowHttpBinding with muteException hard-coded to false and never
+    copies the endpoint's configured value onto it. As a result,
+    camel.component.undertow.mute-exception=true is silently ignored for
+    routes reachable through the undertow Rest DSL: an unhandled processing
+    exception returns the full Java stack trace to an unauthenticated
+    client, while a plain (non-Rest-DSL) undertow endpoint with the same
+    setting correctly returns an empty body. Disclosed details can include
+    backend hostnames, database connection strings, credential/vault
+    references, file paths, and library versions (CWE-209). Fixed together
+    with the related CVE-2026-49365 under CAMEL-23651. Fixed in 4.14.8,
+    4.18.3, and 4.21.0.
+  type: CVE
+  targets:
+    - apache-camel
+    - camel-undertow
+  cve: CVE-2026-56139
+  cwe: CWE-209
+  cvss:
+    score: 5.3
+    severity: medium
+    metrics: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N"
+  affected_versions:
+    - "Apache Camel camel-undertow 4.0.0 - 4.14.7"
+    - "Apache Camel camel-undertow 4.15.0 - 4.18.2"
+    - "Apache Camel camel-undertow 4.19.0 - 4.20.x"
+  fixed_version: "4.14.8 / 4.18.3 / 4.21.0"
+  tags:
+    - info-disclosure
+    - stack-trace
+    - unauthenticated
+    - apache-camel
+    - camel-undertow
+    - cwe-209
+    - cve-2026
+    - cve-2026-56139
+  references:
+    - https://camel.apache.org/security/CVE-2026-56139.html
+    - https://github.com/oscerd/CVE-2026-56139
+    - https://github.com/apache/camel/pull/23913
+    - https://vulnerabletarget.com/VT-2026-56139
+
+vulnerabilities:
+  - id: undertow_restdsl_muteexception_bypass
+    name: "Rest DSL consumer ignores muteException and leaks Java stack trace"
+    description: |
+      GET /api/orders is served by an undertow Rest DSL consumer configured
+      with muteException=true. The underlying RestUndertowHttpBinding is
+      created without copying that setting (it stays hard-coded to false),
+      so an unhandled exception in the route returns HTTP 500 with the full
+      Java stack trace, including internal connection details. A plain
+      undertow endpoint with the identical setting (GET /plain/orders on a
+      separate port in this lab) correctly returns an empty body, proving
+      the Rest DSL path is the defective one.
+    endpoint: /api/orders
+    method: GET
+    param: ""
+    request: |
+      GET /api/orders HTTP/1.1
+      Host: {{Hostname}}
+    response: |
+      HTTP/1.1 500 Internal Server Error
+      Content-Type: text/plain
+
+      java.lang.IllegalStateException: Inventory lookup failed: cannot connect to
+      jdbc:postgresql://prod-db.internal:5432/inventory (user=svc_inventory,
+      password from vault secret 'inventory/db') — backend host 10.20.30.40 unreachable
+        at com.example.FailingProcessor.process(FailingProcessor.java:15)
+        at org.apache.camel.component.undertow.UndertowConsumer.handleRequest(UndertowConsumer.java:219)
+        ...
+
+technical: |
+  UndertowComponent creates the Rest DSL binding as:
+
+    if (!map.containsKey("undertowHttpBinding")) {
+        endpoint.setUndertowHttpBinding(new RestUndertowHttpBinding(endpoint.isUseStreaming()));
+    }
+
+  RestUndertowHttpBinding's muteException defaults to false and this call
+  site never copies endpoint.getMuteException() onto it. Because
+  UndertowEndpoint.getUndertowHttpBinding() now returns a non-null binding,
+  the branch that would otherwise copy the endpoint's muteException value
+  is skipped entirely — so any muteException configuration (global property
+  or per-endpoint) has no effect on undertow Rest DSL consumers. Plain
+  (non-Rest-DSL) undertow endpoints go through a different binding path
+  that does copy the value, so they behave correctly, which is what makes
+  the discrepancy easy to demonstrate.
+
+  Fixed by CAMEL-23651: the Rest DSL binding path now copies
+  endpoint.getMuteException() into RestUndertowHttpBinding, and the
+  default for undertow/netty-http muteException was corrected to true
+  (companion fix CVE-2026-49365).
+
+impact: |
+  An unauthenticated client can trigger any unhandled exception on a
+  vulnerable route and receive the full Java stack trace in the response,
+  even though the application explicitly enabled muteException to prevent
+  exactly that. Disclosed data can include backend hostnames, database
+  connection strings, credential or secret-manager hints, internal file
+  paths, and library/framework versions — information that materially aids
+  further targeted attacks.
+
+remediation:
+  - "Upgrade camel-undertow to 4.14.8, 4.18.3, or 4.21.0 (CAMEL-23651)"
+  - "Until upgraded, add a global onException(...).handled(true) handler that returns a generic error body instead of relying on muteException for Rest DSL consumers"
+  - "Audit undertow Rest DSL routes for exceptions that may carry sensitive connection or credential details"
+
+poc:
+  nuclei:
+    - "vt-2026-56139.nuclei.yaml"
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "docker compose up -d  # pulls ghcr.io/happyhackingspace/vt-2026-56139:latest"
+  - "Vulnerable (leaks): GET http://localhost:8561/api/orders"
+  - "Control (muted, same setting): GET http://localhost:8562/plain/orders"
+  - "Built-in demonstrator: GET http://localhost:8563/exploit/attack"
+  - "nuclei -t vt-2026-56139.nuclei.yaml -u http://localhost:8561"

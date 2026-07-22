@@ -1,0 +1,60 @@
+id: vt-2026-56139
+
+info:
+  name: Apache Camel camel-undertow Rest DSL - muteException Stack Trace Disclosure
+  author: omarkurt
+  severity: medium
+  description: |
+    Apache Camel's camel-undertow component builds the Rest DSL consumer's
+    RestUndertowHttpBinding with muteException hard-coded to false and never
+    copies the endpoint's configured value. Even when
+    camel.component.undertow.mute-exception=true is set, an unhandled
+    processing exception on an undertow Rest DSL route returns the full Java
+    stack trace to an unauthenticated client, disclosing internal hostnames,
+    database connection strings, credential/vault hints, and library
+    internals.
+  impact: |
+    Unauthenticated disclosure of internal implementation details (backend
+    hostnames, database URLs, credential/vault references, file paths, and
+    library versions) that aid further attacks against the application and
+    its infrastructure.
+  remediation: |
+    Update camel-undertow to 4.14.8, 4.18.3, or 4.21.0. Until upgraded, add
+    an onException(...).handled(true) global error handler that returns a
+    generic message instead of relying on muteException for Rest DSL
+    consumers.
+  reference:
+    - https://camel.apache.org/security/CVE-2026-56139.html
+    - https://github.com/oscerd/CVE-2026-56139
+    - https://vulnerabletarget.com/VT-2026-56139
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: apache
+    product: camel-undertow
+    framework: apache-camel
+  tags: cve,cve2026,apache,camel,undertow,info-disclosure,cwe-209
+
+http:
+  - raw:
+      - |
+        GET /api/orders HTTP/1.1
+        Host: {{Hostname}}
+
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 500
+
+      - type: word
+        part: body
+        words:
+          - "org.apache.camel.component.undertow.UndertowConsumer"
+          - "org.apache.camel"
+        condition: and
+
+      - type: regex
+        part: body
+        regex:
+          - '\tat [a-zA-Z0-9_.$]+\([A-Za-z0-9_.]+\.java:[0-9]+\)'
