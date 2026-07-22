@@ -1,0 +1,116 @@
+id: vt-2026-54433
+
+info:
+  name: "Roundcube Webmail - Zero-Click Stored XSS in Plain-Text Rendering"
+  author: omarkurt
+  description: |
+    Roundcube Webmail before 1.6.17 and 1.7.x before 1.7.2 contains a
+    zero-click stored Cross-Site Scripting vulnerability in its plain-text
+    message renderer. When converting a plain-text body to HTML,
+    rcube_string_replacer auto-links bare email addresses and permits an
+    optional mailto-style query string via the regex `(\?\S+)?`, which
+    accepts any non-whitespace character including `<` and `>`. An attacker
+    can craft a plain-text email whose "address" is
+    `a@a.co?]<img/src="x"/onerror=alert(document.domain)>`, causing the
+    trailing HTML to be emitted unescaped as soon as the victim opens or
+    previews the message - no click, download, or further interaction is
+    needed.
+  type: CVE
+  targets:
+    - roundcube-webmail
+  cve: CVE-2026-54433
+  cwe: CWE-79
+  cvss:
+    score: 10.0
+    severity: critical
+    metrics: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:N"
+  affected_versions:
+    - "Roundcube Webmail 1.6.0 - 1.6.16"
+    - "Roundcube Webmail 1.7.0 - 1.7.1"
+  fixed_version: "1.6.17 / 1.7.2"
+  tags:
+    - xss
+    - zero-click
+    - stored-xss
+    - unauthenticated
+    - webmail
+    - roundcube
+    - cwe-79
+    - cve-2026
+    - cve-2026-54433
+  references:
+    - https://roundcube.net/news/2026/07/05/security-updates-1.6.17-and-1.7.2
+    - https://nvd.nist.gov/vuln/detail/CVE-2026-54433
+    - https://github.com/roundcube/roundcubemail/commit/4c278f4868c67b163567cae3d74e58d872913459
+    - https://vulnerabletarget.com/VT-2026-54433
+
+vulnerabilities:
+  - id: plaintext_mailto_zeroclick_xss
+    name: "Zero-click stored XSS via crafted mailto-like address in plain-text body"
+    description: |
+      An authenticated victim (victim@lab.local) has received a plain-text
+      email whose body is a single crafted pseudo mailto address:
+      `a@a.co?]<img/src="x"/onerror=alert(document.domain)>`. Simply opening
+      the message (GET /?_task=mail&_action=show) renders the trailing
+      `<img ... onerror=...>` tag unescaped inside the message body,
+      executing arbitrary JavaScript in the victim's session with no
+      further interaction.
+    endpoint: /?_task=mail&_action=show
+    method: GET
+    param: _uid
+    request: |
+      GET /?_task=mail&_action=show&_mbox=INBOX&_uid=1&_extwin=1 HTTP/1.1
+      Host: {{Hostname}}
+      Cookie: roundcube_sessid=<authenticated-session>
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: text/html; charset=UTF-8
+
+      ...<div class="pre"><a href="mailto:a@a.co?" onclick="return rcmail.command('compose','a@a.co?',this)">a@a.co?</a>]<img/src="x"/onerror=alert(document.domain)></div>...
+
+technical: |
+  rcube_string_replacer (program/lib/Roundcube/rcube_string_replacer.php) is
+  used to convert plain-text message parts to safe HTML. It matches bare
+  email addresses with a pattern that additionally captures an optional
+  mailto-style query string using `(\?\S+)?` — intended to preserve
+  legitimate strings like "user@example.com?subject=test" — but `\S+`
+  matches any non-whitespace byte, including `<` and `>`. The matched
+  address (including the malformed query fragment) is placed directly
+  inside an `<a href="mailto:...">` anchor that the replacer builds and
+  re-inserts into the HTML output *after* the surrounding text has already
+  been HTML-escaped, so the injected `<img ...>` tag is never escaped. The
+  regression test added in the fix (tests/Framework/Text2HtmlTest.php)
+  uses the exact payload `a@a.co?]<img/src="x"/onerror=alert(document.domain)>`
+  and asserts the tag is now emitted as
+  `]&lt;img/src=&quot;x&quot;/onerror=alert(document.domain)&gt;`. Fixed by
+  narrowing the pattern to `(\?[^<>\s]+)?`, which still allows normal query
+  strings but rejects angle brackets and whitespace.
+impact: |
+  Any party able to deliver a single plain-text email to the victim's
+  mailbox (no spoofing or spam-filter bypass required beyond normal mail
+  delivery) achieves arbitrary JavaScript execution in the victim's
+  Roundcube session the moment the message is opened or previewed. This
+  enables session/cookie theft, silent mailbox exfiltration, further
+  phishing from the compromised account, and full account takeover -
+  without the victim clicking any link, opening any attachment, or taking
+  any action beyond reading their inbox.
+
+remediation:
+  - "Upgrade Roundcube Webmail to 1.6.17 or 1.7.2 or later"
+  - "Until upgraded, disable plain-text-to-HTML auto-linking or restrict inbound mail to trusted senders as a stopgap"
+  - "Review Roundcube access/audit logs for anomalous outbound requests immediately following message opens, which may indicate exploitation"
+
+poc:
+  nuclei:
+    - "vt-2026-54433.nuclei.yaml"
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "docker compose up -d  # pulls ghcr.io/happyhackingspace/vt-2026-54433:latest"
+  - "Web UI: http://localhost:8543 (login victim@lab.local / anything - IMAP auth is disabled in this lab)"
+  - "The mail-init container auto-delivers the crafted message to victim@lab.local on startup"
+  - "Open the 'Invoice' message in the inbox to trigger the zero-click XSS (alert(document.domain) fires immediately)"
+  - "nuclei -t vt-2026-54433.nuclei.yaml -u http://localhost:8543"
