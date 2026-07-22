@@ -1,0 +1,28 @@
+services:
+  camel:
+    image: ghcr.io/happyhackingspace/vt-2026-56139:latest
+    pull_policy: always
+    container_name: vt-2026-56139-camel
+    restart: unless-stopped
+    ports:
+      - "8561:8888"  # vulnerable: undertow Rest DSL consumer (leaks stack trace)
+      - "8562:8889"  # control: plain undertow endpoint (honours muteException)
+      - "8563:8080"  # built-in demonstrator (GET /exploit/attack)
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/exploit/attack"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+    networks:
+      - vt-net
+    labels:
+      - "vuln.cve=CVE-2026-56139"
+      - "vuln.product=apache-camel-undertow"
+      - "vuln.severity=medium"
+      - "org.opencontainers.image.source=https://github.com/HappyHackingSpace/vt-templates"
+      - "org.opencontainers.image.title=vt-2026-56139"
+
+networks:
+  vt-net:
+    driver: bridge
