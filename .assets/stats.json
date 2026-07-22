@@ -1,7 +1,7 @@
 {
-  "total": 129,
+  "total": 130,
   "categories": {
-    "cves": 18,
+    "cves": 19,
     "http": 2,
     "benchmarks": 104,
     "labs": 5
@@ -31,10 +31,12 @@
     "cve-2025",
     "cve-2025-71243",
     "cve-2026",
+    "cve-2026-54433",
     "cve-2026-56139",
     "cve-2026-60137",
     "cve-2026-63030",
     "cwe-209",
+    "cwe-79",
     "dagu",
     "default-credentials",
     "default_credentials",
@@ -87,6 +89,7 @@
     "redirect",
     "rest-api",
     "rfi",
+    "roundcube",
     "saisies",
     "security-misconfiguration",
     "sensitive-data",
@@ -101,6 +104,7 @@
     "ssrf",
     "ssti",
     "stack-trace",
+    "stored-xss",
     "template-injection",
     "training",
     "unauth",
@@ -110,6 +114,7 @@
     "web",
     "web-check",
     "weblogic",
+    "webmail",
     "wordpress",
     "workflow-engine",
     "wp-plugin",
@@ -117,7 +122,8 @@
     "wpvivid",
     "xbow",
     "xss",
-    "xxe"
+    "xxe",
+    "zero-click"
   ],
-  "updated_at": "2026-07-22T20:24:17Z"
+  "updated_at": "2026-07-22T21:23:23Z"
 }

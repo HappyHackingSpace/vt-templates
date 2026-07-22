@@ -1,5 +1,84 @@
 [
   {
+    "id": "vt-2026-54433",
+    "info": {
+      "name": "Roundcube Webmail - Zero-Click Stored XSS in Plain-Text Rendering",
+      "author": "omarkurt",
+      "description": "Roundcube Webmail before 1.6.17 and 1.7.x before 1.7.2 contains a\nzero-click stored Cross-Site Scripting vulnerability in its plain-text\nmessage renderer. When converting a plain-text body to HTML,\nrcube_string_replacer auto-links bare email addresses and permits an\noptional mailto-style query string via the regex `(\\?\\S+)?`, which\naccepts any non-whitespace character including `<` and `>`. An attacker\ncan craft a plain-text email whose \"address\" is\n`a@a.co?]<img/src=\"x\"/onerror=alert(document.domain)>`, causing the\ntrailing HTML to be emitted unescaped as soon as the victim opens or\npreviews the message - no click, download, or further interaction is\nneeded.\n",
+      "type": "CVE",
+      "targets": [
+        "roundcube-webmail"
+      ],
+      "cve": "CVE-2026-54433",
+      "cwe": "CWE-79",
+      "cvss": {
+        "score": 10.0,
+        "severity": "critical",
+        "metrics": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:N"
+      },
+      "affected_versions": [
+        "Roundcube Webmail 1.6.0 - 1.6.16",
+        "Roundcube Webmail 1.7.0 - 1.7.1"
+      ],
+      "fixed_version": "1.6.17 / 1.7.2",
+      "tags": [
+        "xss",
+        "zero-click",
+        "stored-xss",
+        "unauthenticated",
+        "webmail",
+        "roundcube",
+        "cwe-79",
+        "cve-2026",
+        "cve-2026-54433"
+      ],
+      "references": [
+        "https://roundcube.net/news/2026/07/05/security-updates-1.6.17-and-1.7.2",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-54433",
+        "https://github.com/roundcube/roundcubemail/commit/4c278f4868c67b163567cae3d74e58d872913459",
+        "https://vulnerabletarget.com/VT-2026-54433"
+      ]
+    },
+    "vulnerabilities": [
+      {
+        "id": "plaintext_mailto_zeroclick_xss",
+        "name": "Zero-click stored XSS via crafted mailto-like address in plain-text body",
+        "description": "An authenticated victim (victim@lab.local) has received a plain-text\nemail whose body is a single crafted pseudo mailto address:\n`a@a.co?]<img/src=\"x\"/onerror=alert(document.domain)>`. Simply opening\nthe message (GET /?_task=mail&_action=show) renders the trailing\n`<img ... onerror=...>` tag unescaped inside the message body,\nexecuting arbitrary JavaScript in the victim's session with no\nfurther interaction.\n",
+        "endpoint": "/?_task=mail&_action=show",
+        "method": "GET",
+        "param": "_uid",
+        "request": "GET /?_task=mail&_action=show&_mbox=INBOX&_uid=1&_extwin=1 HTTP/1.1\nHost: {{Hostname}}\nCookie: roundcube_sessid=<authenticated-session>\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: text/html; charset=UTF-8\n\n...<div class=\"pre\"><a href=\"mailto:a@a.co?\" onclick=\"return rcmail.command('compose','a@a.co?',this)\">a@a.co?</a>]<img/src=\"x\"/onerror=alert(document.domain)></div>...\n"
+      }
+    ],
+    "technical": "rcube_string_replacer (program/lib/Roundcube/rcube_string_replacer.php) is\nused to convert plain-text message parts to safe HTML. It matches bare\nemail addresses with a pattern that additionally captures an optional\nmailto-style query string using `(\\?\\S+)?` \u2014 intended to preserve\nlegitimate strings like \"user@example.com?subject=test\" \u2014 but `\\S+`\nmatches any non-whitespace byte, including `<` and `>`. The matched\naddress (including the malformed query fragment) is placed directly\ninside an `<a href=\"mailto:...\">` anchor that the replacer builds and\nre-inserts into the HTML output *after* the surrounding text has already\nbeen HTML-escaped, so the injected `<img ...>` tag is never escaped. The\nregression test added in the fix (tests/Framework/Text2HtmlTest.php)\nuses the exact payload `a@a.co?]<img/src=\"x\"/onerror=alert(document.domain)>`\nand asserts the tag is now emitted as\n`]&lt;img/src=&quot;x&quot;/onerror=alert(document.domain)&gt;`. Fixed by\nnarrowing the pattern to `(\\?[^<>\\s]+)?`, which still allows normal query\nstrings but rejects angle brackets and whitespace.\n",
+    "impact": "Any party able to deliver a single plain-text email to the victim's\nmailbox (no spoofing or spam-filter bypass required beyond normal mail\ndelivery) achieves arbitrary JavaScript execution in the victim's\nRoundcube session the moment the message is opened or previewed. This\nenables session/cookie theft, silent mailbox exfiltration, further\nphishing from the compromised account, and full account takeover -\nwithout the victim clicking any link, opening any attachment, or taking\nany action beyond reading their inbox.\n",
+    "remediation": [
+      "Upgrade Roundcube Webmail to 1.6.17 or 1.7.2 or later",
+      "Until upgraded, disable plain-text-to-HTML auto-linking or restrict inbound mail to trusted senders as a stopgap",
+      "Review Roundcube access/audit logs for anomalous outbound requests immediately following message opens, which may indicate exploitation"
+    ],
+    "poc": {
+      "nuclei": [
+        "vt-2026-54433.nuclei.yaml"
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml"
+      }
+    },
+    "post-install": [
+      "docker compose up -d  # pulls ghcr.io/happyhackingspace/vt-2026-54433:latest",
+      "Web UI: http://localhost:8543 (login victim@lab.local / anything - IMAP auth is disabled in this lab)",
+      "The mail-init container auto-delivers the crafted message to victim@lab.local on startup",
+      "Open the 'Invoice' message in the inbox to trigger the zero-click XSS (alert(document.domain) fires immediately)",
+      "nuclei -t vt-2026-54433.nuclei.yaml -u http://localhost:8543"
+    ],
+    "category": "cves",
+    "added_date": "2026-07-23T00:23:07+03:00"
+  },
+  {
     "id": "vt-2026-56139",
     "info": {
       "name": "Apache Camel camel-undertow - Rest DSL muteException Stack Trace Disclosure",

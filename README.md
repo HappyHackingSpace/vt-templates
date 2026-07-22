@@ -10,6 +10,7 @@
 
 | Type | ID | Name | Tech | Tags |
 |:----:|-----|------|------|------|
+| 🔴 | [vt-2026-54433](cves/vt-2026-54433) | Roundcube Webmail - Zero-Click Stored XSS in Plain-Text Rendering | roundcube-webmail | `xss` `zero-click` |
 | 🔴 | [vt-2026-56139](cves/vt-2026-56139) | Apache Camel camel-undertow - Rest DSL muteException Stack Trace Disclosure | apache-camel, camel-undertow | `info-disclosure` `stack-trace` |
 | 🔴 | [vt-2026-63030](cves/vt-2026-63030) | WordPress Core - REST Batch Route Confusion to SQLi (wp2shell) | wordpress | `sqli` `rce` |
 | 🔴 | [vt-2026-1492](cves/vt-2026-1492) | WordPress User Registration & Membership - Unauthenticated Privilege Escalation | wordpress | `privilege-escalation` `unauthenticated` |
@@ -40,4 +41,4 @@
 | 📊 | [vt-xbow-102](benchmarks/xbow/vt-xbow-102) | Email updates | web | `default_credentials` `business_logic` |
 | 📊 | ... | *101 more benchmarks* | | |
 
-> Currently tracking **129** security targets, including **18** CVEs, **5** labs, and **104** benchmarks.
+> Currently tracking **130** security targets, including **19** CVEs, **5** labs, and **104** benchmarks.
