@@ -1,0 +1,17 @@
+services:
+  babeld-sim:
+    image: ghcr.io/happyhackingspace/vt-2026-3854:latest
+    container_name: vt-2026-3854-babeld
+    restart: unless-stopped
+    ports:
+      - "8385:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/')"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    labels:
+      - "vuln.cve=CVE-2026-3854"
+      - "vuln.product=github-enterprise-server"
+      - "vuln.severity=critical"
+      - "vuln.name=babeld-x-stat-field-injection-sim"
