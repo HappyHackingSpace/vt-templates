@@ -1,0 +1,114 @@
+name: Template Validation
+
+# Analyzes each changed VT template's index.yaml with the vt CLI's own
+# loader/Validate. vt loads and validates the template at startup; if it is
+# schema/semantically sound it passes, otherwise the job fails with vt's exact
+# reason (unmarshal line, "author can not be empty", id/dirname mismatch, ...).
+# No docker/nuclei here — just fast, deterministic validation.
+
+on:
+  pull_request:
+    paths:
+      - 'cves/**'
+      - 'http/**'
+      - 'labs/**'
+      - 'benchmarks/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  # Pinned vt CLI ref. Kept on v0.0.8, whose strict poc schema (map[string][]string)
+  # rejects malformed templates. Newer vt loosened poc to map[string]any, which would
+  # let those slip through — don't bump this without intending that.
+  VT_REF: v0.0.8
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.25'
+          cache: false
+
+      - name: Build vt CLI (${{ env.VT_REF }})
+        run: |
+          set -euo pipefail
+          go install "github.com/happyhackingspace/vt/cmd/vt@${VT_REF}"
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+      - name: Validate changed templates
+        run: |
+          set -uo pipefail
+
+          BASE="origin/${{ github.base_ref }}"
+          git fetch --no-tags --depth=1 origin "${{ github.base_ref }}"
+
+          # From the changed files, find the template root dirs that contain an
+          # index.yaml (walk up until index.yaml — covers nested benchmarks too).
+          declare -A SEEN
+          TEMPLATES=()
+          while IFS= read -r f; do
+            [ -n "$f" ] || continue
+            d=$(dirname "$f")
+            while [ "$d" != "." ] && [ "$d" != "/" ]; do
+              if [ -f "$d/index.yaml" ]; then
+                [ -n "${SEEN[$d]:-}" ] || { SEEN[$d]=1; TEMPLATES+=("$d"); }
+                break
+              fi
+              d=$(dirname "$d")
+            done
+          done < <(git diff --name-only "$BASE"...HEAD \
+                     | grep -E '^(cves|http|labs|benchmarks)/' || true)
+
+          if [ "${#TEMPLATES[@]}" -eq 0 ]; then
+            echo "No changed templates to validate."
+            exit 0
+          fi
+
+          echo "Templates to validate:"
+          printf '  - %s\n' "${TEMPLATES[@]}"
+
+          FAILED=0
+          for t in "${TEMPLATES[@]}"; do
+            ID=$(awk '/^id:/{print $2; exit}' "$t/index.yaml")
+            [ -n "$ID" ] || ID=$(basename "$t")
+
+            # vt reads templates from $HOME/vt-templates. Build an isolated HOME
+            # containing only this template, using a COPY (vt skips symlinked
+            # template dirs, which would cause a silent false-pass).
+            VTHOME="$RUNNER_TEMP/vthome-$ID"
+            rm -rf "$VTHOME"
+            mkdir -p "$VTHOME/vt-templates/$(dirname "$t")"
+            cp -r "$t" "$VTHOME/vt-templates/$(dirname "$t")/"
+
+            echo "::group::$ID ($t/index.yaml)"
+            # --list loads+validates; --inspect guarantees the template actually
+            # loaded (catches a broken staging via "not found").
+            OUT=$( { HOME="$VTHOME" vt template --list && \
+                     HOME="$VTHOME" vt inspect --id "$ID"; } 2>&1 )
+            RC=$?
+            echo "$OUT"
+            if [ "$RC" -eq 0 ]; then
+              echo "PASS $ID: valid"
+            else
+              REASON=$(printf '%s\n' "$OUT" | sed -r 's/\x1b\[[0-9;]*m//g' \
+                         | grep -iE 'FTL|error' | head -1)
+              [ -n "$REASON" ] || REASON="vt validation failed (rc=$RC)"
+              echo "FAIL $ID: $REASON"
+              echo "::error file=$t/index.yaml::$ID is invalid — $REASON"
+              FAILED=1
+            fi
+            echo "::endgroup::"
+          done
+
+          exit $FAILED
