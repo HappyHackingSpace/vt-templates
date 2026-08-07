@@ -1,0 +1,17 @@
+services:
+  app:
+    image: ghcr.io/happyhackingspace/vt-2026-57827:latest
+    container_name: vt-cve-2026-57827
+    ports:
+      - "8383:80"
+    environment:
+      - TZ=Europe/Istanbul
+    restart: unless-stopped
+    labels:
+      - "vuln.cve=CVE-2026-57827"
+      - "vuln.type=Unauthenticated Arbitrary File Upload"
+      - "vuln.severity=critical"
+      - "vuln.cvss=9.8"
+      - "vuln.product=rsjoomla-rsfiles"
+      - "vuln.cwe=CWE-434"
+      - "vuln.simulated=true"
