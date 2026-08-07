@@ -1,7 +1,7 @@
 {
-  "total": 131,
+  "total": 132,
   "categories": {
-    "cves": 20,
+    "cves": 21,
     "http": 2,
     "benchmarks": 104,
     "labs": 5
@@ -34,6 +34,7 @@
     "cve-2026-3854",
     "cve-2026-54433",
     "cve-2026-56139",
+    "cve-2026-57827",
     "cve-2026-60137",
     "cve-2026-63030",
     "cwe-209",
@@ -63,6 +64,7 @@
     "injection",
     "insecure_deserialization",
     "java",
+    "joomla",
     "jwt",
     "lfi",
     "mailpit",
@@ -95,10 +97,13 @@
     "rest-api",
     "rfi",
     "roundcube",
+    "rsfiles",
+    "rsjoomla",
     "saisies",
     "security-misconfiguration",
     "sensitive-data",
     "server-side",
+    "simulated",
     "smtp",
     "smuggling_desync",
     "spip",
@@ -130,5 +135,5 @@
     "xxe",
     "zero-click"
   ],
-  "updated_at": "2026-08-07T01:55:52Z"
+  "updated_at": "2026-08-07T12:03:11Z"
 }

