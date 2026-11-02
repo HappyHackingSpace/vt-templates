@@ -15,7 +15,7 @@ Jinja2==3.1.4
 MarkupSafe==2.1.5
 mongoengine==0.28.2
 promise==2.3
-pymongo==4.7.3
+pymongo==4.18.3
 Rx==1.6.3
 singledispatch==4.1.0
 six==1.16.0
