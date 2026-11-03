@@ -1,7 +1,7 @@
 {
-  "total": 132,
+  "total": 133,
   "categories": {
-    "cves": 21,
+    "cves": 22,
     "http": 2,
     "benchmarks": 104,
     "labs": 5
@@ -39,6 +39,7 @@
     "cve-2026-63030",
     "cwe-209",
     "cwe-79",
+    "cwe-84",
     "dagu",
     "default-credentials",
     "default_credentials",
@@ -66,6 +67,7 @@
     "java",
     "joomla",
     "jwt",
+    "kev",
     "lfi",
     "mailpit",
     "medium",
@@ -83,6 +85,8 @@
     "path-traversal",
     "path_traversal",
     "php",
+    "plex",
+    "plex2shell",
     "plugin",
     "postgis",
     "pre-receive-hook",
@@ -112,6 +116,7 @@
     "sqli-like",
     "ssh",
     "ssrf",
+    "ssrf-chain",
     "ssti",
     "stack-trace",
     "stored-xss",
@@ -119,6 +124,7 @@
     "training",
     "unauth",
     "unauthenticated",
+    "url-injection",
     "vitest",
     "vulnerabilities",
     "web",
@@ -135,5 +141,5 @@
     "xxe",
     "zero-click"
   ],
-  "updated_at": "2026-11-03T04:12:14Z"
+  "updated_at": "2026-11-03T07:28:16Z"
 }
