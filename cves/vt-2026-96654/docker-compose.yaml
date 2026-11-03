@@ -1,0 +1,25 @@
+# CVE-2026-96654 - Plex Media Server URL injection (plex2shell chain)
+# Affected: < 1.43.3.10861 ; this lab pins the pre-fix 1.43.3.10828
+# WARNING: intentionally VULNERABLE. Local testing only.
+# https://vulnerabletarget.com/VT-2026-96654
+
+services:
+  plex:
+    image: ghcr.io/happyhackingspace/vt-2026-96654:1.43.3.10828
+    container_name: vt-2026-96654
+    environment:
+      - TZ=Europe/Istanbul
+    ports:
+      - "32400:32400"
+    networks:
+      - vt-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://127.0.0.1:32400/identity || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+networks:
+  vt-net:
+    driver: bridge
