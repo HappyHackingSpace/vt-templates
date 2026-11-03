@@ -1,0 +1,109 @@
+id: vt-2026-88804
+
+info:
+  name: "SUSE Rancher < 2.11.18 - Unauthenticated Public Settings Write leading to Stored XSS"
+  author: omarkurt
+  description: |
+    Rancher before 2.11.18 (and 2.12.14 / 2.13.10 / 2.14.6 / 2.15.2) exposes the public UI
+    settings routes under /v3/settings/* unauthenticated and intends them to be read-only. The
+    underlying Norman API framework honours an HTTP method-override request parameter (_method),
+    so an unauthenticated remote user can reinterpret a GET as a PUT and write arbitrary setting
+    values (CWE-862, missing authorization). The value of the "ui-pl" setting is rendered
+    unescaped as raw HTML on the Rancher login/first-login page (CWE-79), so an attacker-written
+    value becomes stored cross-site scripting executing in the browser of any user who opens the
+    login page, under the Rancher origin. Exploitation requires no account; a legitimate user
+    need only load the login page.
+  targets:
+    - rancher
+    - suse_rancher
+  type: CVE
+  cve: CVE-2026-88804
+  cwe: CWE-79
+  cvss:
+    score: "9.4"
+    severity: critical
+    metrics: "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H"
+  affected_versions:
+    - ">= 2.11.0, < 2.11.18"
+    - ">= 2.12.0, < 2.12.14"
+    - ">= 2.13.0, < 2.13.10"
+    - ">= 2.14.0, < 2.14.6"
+    - ">= 2.15.0, < 2.15.2"
+  fixed_version: "2.11.18"
+  tags:
+    - cve
+    - cve-2026
+    - rancher
+    - suse
+    - stored-xss
+    - auth-bypass
+    - method-override
+    - unauth
+    - cwe-79
+    - cwe-862
+  references:
+    - https://vulnerabletarget.com/VT-2026-88804
+    - https://github.com/rancher/rancher/security/advisories/GHSA-992f-xh8r-jg2f
+    - https://nvd.nist.gov/vuln/detail/CVE-2026-88804
+    - https://www.cve.org/CVERecord?id=CVE-2026-88804
+    - https://github.com/R0gfall/CVE-2026-88804
+
+vulnerabilities:
+  - id: public_settings_method_override_write
+    name: "Unauthenticated write to ui-pl via _method=PUT override on /v3/settings"
+    endpoint: /v3/settings/ui-pl?_method=PUT
+    method: GET
+    request: |
+      GET /v3/settings/ui-pl?_method=PUT HTTP/1.1
+      Host: {{Hostname}}
+      Content-Type: multipart/form-data; boundary=----{{boundary}}
+
+      ------{{boundary}}
+      Content-Disposition: form-data; name="value"
+
+      {{marker}}
+      ------{{boundary}}--
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      {"id":"ui-pl","value":"{{marker}}",...}
+
+technical: |
+  Rancher's management API is served by the Norman framework. A small set of settings
+  (ui-pl, ui-banners, ui-brand, ui-issues, ui-default-landing, first-login) are exposed on
+  unauthenticated public routes under /v3/settings/* so the login UI can read branding before
+  a user signs in. These routes are supposed to be read-only for unauthenticated callers.
+  Norman honours an HTTP method-override parameter (for example the `_method` query parameter),
+  which is evaluated before the authorization check that distinguishes a read from a write. An
+  unauthenticated GET to /v3/settings/ui-pl?_method=PUT with a multipart body therefore performs
+  a PUT and overwrites the setting value (CWE-862). The ui-pl value is subsequently emitted into
+  the Rancher login/first-login page as raw, unescaped HTML (CWE-79). Writing an HTML/JavaScript
+  payload into ui-pl stores cross-site scripting that executes for any user who later loads the
+  login page, in the Rancher origin and before authentication.
+
+impact: |
+  An unauthenticated network attacker gains two primitives: arbitrary writes to Rancher public
+  settings and stored XSS on the pre-auth login page. The XSS runs in the Rancher origin for any
+  visitor to the login page, including administrators, and can be used to disclose the local
+  admin bootstrap password or hijack an active admin session. With administrative access to
+  Rancher the attacker controls the Rancher management plane and, through it, the downstream
+  Kubernetes clusters Rancher manages.
+
+remediation:
+  - "Upgrade Rancher to 2.15.2, 2.14.6, 2.13.10, 2.12.14, 2.11.18 or newer (the fix strips method-override parameters before the public settings routes and makes them strictly read-only)"
+  - "Until patched, place a reverse proxy or WAF in front of Rancher that rejects /v3/settings/* requests carrying method-override parameters or request bodies"
+  - "Review ui-pl, ui-banners, ui-brand, ui-issues, ui-default-landing and first-login for unexpected values"
+  - "If tampering is found, rotate the local admin password and invalidate admin tokens and sessions"
+
+poc:
+  nuclei:
+    - "vt-2026-88804.nuclei.yaml"
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Wait for Rancher to finish bootstrapping (2-5 minutes), then browse to https://localhost:<mapped-port>/ to confirm the login page is up"
+  - "Read the public setting unauthenticated to confirm the lab is reachable: curl -sk 'https://localhost:<mapped-port>/v3/settings/ui-pl'"
