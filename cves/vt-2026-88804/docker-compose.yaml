@@ -1,0 +1,27 @@
+# CVE-2026-88804 - SUSE Rancher unauthenticated public-settings write -> stored XSS
+# Affected: < 2.11.18 ; this lab pins the pre-fix 2.11.3
+# WARNING: intentionally VULNERABLE. Local testing only. Rancher needs a privileged container.
+# https://vulnerabletarget.com/VT-2026-88804
+
+services:
+  rancher:
+    image: ghcr.io/happyhackingspace/vt-2026-88804:2.11.3
+    container_name: vt-2026-88804
+    privileged: true
+    environment:
+      - CATTLE_BOOTSTRAP_PASSWORD=vt-lab-bootstrap
+    ports:
+      - "8443:443"
+      - "8080:80"
+    networks:
+      - vt-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -skf https://127.0.0.1/healthz || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 40
+      start_period: 120s
+
+networks:
+  vt-net:
+    driver: bridge
