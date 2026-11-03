@@ -10,6 +10,7 @@
 
 | Type | ID | Name | Tech | Tags |
 |:----:|-----|------|------|------|
+| 🔴 | [vt-2026-88804](cves/vt-2026-88804) | SUSE Rancher < 2.11.18 - Unauthenticated Public Settings Write leading to Stored XSS | rancher, suse_rancher | `cve-2026` `rancher` |
 | 🔴 | [vt-2026-96654](cves/vt-2026-96654) | Plex Media Server < 1.43.3.10861 - URL Injection in agent searchOne (loopback plugin-API pivot) | plex, plex_media_server | `cve-2026` `plex` |
 | 🔴 | [vt-2026-57827](cves/vt-2026-57827) | RSFiles! for Joomla - Unauthenticated Arbitrary File Upload to RCE (CVE-2026-57827) | rsjoomla-rsfiles, joomla | `cve-2026` `cve-2026-57827` |
 | 🔴 | [vt-2026-3854](cves/vt-2026-3854) | GitHub Enterprise Server - X-Stat Field Injection to Pre-Receive Hook RCE | github-enterprise-server | `rce` `github` |
@@ -44,4 +45,4 @@
 | 📊 | [vt-xbow-102](benchmarks/xbow/vt-xbow-102) | Email updates | web | `default_credentials` `business_logic` |
 | 📊 | ... | *101 more benchmarks* | | |
 
-> Currently tracking **133** security targets, including **22** CVEs, **5** labs, and **104** benchmarks.
+> Currently tracking **134** security targets, including **23** CVEs, **5** labs, and **104** benchmarks.

@@ -1,7 +1,7 @@
 {
-  "total": 133,
+  "total": 134,
   "categories": {
-    "cves": 22,
+    "cves": 23,
     "http": 2,
     "benchmarks": 104,
     "labs": 5
@@ -40,6 +40,7 @@
     "cwe-209",
     "cwe-79",
     "cwe-84",
+    "cwe-862",
     "dagu",
     "default-credentials",
     "default_credentials",
@@ -71,6 +72,7 @@
     "lfi",
     "mailpit",
     "medium",
+    "method-override",
     "middleware",
     "missing-auth",
     "mysql",
@@ -95,6 +97,7 @@
     "proxy",
     "qwik",
     "race_condition",
+    "rancher",
     "rce",
     "react",
     "redirect",
@@ -120,6 +123,7 @@
     "ssti",
     "stack-trace",
     "stored-xss",
+    "suse",
     "template-injection",
     "training",
     "unauth",
@@ -141,5 +145,5 @@
     "xxe",
     "zero-click"
   ],
-  "updated_at": "2026-11-03T07:28:16Z"
+  "updated_at": "2026-11-03T11:06:17Z"
 }
