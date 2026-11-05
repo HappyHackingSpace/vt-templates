@@ -1,6 +1,6 @@
 # Damn Vulnerable App (xssdoctor): OAuth server + multi-tenant task manager + tracker iframe
 # WARNING: intentionally VULNERABLE. Local testing only.
-# https://vulnerabletarget.com/VT-DAMNVULNERABLEAPP
+# https://vulnerabletarget.com/VT-damnvulnerableapp
 # Upstream app by xssdoctor: https://github.com/xssdoctor/damnvulnerableapp (commit 52958a9)
 #
 # The OAuth flow builds redirect URLs from the *_BASE_URL values, and the app calls the OAuth server at
