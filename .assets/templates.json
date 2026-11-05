@@ -24,7 +24,7 @@
         "nodejs"
       ],
       "references": [
-        "https://vulnerabletarget.com/VT-DAMNVULNERABLEAPP",
+        "https://vulnerabletarget.com/VT-damnvulnerableapp",
         "https://github.com/xssdoctor/damnvulnerableapp"
       ]
     },
