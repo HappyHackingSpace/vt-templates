@@ -1,0 +1,17 @@
+# CVE-2026-22777 - ComfyUI-Manager CRLF injection in config handler
+# Affected: ComfyUI-Manager < 3.39.2 and 4.0.0 - 4.0.4 ; this lab pins 3.39.1
+# WARNING: intentionally VULNERABLE. Local testing only.
+# https://vulnerabletarget.com/VT-2026-22777
+# Lab environment from Vulhub (MIT): https://github.com/vulhub/vulhub/tree/master/comfyui/CVE-2026-22777
+
+services:
+  comfyui:
+    image: ghcr.io/happyhackingspace/vt-2026-22777:3.39.1
+    platform: linux/amd64
+    container_name: vt-2026-22777
+    ports:
+      - "8188:8188"
+    labels:
+      - "vuln.cve=CVE-2026-22777"
+      - "vuln.product=comfyui-manager"
+      - "vuln.severity=high"
