@@ -1,12 +1,13 @@
 {
-  "total": 134,
+  "total": 135,
   "categories": {
-    "cves": 23,
+    "cves": 24,
     "http": 2,
     "benchmarks": 104,
     "labs": 5
   },
   "tags": [
+    "ai",
     "apache-camel",
     "api-exposure",
     "arbitrary_file_upload",
@@ -21,9 +22,13 @@
     "camel-undertow",
     "canto",
     "code-injection",
+    "comfyui",
+    "comfyui-manager",
     "command-injection",
     "command_injection",
+    "config-injection",
     "critical",
+    "crlf",
     "crypto",
     "crypto-fail-open",
     "ctf",
@@ -95,6 +100,7 @@
     "privilege-escalation",
     "privilege_escalation",
     "proxy",
+    "python",
     "qwik",
     "race_condition",
     "rancher",
@@ -145,5 +151,5 @@
     "xxe",
     "zero-click"
   ],
-  "updated_at": "2026-11-05T03:52:16Z"
+  "updated_at": "2026-11-05T10:28:57Z"
 }

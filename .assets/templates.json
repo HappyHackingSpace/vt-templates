@@ -1,5 +1,94 @@
 [
   {
+    "id": "vt-2026-22777",
+    "info": {
+      "name": "ComfyUI-Manager - CRLF Injection in Configuration Handler",
+      "author": "omarkurt",
+      "description": "ComfyUI-Manager, the official extension manager for ComfyUI, writes values taken\nfrom HTTP query parameters into its config.ini without removing carriage return or\nnewline characters. Versions prior to 3.39.2, and 4.0.0 through 4.0.4, let an\nunauthenticated attacker add arbitrary keys to the configuration, for example\nsecurity_level = weak. After a restart this disables the Manager's security checks,\nand installing a custom node from a git URL then leads to remote code execution.\nThe flaw is an incomplete fix of CVE-2025-67303.\n",
+      "type": "CVE",
+      "targets": [
+        "comfyui",
+        "comfyui-manager"
+      ],
+      "cve": "CVE-2026-22777",
+      "cwe": "CWE-93",
+      "cvss": {
+        "score": 7.5,
+        "severity": "high",
+        "metrics": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N"
+      },
+      "affected_versions": [
+        "< 3.39.2",
+        ">= 4.0.0, < 4.0.5"
+      ],
+      "fixed_version": "3.39.2",
+      "tags": [
+        "crlf",
+        "config-injection",
+        "unauthenticated",
+        "comfyui",
+        "comfyui-manager",
+        "ai",
+        "python",
+        "cve-2026"
+      ],
+      "references": [
+        "https://vulnerabletarget.com/VT-2026-22777",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-22777",
+        "https://github.com/Comfy-Org/ComfyUI-Manager/security/advisories/GHSA-562r-8445-54r2",
+        "https://github.com/Comfy-Org/ComfyUI-Manager/commit/f4fa394e0f03b013f1068c96cff168ad10bd0410",
+        "https://github.com/vulhub/vulhub/tree/master/comfyui/CVE-2026-22777",
+        "https://github.com/projectdiscovery/nuclei-templates/pull/17692"
+      ]
+    },
+    "vulnerabilities": [
+      {
+        "id": "db_mode_crlf_injection",
+        "name": "CRLF injection into config.ini via db_mode value",
+        "description": "The db_mode endpoint stores the value parameter in config.ini as-is. A URL-encoded\ncarriage return (%0D) ends the db_mode line, so the rest of the value is read back\nas a new key. Here it sets security_level = weak. The endpoint is served under\nboth /manager/db_mode and /api/manager/db_mode.\n",
+        "endpoint": "/api/manager/db_mode",
+        "method": "GET",
+        "param": "value",
+        "request": "GET /api/manager/db_mode?value=cache%0Dsecurity_level%20=%20weak HTTP/1.1\nHost: {{Hostname}}\n",
+        "response": "HTTP/1.1 200 OK\nContent-Length: 0\nServer: Python/3.13 aiohttp/3.13.3\n"
+      },
+      {
+        "id": "security_gate_bypass",
+        "name": "High-risk install endpoint unlocked after restart",
+        "description": "The injected key takes effect when the Manager reloads its configuration, which the\nunauthenticated reboot endpoint triggers. Before the injection, installing a custom\nnode from a git URL is refused with 403 {\"error\": \"security_level\"}. Afterwards the\nManager accepts the request and tries to install the given URL. Pointing it at an\nattacker-controlled repository runs that node's code on the server.\n",
+        "endpoint": "/api/customnode/install/git_url",
+        "method": "POST",
+        "request": "POST /api/customnode/install/git_url HTTP/1.1\nHost: {{Hostname}}\nContent-Type: text/plain\n\nfile:///nonexistent-vt-probe\n",
+        "response": "HTTP/1.1 400 Bad Request\nContent-Length: 0\n"
+      }
+    ],
+    "technical": "write_config() in glob/manager_core.py writes the in-memory configuration, including\nthe db_mode value supplied by the client, to __manager/config.ini with configparser.\nIn 3.39.1 the value is not sanitised, so\n\n  GET /api/manager/db_mode?value=cache%0Dsecurity_level%20=%20weak\n\nproduces the line \"db_mode = cache\\rsecurity_level = weak\". Python opens the file with\nuniversal newlines, so on the next read the carriage return splits it into two\nentries. The Manager reads the file with ConfigParser(strict=False), and the later\nsecurity_level = weak overrides security_level = normal.\n\nis_allowed_security_level('high') in glob/manager_server.py only returns True for\nsecurity_level = weak when ComfyUI listens on a non-local address (--listen), which\nis the case in this lab. High-risk operations, such as installing a custom node from\nan arbitrary git URL or via pip, then become available without authentication.\nGET /api/manager/reboot restarts the server, so the attacker does not need to wait\nfor an operator to restart it.\n\nThe fix (commit f4fa394, 3.39.2) strips \\r, \\n and \\0 from every string value before\nwriting the file.\n",
+    "impact": "An unauthenticated attacker who can reach the ComfyUI web port can rewrite the\nManager's security settings and restart the server. Combined with the unlocked custom\nnode installation this gives remote code execution as the ComfyUI process, the same\nchain as CVE-2025-67303. ComfyUI hosts often hold GPU resources, models and API keys.\n",
+    "remediation": [
+      "Update ComfyUI-Manager to 3.39.2 or 4.0.5 or later",
+      "Do not expose ComfyUI to untrusted networks; drop --listen or put it behind an authenticating reverse proxy",
+      "Check __manager/config.ini for unexpected keys or carriage returns and reset security_level"
+    ],
+    "poc": {
+      "nuclei": [
+        "vt-2026-22777.nuclei.yaml"
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml"
+      }
+    },
+    "post-install": [
+      "Access ComfyUI at http://localhost:8188 (ready in about 15 seconds)",
+      "The image is amd64 only; on Apple Silicon it runs under emulation",
+      "Check the Manager version: GET /api/manager/version returns V3.39.1",
+      "The lab covers the configuration injection and the security gate bypass; the RCE step (installing a malicious custom node) is described but not shipped"
+    ],
+    "category": "cves",
+    "added_date": "2026-11-05T13:28:37+03:00"
+  },
+  {
     "id": "vt-2026-88804",
     "info": {
       "name": "SUSE Rancher < 2.11.18 - Unauthenticated Public Settings Write leading to Stored XSS",
