@@ -10,6 +10,7 @@
 
 | Type | ID | Name | Tech | Tags |
 |:----:|-----|------|------|------|
+| 🧪 | [vt-damnvulnerableapp](labs/vt-damnvulnerableapp) | Damn Vulnerable App - OAuth Task Manager | nodejs, express, react, oauth2 | `oauth` `jwt` |
 | 🔴 | [vt-2026-22777](cves/vt-2026-22777) | ComfyUI-Manager - CRLF Injection in Configuration Handler | comfyui, comfyui-manager | `crlf` `config-injection` |
 | 🔴 | [vt-2026-88804](cves/vt-2026-88804) | SUSE Rancher < 2.11.18 - Unauthenticated Public Settings Write leading to Stored XSS | rancher, suse_rancher | `cve-2026` `rancher` |
 | 🔴 | [vt-2026-96654](cves/vt-2026-96654) | Plex Media Server < 1.43.3.10861 - URL Injection in agent searchOne (loopback plugin-API pivot) | plex, plex_media_server | `cve-2026` `plex` |
@@ -46,4 +47,4 @@
 | 📊 | [vt-xbow-102](benchmarks/xbow/vt-xbow-102) | Email updates | web | `default_credentials` `business_logic` |
 | 📊 | ... | *101 more benchmarks* | | |
 
-> Currently tracking **135** security targets, including **24** CVEs, **5** labs, and **104** benchmarks.
+> Currently tracking **136** security targets, including **24** CVEs, **6** labs, and **104** benchmarks.

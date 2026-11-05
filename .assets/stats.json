@@ -1,10 +1,10 @@
 {
-  "total": 135,
+  "total": 136,
   "categories": {
+    "labs": 6,
     "cves": 24,
     "http": 2,
-    "benchmarks": 104,
-    "labs": 5
+    "benchmarks": 104
   },
   "tags": [
     "ai",
@@ -17,10 +17,12 @@
     "batch",
     "blind_sqli",
     "broken-auth",
+    "broken-authentication",
     "brute_force",
     "business_logic",
     "camel-undertow",
     "canto",
+    "clickjacking",
     "code-injection",
     "comfyui",
     "comfyui-manager",
@@ -31,6 +33,7 @@
     "crlf",
     "crypto",
     "crypto-fail-open",
+    "csrf",
     "ctf",
     "cve",
     "cve-2025",
@@ -80,12 +83,14 @@
     "method-override",
     "middleware",
     "missing-auth",
+    "multi-tenant",
     "mysql",
     "network",
     "nextjs",
     "nginx-ui",
     "nodejs",
     "nosqli",
+    "oauth",
     "open-redirect",
     "oracle",
     "owasp",
@@ -151,5 +156,5 @@
     "xxe",
     "zero-click"
   ],
-  "updated_at": "2026-11-05T10:28:57Z"
+  "updated_at": "2026-11-05T10:51:57Z"
 }
