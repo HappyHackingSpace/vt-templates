@@ -12,7 +12,8 @@ info:
     that sends a wrong password first and then a 257+ byte password authenticates as the account.
     This lab is the scenario published by oz9un: alice has "*" (key-only) and bob has a real
     password. It runs Alpine 3.24 with openssh 10.3_p1-r1, the build before the 2026-11-05 fix.
-  type: Generic
+  type: Lab
+  difficulty: Easy
   targets:
     - openssh
     - alpine
