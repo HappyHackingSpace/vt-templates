@@ -1,9 +1,9 @@
 {
   "total": 138,
   "categories": {
-    "http": 3,
-    "labs": 7,
+    "labs": 8,
     "cves": 24,
+    "http": 2,
     "benchmarks": 104
   },
   "tags": [
@@ -160,5 +160,5 @@
     "xxe",
     "zero-click"
   ],
-  "updated_at": "2026-11-06T05:31:13Z"
+  "updated_at": "2026-11-06T05:36:44Z"
 }

@@ -5,7 +5,8 @@
       "name": "SSHole - OpenSSH on musl Password Authentication Bypass",
       "author": "omarkurt",
       "description": "OpenSSH built against musl libc (Alpine, OpenWrt, Buildroot and many container images) lets\nan account that should never take a password at all, one with \"*\" in /etc/shadow such as a\nkey-only deploy user, be logged in over password authentication. musl's crypt() returns the\nsingle character \"*\" when it cannot hash a password, including when the password is longer\nthan its 256-byte cap, and sshd compares that against the stored \"*\". A single connection\nthat sends a wrong password first and then a 257+ byte password authenticates as the account.\nThis lab is the scenario published by oz9un: alice has \"*\" (key-only) and bob has a real\npassword. It runs Alpine 3.24 with openssh 10.3_p1-r1, the build before the 2026-11-05 fix.\n",
-      "type": "Generic",
+      "type": "Lab",
+      "difficulty": "Easy",
       "targets": [
         "openssh",
         "alpine",
@@ -61,7 +62,7 @@
       "Demonstrate with the upstream PoC: ./attack.sh 127.0.0.1 22022 alice",
       "Restart the container to reset accounts"
     ],
-    "category": "http",
+    "category": "labs",
     "added_date": "2026-11-06T08:30:56+03:00"
   },
   {
