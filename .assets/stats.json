@@ -1,7 +1,7 @@
 {
-  "total": 136,
+  "total": 137,
   "categories": {
-    "labs": 6,
+    "labs": 7,
     "cves": 24,
     "http": 2,
     "benchmarks": 104
@@ -104,6 +104,7 @@
     "pre-receive-hook",
     "privilege-escalation",
     "privilege_escalation",
+    "prototype-pollution",
     "proxy",
     "python",
     "qwik",
@@ -156,5 +157,5 @@
     "xxe",
     "zero-click"
   ],
-  "updated_at": "2026-11-06T03:50:11Z"
+  "updated_at": "2026-11-06T05:07:51Z"
 }

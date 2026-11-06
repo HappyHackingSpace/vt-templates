@@ -10,6 +10,7 @@
 
 | Type | ID | Name | Tech | Tags |
 |:----:|-----|------|------|------|
+| 🧪 | [vt-vulnlab](labs/vt-vulnlab) | VulnLab - Node.js/Express Training App | nodejs, express, graphql | `command-injection` `lfi` |
 | 🧪 | [vt-damnvulnerableapp](labs/vt-damnvulnerableapp) | Damn Vulnerable App - OAuth Task Manager | nodejs, express, react, oauth2 | `oauth` `jwt` |
 | 🔴 | [vt-2026-22777](cves/vt-2026-22777) | ComfyUI-Manager - CRLF Injection in Configuration Handler | comfyui, comfyui-manager | `crlf` `config-injection` |
 | 🔴 | [vt-2026-88804](cves/vt-2026-88804) | SUSE Rancher < 2.11.18 - Unauthenticated Public Settings Write leading to Stored XSS | rancher, suse_rancher | `cve-2026` `rancher` |
@@ -47,4 +48,4 @@
 | 📊 | [vt-xbow-102](benchmarks/xbow/vt-xbow-102) | Email updates | web | `default_credentials` `business_logic` |
 | 📊 | ... | *101 more benchmarks* | | |
 
-> Currently tracking **136** security targets, including **24** CVEs, **6** labs, and **104** benchmarks.
+> Currently tracking **137** security targets, including **24** CVEs, **7** labs, and **104** benchmarks.

