@@ -1,0 +1,16 @@
+# VulnLab (nospi510): Node.js/Express training app with injection, file, auth and API flaws
+# WARNING: intentionally VULNERABLE. Local testing only.
+# https://vulnerabletarget.com/VT-vulnlab
+# Upstream app by nospi510 (MIT): https://github.com/nospi510/vulnlab (commit b4b975b)
+#
+# Some checks change global state (prototype pollution, user delete). Restart the container to reset it.
+
+services:
+  app:
+    image: ghcr.io/happyhackingspace/vt-vulnlab:b4b975b
+    container_name: vt-vulnlab
+    ports:
+      - "3001:3001"
+    labels:
+      - "vuln.product=vulnlab"
+      - "vuln.type=lab"
