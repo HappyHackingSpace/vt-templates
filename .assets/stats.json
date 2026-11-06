@@ -1,13 +1,14 @@
 {
-  "total": 137,
+  "total": 138,
   "categories": {
+    "http": 3,
     "labs": 7,
     "cves": 24,
-    "http": 2,
     "benchmarks": 104
   },
   "tags": [
     "ai",
+    "alpine",
     "apache-camel",
     "api-exposure",
     "arbitrary_file_upload",
@@ -84,6 +85,7 @@
     "middleware",
     "missing-auth",
     "multi-tenant",
+    "musl",
     "mysql",
     "network",
     "nextjs",
@@ -92,6 +94,7 @@
     "nosqli",
     "oauth",
     "open-redirect",
+    "openssh",
     "oracle",
     "owasp",
     "path-traversal",
@@ -157,5 +160,5 @@
     "xxe",
     "zero-click"
   ],
-  "updated_at": "2026-11-06T05:07:51Z"
+  "updated_at": "2026-11-06T05:31:13Z"
 }
