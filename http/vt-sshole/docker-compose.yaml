@@ -1,0 +1,17 @@
+# SSHole: OpenSSH on musl (Alpine) lets accounts with "*" in shadow accept any 257+ byte password
+# WARNING: intentionally VULNERABLE. Local testing only.
+# https://vulnerabletarget.com/VT-sshole
+# Scenario by oz9un (MIT): https://github.com/oz9un/sshole (commit 6fa685f)
+# Image: alpine 3.24 + openssh 10.3_p1-r1 (the Alpine build before the 2026-11-05 fix, -r2).
+#
+# alice has "*" in shadow (key-only) yet can be logged into over password auth; bob has a real password.
+
+services:
+  sshd:
+    image: ghcr.io/happyhackingspace/vt-sshole:10.3_p1-r1
+    container_name: vt-sshole
+    ports:
+      - "22022:22"
+    labels:
+      - "vuln.product=openssh-musl"
+      - "vuln.type=lab"

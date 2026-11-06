@@ -1,0 +1,96 @@
+id: vt-sshole
+
+info:
+  name: "SSHole - OpenSSH on musl Password Authentication Bypass"
+  author: omarkurt
+  description: |
+    OpenSSH built against musl libc (Alpine, OpenWrt, Buildroot and many container images) lets
+    an account that should never take a password at all, one with "*" in /etc/shadow such as a
+    key-only deploy user, be logged in over password authentication. musl's crypt() returns the
+    single character "*" when it cannot hash a password, including when the password is longer
+    than its 256-byte cap, and sshd compares that against the stored "*". A single connection
+    that sends a wrong password first and then a 257+ byte password authenticates as the account.
+    This lab is the scenario published by oz9un: alice has "*" (key-only) and bob has a real
+    password. It runs Alpine 3.24 with openssh 10.3_p1-r1, the build before the 2026-11-05 fix.
+  type: Generic
+  targets:
+    - openssh
+    - alpine
+    - musl
+  tags:
+    - ssh
+    - auth-bypass
+    - musl
+    - alpine
+    - openssh
+    - network
+  references:
+    - https://vulnerabletarget.com/VT-sshole
+    - https://github.com/oz9un/sshole
+    - https://alpinelinux.org/posts/2026-11-05-openssh-password-authentication-bypass/
+    - https://www.openssh.com/releasenotes.html#10.6p2
+
+vulnerabilities:
+  - id: musl_password_auth_bypass
+    name: "Password auth bypass for '*' accounts on musl OpenSSH"
+    description: |
+      Over one SSH connection, send a throwaway wrong password, then a password of 257+ bytes.
+      For an account whose shadow field is exactly "*" (for example the key-only user alice),
+      the second attempt succeeds and a shell is granted. The protocol-level exchange is shown
+      below; see poc/attack.sh in the upstream repo for the exact SSH_ASKPASS sequence.
+    endpoint: /
+    method: GET
+    param: password
+    request: |
+      SSH-2.0 password authentication to {{Hostname}}:22
+      ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no \
+          -o NumberOfPasswordPrompts=3 alice@{{Hostname}}
+      prompt 1: "wrong"                 (any short value; expected to fail)
+      prompt 2: "AAAA... (300 bytes)"   (257+ bytes; authenticates)
+    response: |
+      Permission denied, please try again.
+      uid=1000(alice) gid=1000(alice) groups=1000(alice)
+
+technical: |
+  Chain (see TIMELINE.md in the upstream repo):
+  - A locked, key-only account carries "*" in /etc/shadow; "*" is not a hash, so no password
+    should ever match it.
+  - musl crypt() does not return NULL on failure (since 2012); it returns the single byte "*".
+    It also refuses passwords over 256 bytes (sha512crypt DoS cap), so a 257+ byte password
+    makes crypt() fail and return "*".
+  - sshd's CVE-2016-6210 timing fix hashes the supplied password against a borrowed salt for
+    accounts with no real hash. The first attempt overwrites musl's static getspnam buffer; the
+    second returns the cached salt with the buffer intact, so crypt(long_pw, borrowed_$6$_salt)
+    returns "*" and matches the shadow "*".
+  - PAM is not involved: with UsePAM no (Alpine default on these images) sshd calls crypt
+    directly. PAM-based distros do not reach this path for a "*" account.
+
+  Verified in this lab (openssh 10.3_p1-r1):
+  - alice ("*" in shadow): logged in over password auth, reproducibly (uid=1000).
+  - A short password, and a single 257-byte attempt without the throwaway-first step, are both
+    rejected.
+  - bob (real password): the bypass path does not apply; normal login with his password works.
+  - root is "*" too but PermitRootLogin blocks password login, so root is not reachable here.
+
+impact: |
+  Anyone who can reach the SSH port can log in as a key-only or otherwise passwordless account
+  without a key or a password, on an affected musl build with password authentication enabled.
+
+remediation:
+  - "Upgrade OpenSSH to 10.6p2, or the backported Alpine package (openssh 10.3_p1-r2 and later)"
+  - "Until patched, set PasswordAuthentication no, or MaxAuthTries 1"
+  - "Prefer PAM-based password checks where available"
+
+poc:
+  nuclei:
+    - "vt-sshole.nuclei.yaml"
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "The SSH service listens on localhost:22022"
+  - "Target account: alice (key-only, '*' in shadow). Real account: bob / BobPass-123"
+  - "Demonstrate with the upstream PoC: ./attack.sh 127.0.0.1 22022 alice"
+  - "Restart the container to reset accounts"
