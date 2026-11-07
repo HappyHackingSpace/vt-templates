@@ -1,5 +1,81 @@
 [
   {
+    "id": "vt-2026-34577",
+    "info": {
+      "name": "Postiz - Unauthenticated SSRF in Public Stream Endpoint",
+      "author": "omarkurt",
+      "description": "Postiz, an open-source social media scheduling tool, exposes an unauthenticated\nGET /public/stream endpoint (served as /api/public/stream behind the bundled\nnginx) that fetches the URL given in the url query parameter and streams the\nfull response back to the caller. The only check is url.endsWith('mp4'), which\nis bypassed by ending the URL with a query value or fragment such as ?x=.mp4 or\n#.mp4. Versions prior to 2.21.3 let an unauthenticated attacker read responses\nfrom internal services and cloud metadata endpoints.\n",
+      "type": "CVE",
+      "targets": [
+        "postiz"
+      ],
+      "cve": "CVE-2026-34577",
+      "cwe": "CWE-918",
+      "cvss": {
+        "score": 8.6,
+        "severity": "high",
+        "metrics": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N"
+      },
+      "affected_versions": [
+        "< 2.21.3"
+      ],
+      "fixed_version": "2.21.3",
+      "tags": [
+        "ssrf",
+        "unauthenticated",
+        "postiz",
+        "nodejs",
+        "nestjs",
+        "cve-2026"
+      ],
+      "references": [
+        "https://vulnerabletarget.com/VT-2026-34577",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-34577",
+        "https://github.com/gitroomhq/postiz-app/security/advisories/GHSA-mv6h-v3jg-g539",
+        "https://github.com/gitroomhq/postiz-app/releases/tag/v2.21.3",
+        "https://github.com/projectdiscovery/nuclei-templates/pull/17716"
+      ]
+    },
+    "vulnerabilities": [
+      {
+        "id": "public_stream_ssrf",
+        "name": "Unauthenticated SSRF via url parameter of /api/public/stream",
+        "description": "The url parameter is passed to fetch() after only checking that it ends with\n\"mp4\". Appending ?x=.mp4 (or a #.mp4 fragment, which fetch() drops) satisfies\nthe check while the server requests an arbitrary internal address. The upstream\nbody and content type are streamed back to the caller. In the lab this reads a\nfile from a container that is only reachable on the internal Docker network.\n",
+        "endpoint": "/api/public/stream",
+        "method": "GET",
+        "param": "url",
+        "request": "GET /api/public/stream?url=http://internal-canary/secret.txt?x=.mp4 HTTP/1.1\nHost: {{Hostname}}\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: text/plain\n\nVT{postiz-ssrf-internal-only}\n"
+      }
+    ],
+    "technical": "PublicController.streamFile() in apps/backend/src/api/routes/public.controller.ts\n(v2.21.2) reads the url query parameter, rejects it with 400 \"Invalid video URL\"\nonly when it does not end with \"mp4\", and then calls fetch(url). Non-error\nresponses are piped back with the upstream content type. The controller carries no\nauth guard, and there is no check on the scheme, host or resolved address.\n\nThe suffix check runs on the raw string, so any URL whose query string or fragment\nends in mp4 passes:\n\n  /api/public/stream?url=http://internal-canary/secret.txt?x=.mp4\n  /api/public/stream?url=http://internal-canary/secret.txt%23.mp4\n\nThe fix in 2.21.3 binds the query to the OnlyURL DTO, whose IsSafeWebhookUrl\nvalidator only accepts public HTTPS URLs and rejects internal network addresses.\n",
+    "impact": "An unauthenticated attacker who can reach the Postiz web port can make the server\nsend GET requests to any host it can reach and read the full responses. This exposes\ninternal HTTP services and admin panels, and on cloud hosts the instance metadata\nservice, which can leak IAM credentials.\n",
+    "remediation": [
+      "Upgrade Postiz to 2.21.3 or later",
+      "Block egress from the Postiz container to internal ranges and the cloud metadata address (169.254.169.254)",
+      "Do not expose Postiz to untrusted networks until it is patched"
+    ],
+    "poc": {
+      "nuclei": [
+        "vt-2026-34577.nuclei.yaml"
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml"
+      }
+    },
+    "post-install": [
+      "Access Postiz at http://localhost:4007 (the backend is ready in about 1-2 minutes)",
+      "The lab runs Postiz v2.21.2 with PostgreSQL, Redis, Temporal and Elasticsearch; allow about 3 GB of memory",
+      "Readiness check: GET /api/public/stream?url=x returns 400 Invalid video URL",
+      "The Nuclei template confirms the SSRF out of band (interactsh), so the lab needs outbound internet access",
+      "To reproduce the internal read, attach a canary: docker run -d --rm --name vt34577-canary --network vt-2026-34577_default --network-alias internal-canary nginx:alpine sh -c 'echo VT{postiz-ssrf-internal-only} > /usr/share/nginx/html/secret.txt && nginx -g \"daemon off;\"'"
+    ],
+    "category": "cves",
+    "added_date": "2026-11-07T09:21:10+03:00"
+  },
+  {
     "id": "vt-sshole",
     "info": {
       "name": "SSHole - OpenSSH on musl Password Authentication Bypass",

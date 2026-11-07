@@ -1,8 +1,8 @@
 {
-  "total": 138,
+  "total": 139,
   "categories": {
+    "cves": 25,
     "labs": 8,
-    "cves": 24,
     "http": 2,
     "benchmarks": 104
   },
@@ -87,6 +87,7 @@
     "multi-tenant",
     "musl",
     "mysql",
+    "nestjs",
     "network",
     "nextjs",
     "nginx-ui",
@@ -104,6 +105,7 @@
     "plex2shell",
     "plugin",
     "postgis",
+    "postiz",
     "pre-receive-hook",
     "privilege-escalation",
     "privilege_escalation",
@@ -160,5 +162,5 @@
     "xxe",
     "zero-click"
   ],
-  "updated_at": "2026-11-07T03:24:16Z"
+  "updated_at": "2026-11-07T06:21:30Z"
 }

@@ -10,6 +10,7 @@
 
 | Type | ID | Name | Tech | Tags |
 |:----:|-----|------|------|------|
+| 🔴 | [vt-2026-34577](cves/vt-2026-34577) | Postiz - Unauthenticated SSRF in Public Stream Endpoint | postiz | `ssrf` `unauthenticated` |
 | 🧪 | [vt-sshole](labs/vt-sshole) | SSHole - OpenSSH on musl Password Authentication Bypass | openssh, alpine, musl | `ssh` `auth-bypass` |
 | 🧪 | [vt-vulnlab](labs/vt-vulnlab) | VulnLab - Node.js/Express Training App | nodejs, express, graphql | `command-injection` `lfi` |
 | 🧪 | [vt-damnvulnerableapp](labs/vt-damnvulnerableapp) | Damn Vulnerable App - OAuth Task Manager | nodejs, express, react, oauth2 | `oauth` `jwt` |
@@ -49,4 +50,4 @@
 | 📊 | [vt-xbow-102](benchmarks/xbow/vt-xbow-102) | Email updates | web | `default_credentials` `business_logic` |
 | 📊 | ... | *101 more benchmarks* | | |
 
-> Currently tracking **138** security targets, including **24** CVEs, **8** labs, and **104** benchmarks.
+> Currently tracking **139** security targets, including **25** CVEs, **8** labs, and **104** benchmarks.
