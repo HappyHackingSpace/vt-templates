@@ -1,0 +1,105 @@
+# =============================================================================
+# vt-2026-87902 — WordPress Core get_page_template() path traversal (CVE-2026-87902)
+# =============================================================================
+# Affected: WordPress < 7.1.2 (lab: 7.1.1, php8.2-apache)
+# Preconditions: classic theme with a top-level `page-*` directory (Twenty Twelve
+# `page-templates/`) + official php image (pearcmd.php present, register_argc_argv On).
+# VULNERABLE intentionally. Local lab only. Do not expose publicly.
+# https://vulnerabletarget.com/VT-2026-87902
+#
+# App image is a byte-identical GHCR mirror of wordpress:7.1.1-php8.2-apache
+# (insulates the lab from Docker Hub deletion / rate limits). Supporting mysql
+# and wp-cli images are pinned by digest. Mirror recipe: CVE/CVE-2026-87902/data.json
+# =============================================================================
+
+services:
+  db:
+    image: mysql:8.0@sha256:7dcddc01f13bab2f15cde676d44d01f61fc9f99fe7785e86196dfc07d358ae2b
+    container_name: vt-2026-87902-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+      MYSQL_ROOT_PASSWORD: rootpass
+    volumes:
+      - vt_2026_87902_db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    networks:
+      - vt-net
+
+  wordpress:
+    image: ghcr.io/happyhackingspace/vt-2026-87902:7.1.1
+    container_name: vt-2026-87902-wp
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8787:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_TABLE_PREFIX: wp_
+    volumes:
+      - vt_2026_87902_wp:/var/www/html
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://127.0.0.1/wp-includes/images/blank.gif"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+      start_period: 20s
+    networks:
+      - vt-net
+    labels:
+      - "vuln.cve=CVE-2026-87902"
+      - "vuln.product=wordpress"
+      - "vuln.severity=critical"
+
+  # One-shot installer: core install + Twenty Twelve (has page-templates/) + one published page
+  wpcli-init:
+    image: wordpress:cli-php8.2@sha256:be56991798a70b0491f406f0a088ec3f12b5cb915ab6949dced0d9052861265b
+    container_name: vt-2026-87902-init
+    depends_on:
+      wordpress:
+        condition: service_healthy
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_TABLE_PREFIX: wp_
+    volumes:
+      - vt_2026_87902_wp:/var/www/html
+    user: "33:33"
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        set -e
+        if ! wp core is-installed 2>/dev/null; then
+          wp core install --url="http://127.0.0.1:8787" --title="vt-2026-87902 lab" \
+            --admin_user=admin --admin_password='AdminPass!234' \
+            --admin_email=admin@example.local --skip-email
+          wp theme install twentytwelve --version=4.9 --activate
+          wp post create --post_type=page --post_title='About' --post_status=publish
+          echo "INSTALL_OK"
+        else
+          echo "ALREADY_INSTALLED"
+        fi
+    networks:
+      - vt-net
+    restart: "no"
+
+volumes:
+  vt_2026_87902_db:
+  vt_2026_87902_wp:
+
+networks:
+  vt-net:
+    driver: bridge
