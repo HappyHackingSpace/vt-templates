@@ -1,5 +1,82 @@
 [
   {
+    "id": "vt-2026-87902",
+    "info": {
+      "name": "WordPress Core - Unauthenticated Page Template Path Traversal to RCE",
+      "author": "omarkurt",
+      "description": "WordPress Core versions prior to 7.1.2 (and the unpatched maintenance releases\nof older branches) contain an unauthenticated path traversal in page-template\nresolution. get_page_template() builds the candidate \"page-{pagename}.php\" from\na urldecoded pagename query variable without validating it, so a double-encoded\ntraversal sequence makes locate_template() include a chosen readable local .php\nfile outside the active theme. When the active theme has a top-level page-*\ndirectory (e.g. Twenty Twelve, Twenty Fourteen, Neve, Hestia, Sydney) and the\nserver ships pearcmd.php with register_argc_argv enabled (official php Docker\nimage), this leads to remote code execution.\n",
+      "type": "CVE",
+      "targets": [
+        "wordpress"
+      ],
+      "cve": "CVE-2026-87902",
+      "cwe": "CWE-98",
+      "cvss": {
+        "score": 9.2,
+        "severity": "critical",
+        "metrics": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
+      },
+      "affected_versions": [
+        "WordPress < 7.1.2"
+      ],
+      "fixed_version": "7.1.2 (fix backported to all branches back to 4.7)",
+      "tags": [
+        "lfi",
+        "path-traversal",
+        "rce",
+        "unauthenticated",
+        "wordpress",
+        "wp-core",
+        "cve-2026",
+        "kev"
+      ],
+      "references": [
+        "https://vulnerabletarget.com/VT-2026-87902",
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-87902",
+        "https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-7hp8-65ch-5whp",
+        "https://github.com/WordPress/WordPress/commit/fdeab470f4b4062462cf8ccdc788f258683c2d6f",
+        "https://hadrian.io/vulnerability-alerts/cve-2026-87902-working-poc-wordpress-critical-path-traversal",
+        "https://github.com/projectdiscovery/nuclei-templates/pull/17300"
+      ]
+    },
+    "vulnerabilities": [
+      {
+        "id": "page_template_lfi",
+        "name": "Local PHP file inclusion via pagename traversal",
+        "description": "A double-encoded traversal in the pagename query variable escapes the theme's\npage-templates/ directory and reaches the WordPress root, so wp-links-opml.php\nis included and returns its OPML document instead of the normal page body.\n",
+        "endpoint": "/",
+        "method": "POST",
+        "param": "pagename",
+        "request": "POST /?page_id=4&pagename=templates%252F%252E%252E%252F%252E%252E%252F%252E%252E%252F%252E%252E%252Fwp-links-opml HTTP/1.1\nHost: {{Hostname}}\nContent-Length: 0\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: text/xml; charset=UTF-8\n"
+      }
+    ],
+    "technical": "The flaw is in get_page_template() in wp-includes/template.php. The pagename\nquery variable is urldecoded and, when the decoded value differs from the raw\nvalue, appended to the template candidate list as \"page-{decoded}.php\" with no\nvalidate_file() check (added in the 7.1.2 fix). locate_template() then resolves\nthat candidate relative to the active theme directory, so a traversal sequence\nreaches arbitrary readable .php files. Two preconditions widen impact: the active\ntheme must contain a top-level directory whose name starts with \"page-\" (classic\nthemes such as Twenty Twelve ship page-templates/), and for RCE a reachable .php\nsuch as PEAR's pearcmd.php must exist with register_argc_argv enabled - both true\non the official php/wordpress Docker image.\n",
+    "impact": "An unauthenticated attacker can include local PHP files outside the active theme,\ndisclosing sensitive data. Where pearcmd.php is reachable and register_argc_argv\nis on, the inclusion is escalated to unauthenticated remote code execution running\nas the web-server account, leading to full site compromise.\n",
+    "remediation": [
+      "Update WordPress to 7.1.2 or the patched maintenance release for the installed branch",
+      "Apply fix commit fdeab470f4b4062462cf8ccdc788f258683c2d6f (validate_file guard in get_page_template)",
+      "Disable register_argc_argv and remove pearcmd.php from production PHP installs"
+    ],
+    "poc": {
+      "nuclei": [
+        "vt-2026-87902.nuclei.yaml"
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml"
+      }
+    },
+    "post-install": [
+      "Wait for vt-2026-87902-init to report INSTALL_OK (core install + Twenty Twelve + a published page)",
+      "Access the application at http://localhost:8787",
+      "Run: nuclei -t vt-2026-87902.nuclei.yaml -u http://localhost:8787"
+    ],
+    "category": "cves",
+    "added_date": "2026-11-10T13:05:59+03:00"
+  },
+  {
     "id": "vt-2026-34577",
     "info": {
       "name": "Postiz - Unauthenticated SSRF in Public Stream Endpoint",

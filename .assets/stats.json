@@ -1,7 +1,7 @@
 {
-  "total": 139,
+  "total": 140,
   "categories": {
-    "cves": 25,
+    "cves": 26,
     "labs": 8,
     "http": 2,
     "benchmarks": 104
@@ -154,6 +154,7 @@
     "webmail",
     "wordpress",
     "workflow-engine",
+    "wp-core",
     "wp-plugin",
     "wp2shell",
     "wpvivid",
@@ -162,5 +163,5 @@
     "xxe",
     "zero-click"
   ],
-  "updated_at": "2026-11-10T04:53:15Z"
+  "updated_at": "2026-11-10T10:06:16Z"
 }

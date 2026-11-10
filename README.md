@@ -10,6 +10,7 @@
 
 | Type | ID | Name | Tech | Tags |
 |:----:|-----|------|------|------|
+| 🔴 | [vt-2026-87902](cves/vt-2026-87902) | WordPress Core - Unauthenticated Page Template Path Traversal to RCE | wordpress | `lfi` `path-traversal` |
 | 🔴 | [vt-2026-34577](cves/vt-2026-34577) | Postiz - Unauthenticated SSRF in Public Stream Endpoint | postiz | `ssrf` `unauthenticated` |
 | 🧪 | [vt-sshole](labs/vt-sshole) | SSHole - OpenSSH on musl Password Authentication Bypass | openssh, alpine, musl | `ssh` `auth-bypass` |
 | 🧪 | [vt-vulnlab](labs/vt-vulnlab) | VulnLab - Node.js/Express Training App | nodejs, express, graphql | `command-injection` `lfi` |
@@ -50,4 +51,4 @@
 | 📊 | [vt-xbow-102](benchmarks/xbow/vt-xbow-102) | Email updates | web | `default_credentials` `business_logic` |
 | 📊 | ... | *101 more benchmarks* | | |
 
-> Currently tracking **139** security targets, including **25** CVEs, **8** labs, and **104** benchmarks.
+> Currently tracking **140** security targets, including **26** CVEs, **8** labs, and **104** benchmarks.
