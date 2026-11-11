@@ -1,12 +1,13 @@
 {
-  "total": 140,
+  "total": 141,
   "categories": {
-    "cves": 26,
+    "cves": 27,
     "labs": 8,
     "http": 2,
     "benchmarks": 104
   },
   "tags": [
+    "access-control",
     "ai",
     "alpine",
     "apache-camel",
@@ -47,6 +48,7 @@
     "cve-2026-60137",
     "cve-2026-63030",
     "cwe-209",
+    "cwe-284",
     "cwe-79",
     "cwe-84",
     "cwe-862",
@@ -62,6 +64,7 @@
     "file-upload",
     "ghes",
     "ghsa-2025",
+    "gitea",
     "github",
     "go",
     "graphql",
@@ -142,6 +145,7 @@
     "stored-xss",
     "suse",
     "template-injection",
+    "token-scope-bypass",
     "training",
     "unauth",
     "unauthenticated",
@@ -163,5 +167,5 @@
     "xxe",
     "zero-click"
   ],
-  "updated_at": "2026-11-11T03:19:51Z"
+  "updated_at": "2026-11-11T03:30:27Z"
 }

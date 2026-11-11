@@ -1,5 +1,92 @@
 [
   {
+    "id": "vt-2026-117635",
+    "info": {
+      "name": "Gitea <= 28.2.0 - Public-only Token Scope Bypass on Admin API (privilege escalation)",
+      "author": "omarkurt",
+      "description": "Gitea through 28.2.0 fails to enforce the \"public-only\" access-token restriction\non the /api/v1/admin route group. A token created with the public-only flag plus\nthe write:admin scope is correctly refused on normal routes (for example\nGET /api/v1/orgs/{private-org} returns \"token scope is limited to public orgs\"),\nbut the admin route group attaches neither checkTokenPublicOnly() nor\nrejectPublicOnly(), and admin.GetAllOrgs returns Public, Limited and Private orgs\nunconditionally. A holder of such a site-admin-issued public-only token can list all\nusers and their emails, read private organizations, create private orgs, mint Actions\nrunner registration tokens, and create or promote a new site administrator account\nthat persists after the original token is revoked. This is the same defect previously\nfixed for /api/v1/user (CVE-2026-24791) and for org/team routes (CVE-2026-58429),\nnow reaching the admin API.\n",
+      "type": "CVE",
+      "targets": [
+        "gitea"
+      ],
+      "cve": "CVE-2026-117635",
+      "cwe": "CWE-284",
+      "cvss": {
+        "score": "8.1",
+        "severity": "high",
+        "metrics": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N"
+      },
+      "affected_versions": [
+        "<= 28.2.0"
+      ],
+      "fixed_version": "28.3.0",
+      "tags": [
+        "cve",
+        "cve-2026",
+        "gitea",
+        "access-control",
+        "privilege-escalation",
+        "token-scope-bypass",
+        "authenticated",
+        "cwe-284"
+      ],
+      "references": [
+        "https://vulnerabletarget.com/VT-2026-117635",
+        "https://github.com/go-gitea/gitea/security/advisories/GHSA-37xv-m4w7-j2fh",
+        "https://www.cve.org/CVERecord?id=CVE-2026-117635",
+        "https://github.com/go-gitea/gitea/pull/39690",
+        "https://escape.tech/blog/escape-research-found-a-scope-bypass-that-made-gitea-s-restricted-tokens-full-admins-it-s-now-cve-2026-117635/"
+      ]
+    },
+    "vulnerabilities": [
+      {
+        "id": "public_only_admin_bypass",
+        "name": "Public-only token reaches private orgs via /api/v1/admin/orgs",
+        "description": "The public-only restriction is enforced on /api/v1/orgs/{org} (403) but not on\nthe admin route group, so the same token lists all organizations including private\nones through /api/v1/admin/orgs.\n",
+        "endpoint": "/api/v1/admin/orgs",
+        "method": "GET",
+        "request": "GET /api/v1/admin/orgs?limit=50 HTTP/1.1\nHost: {{Hostname}}\nAuthorization: token PUBLIC_ONLY_WRITE_ADMIN_TOKEN\nAccept: application/json\n",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n[{\"id\":2,\"name\":\"secretorg\",\"full_name\":\"\",\"visibility\":\"private\"}]\n"
+      },
+      {
+        "id": "public_only_control_refusal",
+        "name": "Control: public-only token refused on normal org route",
+        "description": "On a normal route the public-only restriction is correctly enforced, returning\n403 with the scope-limited message. This confirms the token is genuinely\npublic-only and isolates the admin-route bypass.\n",
+        "endpoint": "/api/v1/orgs/secretorg",
+        "method": "GET",
+        "request": "GET /api/v1/orgs/secretorg HTTP/1.1\nHost: {{Hostname}}\nAuthorization: token PUBLIC_ONLY_WRITE_ADMIN_TOKEN\nAccept: application/json\n",
+        "response": "HTTP/1.1 403 Forbidden\nContent-Type: application/json\n\n{\"message\":\"token scope is limited to public orgs\"}\n"
+      }
+    ],
+    "technical": "Gitea records the public-only flag of an access token on the request context in\ntokenRequiresScopes() (routers/api/v1/api.go), which sets ctx.PublicOnly. Two\nmiddlewares enforce it per route group: checkTokenPublicOnly() narrows the result to\nthe public subset of the scope category (it has no Admin case), and rejectPublicOnly()\nrefuses the request outright. Through v28.2.0 the admin route group\n(routers/api/v1/api.go) was declared with\ntokenRequiresScopes(AccessTokenScopeCategoryAdmin), reqToken() and reqSiteAdmin() but\nneither public-only middleware, so a public-only token passed straight through. At the\nhandler level admin.GetAllOrgs (routers/api/v1/admin/org.go) hard-codes\nVisible: {VisibleTypePublic, VisibleTypeLimited, VisibleTypePrivate}, so the admin\nlisting exposes private organizations regardless of the token restriction. The token\nmust be issued from a site-admin account; non-admin tokens with write:admin still get\n403 from reqSiteAdmin(). The fix (v28.3.0, PR #39690 / backport #39853) carries the API\ntoken on the doer and adds rejectPublicOnly() to the admin group, after which\npublic-only tokens receive 403/404 on admin routes.\n",
+    "impact": "An attacker holding a site-admin-issued public-only token - a token explicitly meant to\nbe limited to public resources, and therefore more likely to be shared, embedded in CI\nvariables, or logged - gains full administrative reach over the instance. They can\nenumerate every user account and email address, read and create private organizations,\nmint Actions runner registration tokens, and create or promote a new site-administrator\naccount. Because the created admin account is independent of the token, it survives\nrotation or revocation of the token, giving durable persistence.\n",
+    "remediation": [
+      "Upgrade to Gitea 28.3.0 or later",
+      "Audit site-administrator accounts and remove any that are unrecognized",
+      "Review registered Actions runners and revoke unknown registration tokens",
+      "Rotate public-only tokens issued from site-admin accounts, especially any exposed in CI variables or build logs"
+    ],
+    "poc": {
+      "nuclei": [
+        "vt-2026-117635.nuclei.yaml"
+      ]
+    },
+    "providers": {
+      "docker-compose": {
+        "path": "docker-compose.yaml"
+      }
+    },
+    "post-install": [
+      "Gitea is available at http://localhost:3000 (admin account: vtadmin / VtAdmin123!)",
+      "The seed step (embedded in docker-compose.yaml) provisions a private org 'secretorg' and mints a public-only write:admin token",
+      "Read the generated token and proof: docker compose logs seed  (or: docker compose run --rm proof-reader)",
+      "Run the template: nuclei -t vt-2026-117635.nuclei.yaml -u http://localhost:3000 -var token=<TOKEN> -var org=secretorg",
+      "NOTE: the nuclei template is AUTHENTICATED - it requires -var token=<public-only write:admin token> and -var org=<private-org>. It does NOT match on an unauthenticated scan, by design, because the vulnerability requires a site-admin-issued public-only token."
+    ],
+    "category": "cves",
+    "added_date": "2026-11-11T06:29:54+03:00"
+  },
+  {
     "id": "vt-2026-87902",
     "info": {
       "name": "WordPress Core - Unauthenticated Page Template Path Traversal to RCE",

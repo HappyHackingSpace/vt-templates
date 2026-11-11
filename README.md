@@ -10,6 +10,7 @@
 
 | Type | ID | Name | Tech | Tags |
 |:----:|-----|------|------|------|
+| 🔴 | [vt-2026-117635](cves/vt-2026-117635) | Gitea <= 28.2.0 - Public-only Token Scope Bypass on Admin API (privilege escalation) | gitea | `cve-2026` `gitea` |
 | 🔴 | [vt-2026-87902](cves/vt-2026-87902) | WordPress Core - Unauthenticated Page Template Path Traversal to RCE | wordpress | `lfi` `path-traversal` |
 | 🔴 | [vt-2026-34577](cves/vt-2026-34577) | Postiz - Unauthenticated SSRF in Public Stream Endpoint | postiz | `ssrf` `unauthenticated` |
 | 🧪 | [vt-sshole](labs/vt-sshole) | SSHole - OpenSSH on musl Password Authentication Bypass | openssh, alpine, musl | `ssh` `auth-bypass` |
@@ -51,4 +52,4 @@
 | 📊 | [vt-xbow-102](benchmarks/xbow/vt-xbow-102) | Email updates | web | `default_credentials` `business_logic` |
 | 📊 | ... | *101 more benchmarks* | | |
 
-> Currently tracking **140** security targets, including **26** CVEs, **8** labs, and **104** benchmarks.
+> Currently tracking **141** security targets, including **27** CVEs, **8** labs, and **104** benchmarks.
