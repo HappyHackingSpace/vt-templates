@@ -1,7 +1,7 @@
 {
-  "total": 141,
+  "total": 142,
   "categories": {
-    "cves": 27,
+    "cves": 28,
     "labs": 8,
     "http": 2,
     "benchmarks": 104
@@ -49,9 +49,12 @@
     "cve-2026-63030",
     "cwe-209",
     "cwe-284",
+    "cwe-306",
+    "cwe-78",
     "cwe-79",
     "cwe-84",
     "cwe-862",
+    "cwe-942",
     "dagu",
     "default-credentials",
     "default_credentials",
@@ -83,6 +86,7 @@
     "kev",
     "lfi",
     "mailpit",
+    "mcp",
     "medium",
     "method-override",
     "middleware",
@@ -126,6 +130,7 @@
     "roundcube",
     "rsfiles",
     "rsjoomla",
+    "ruflo",
     "saisies",
     "security-misconfiguration",
     "sensitive-data",
@@ -167,5 +172,5 @@
     "xxe",
     "zero-click"
   ],
-  "updated_at": "2026-11-11T03:30:27Z"
+  "updated_at": "2026-11-11T04:48:22Z"
 }
