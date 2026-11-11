@@ -1,0 +1,34 @@
+# CVE-2026-59726 - Ruflo MCP bridge unauthenticated RCE (terminal_execute via POST /mcp)
+# Affected: Ruflo < 3.16.3 ; this lab builds the pre-fix MCP bridge from upstream tag v3.16.2
+# WARNING: intentionally VULNERABLE (unauthenticated RCE). Local, isolated testing only.
+# Upstream: https://github.com/ruvnet/ruflo (MIT) · default compose: ruflo/docker-compose.yml
+# https://vulnerabletarget.com/VT-2026-59726
+
+services:
+  mcp-bridge:
+    image: ghcr.io/happyhackingspace/vt-2026-59726:3.16.2
+    container_name: vt-2026-59726
+    # Faithful to the vulnerable default: bound to all interfaces, no MCP_AUTH_TOKEN,
+    # default-on tool groups (agents/memory/devtools) so the ruflo backend's terminal_execute
+    # is reachable on the unauthenticated POST /mcp route.
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - NODE_ENV=production
+      - MCP_GROUP_INTELLIGENCE=true
+      - MCP_GROUP_AGENTS=true
+      - MCP_GROUP_MEMORY=true
+      - MCP_GROUP_DEVTOOLS=true
+    networks:
+      - vt-net
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3001/mcp',{method:'POST',headers:{'content-type':'application/json'},body:'{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/list\"}'}).then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+networks:
+  vt-net:
+    driver: bridge

@@ -1,0 +1,110 @@
+id: vt-2026-59726
+
+info:
+  name: "Ruflo < 3.16.3 - Unauthenticated RCE in MCP Bridge (terminal_execute via POST /mcp)"
+  author: omarkurt
+  description: |
+    Ruflo (ruvnet/ruflo), an agent meta-harness for Claude Code and Codex, ships an MCP bridge in
+    its default docker-compose deployment that exposes POST /mcp with no authentication, a
+    wildcard CORS policy (Access-Control-Allow-Origin: *), and the HTTP server bound to all
+    interfaces. The tool blocklist that should block the dangerous terminal_execute tool is
+    enforced only in the autopilot flow, so a direct JSON-RPC tools/call to terminal_execute (and
+    its per-group variant POST /mcp/:group) bypasses it. An unauthenticated network attacker can
+    therefore run arbitrary OS commands as the node user (uid 1000) inside the bridge container,
+    read provider API keys from the environment (OPENAI/GOOGLE/OPENROUTER/ANTHROPIC), spawn
+    swarms on the victim's keys, and persist a poisoned pattern into the AgentDB learning store.
+    Fixed in 3.16.3 (ADR-166 / PR #2521): loopback bind by default, Bearer auth middleware, a
+    server-side executeTool gate for terminal_execute (opt-in MCP_ENABLE_TERMINAL), and a CORS
+    allowlist.
+  type: CVE
+  targets:
+    - ruflo
+  cve: CVE-2026-59726
+  cwe: CWE-78
+  cvss:
+    score: "10.0"
+    severity: critical
+    metrics: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H"
+  affected_versions:
+    - "< 3.16.3"
+  fixed_version: "3.16.3"
+  tags:
+    - cve
+    - cve-2026
+    - ruflo
+    - rce
+    - command-injection
+    - mcp
+    - unauth
+    - cwe-78
+    - cwe-306
+    - cwe-942
+  references:
+    - https://vulnerabletarget.com/VT-2026-59726
+    - https://github.com/ruvnet/ruflo/security/advisories/GHSA-c4hm-4h84-2cf3
+    - https://www.cve.org/CVERecord?id=CVE-2026-59726
+    - https://nvd.nist.gov/vuln/detail/CVE-2026-59726
+    - https://github.com/ruvnet/ruflo/pull/2521
+
+vulnerabilities:
+  - id: mcp_terminal_execute_rce
+    name: "Unauthenticated RCE via MCP terminal_execute on POST /mcp"
+    description: |
+      POST /mcp accepts JSON-RPC tools/call with no authentication and routes the call to
+      executeTool without the autopilot-only blocklist, so terminal_execute reaches the ruflo
+      backend and runs an arbitrary OS command.
+    endpoint: /mcp
+    method: POST
+    param: command
+    request: |
+      POST /mcp HTTP/1.1
+      Host: {{Hostname}}
+      Content-Type: application/json
+
+      {"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"ruflo__terminal_execute","arguments":{"command":"id"}}}
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      {"jsonrpc":"2.0","id":1,"result":{"content":[{"type":"text","text":"uid=1000(node) gid=1000(node)"}]}}
+
+technical: |
+  The MCP bridge (ruflo/src/ruvocal/mcp-bridge/index.js) builds an Express app that applies a
+  wildcard CORS header (Access-Control-Allow-Origin: *) and no authentication middleware, then
+  calls app.listen(PORT) with no host argument so it binds to all interfaces on port 3001. The
+  POST /mcp catch-all handler dispatches JSON-RPC tools/call straight to executeTool(name, args),
+  which routes unknown tool names to the spawned backend MCP servers. The ruflo backend
+  (npx -y ruflo mcp start) provides terminal_execute and belongs to the default-on tool groups
+  (agents/memory/devtools), so terminal_execute is reachable. The blocklist regex
+  (/terminal_execute/) is only consulted in the separate autopilot flow, not on POST /mcp or
+  POST /mcp/:group, so the dangerous tool is never filtered on the direct MCP route. The default
+  docker-compose publishes the bridge on 3001 across all interfaces with no MCP_AUTH_TOKEN,
+  making the OS command execution reachable by any unauthenticated network client.
+
+impact: |
+  An unauthenticated attacker who can reach port 3001 gains arbitrary command execution as the
+  node user inside the bridge container (CVSS 10.0, scope-changed). This exposes provider API
+  keys held in the container environment (OPENAI, GOOGLE, OPENROUTER, ANTHROPIC), lets the
+  attacker spawn agent swarms billed to the victim's keys, and allows persisting a poisoned
+  pattern into the AgentDB learning store that survives a patched redeploy. Combined with the
+  MongoDB service also published by the default compose, the blast radius covers the chat data
+  and learning store as well.
+
+remediation:
+  - "Upgrade Ruflo to 3.16.3 or later"
+  - "Bind the MCP bridge (3001) and MongoDB (27017) to loopback and/or firewall them off from untrusted networks"
+  - "Set MCP_AUTH_TOKEN so the bridge requires Bearer authentication, and leave MCP_ENABLE_TERMINAL unset/false"
+  - "Rotate OPENAI/GOOGLE/OPENROUTER/ANTHROPIC API keys and audit the AgentDB pattern store and MongoDB for tampering"
+
+poc:
+  nuclei:
+    - "vt-2026-59726.nuclei.yaml"
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "The MCP bridge is exposed unauthenticated at http://localhost:3001"
+  - "List tools: curl -s localhost:3001/mcp -H 'Content-Type: application/json' -d '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/list\"}'"
+  - "Trigger RCE: POST /mcp tools/call terminal_execute with {\"command\":\"id\"}"
