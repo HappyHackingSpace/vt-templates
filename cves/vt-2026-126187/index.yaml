@@ -1,0 +1,120 @@
+id: vt-2026-126187
+
+info:
+  name: "React Server Components / Next.js - Flight Typed-Array Deserialization RCE"
+  author: omarkurt
+  description: |
+    React Server Components (the React Flight serializer in react-server-dom-webpack
+    / -parcel / -turbopack) contain an insecure-deserialization flaw that can lead to
+    unauthenticated remote code execution. When a response transports multiple typed
+    arrays that are views over the same underlying ArrayBuffer and the buffer is
+    detached between the serializer writing the length header and flushing the bytes,
+    the client-side decoder reads a length header that no longer matches the emitted
+    payload and over-reads into following (attacker-influenced) stream bytes. Those
+    bytes can be parsed as forged Flight rows that reach a Server Action with
+    attacker-chosen arguments. In Next.js this is reachable in App Router apps with
+    Cache Components (`use cache`) whose cached function returns multiple typed arrays
+    plus an attacker-controlled value. Confirmed by diffing react-server-dom-webpack
+    19.2.8 (vulnerable) against 19.2.9 (patched): the fix throws on a detached buffer
+    and copies partial views before transport.
+  type: CVE
+  targets:
+    - react-server-components
+    - nextjs
+  cve: CVE-2026-126187
+  cwe: CWE-502
+  cvss:
+    score: 9.5
+    severity: critical
+    metrics: "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:N"
+  affected_versions:
+    - "react-server-dom-webpack/-parcel/-turbopack 19.0.0-19.0.8, 19.1.0-19.1.9, 19.2.0-19.2.8, 19.3.0"
+    - "Next.js >=16.0.0 <=16.4.0 (App Router + Cache Components)"
+  fixed_version: "React 19.0.9/19.1.10/19.2.9/19.3.1; Next.js 16.4.1"
+  tags:
+    - rce
+    - deserialization
+    - unauthenticated
+    - react
+    - nextjs
+    - rsc
+    - cve-2026
+  references:
+    - https://vulnerabletarget.com/VT-2026-126187
+    - https://github.com/facebook/react/security/advisories/GHSA-xqc2-xf4c-x3h3
+    - https://github.com/vercel/next.js/security/advisories/GHSA-673q-mjm6-r5xr
+    - https://github.com/vercel/next.js/commit/a4cea6aec5da89d116b8960e113189cf51745d2f
+    - https://github.com/briskets/CVE-2026-126187-poc
+    - https://nvd.nist.gov/vuln/detail/CVE-2026-126187
+
+vulnerabilities:
+  - id: rsc_flight_typedarray_overread
+    name: "React Flight typed-array over-read via use cache (unauthenticated)"
+    description: |
+      A single unauthenticated GET with an `annotation` query value drives the
+      vulnerable `use cache` function to transport two large typed-array views that
+      share one ArrayBuffer. On a vulnerable build the second view flushes 0 bytes
+      while its length header still claims the full size, so the React Flight decoder
+      over-reads and the server render fails ("Connection closed" / React error
+      boundary) -> the typed-array summary never renders. A patched build copies the
+      partial views (view.slice()) and renders the summary cleanly. The differential
+      (summary absent on vulnerable, present on patched) is the detection signal.
+    endpoint: /
+    method: GET
+    param: annotation
+    request: |
+      GET /?annotation=dGVzdGluZ3Rlc3Q= HTTP/1.1
+      Host: {{Hostname}}
+    response: |
+      HTTP/1.1 200 OK
+      Content-Type: text/html
+
+      ...React error boundary (digest); the typed-array summary (block0":8192) is absent...
+
+technical: |
+  Root cause is in the React Flight typed-array transport (emitTypedArrayChunk /
+  the write path in react-server-dom-webpack). The serializer computes the row
+  length header from `typedArray.byteLength` at emit time and keeps a view over the
+  live ArrayBuffer; the bytes are written later at flush. If two large (>2048 byte)
+  typed arrays are views over one shared buffer and that buffer is detached in the
+  window between emit and flush (the zero-copy transfer path), the first/second view
+  flushes 0 bytes while its header still claims the original length. The client
+  decoder trusts the header and over-reads the following stream bytes, which can be
+  crafted into forged Flight rows ("6:[\"<cmd>\"]", "5:{\"id\":\"<action>\",\"bound\":\"$@6\"}",
+  "4:{\"then\":\"$h5\"}") that invoke a Server Action with attacker-controlled bound
+  arguments. The 19.2.8 -> 19.2.9 diff shows the fix: throw "Cannot transport a
+  detached buffer" when `chunk.buffer.detached`, and `view.slice()` partial views
+  (byteOffset!=0 or byteLength!=buffer.byteLength) before transport so a later detach
+  cannot corrupt the stream.
+
+  In this lab the vulnerable arrangement (two 8192-byte views over one 16384-byte
+  ArrayBuffer returned from a `use cache` function, with the attacker value as the
+  trailing bytes) makes the over-read fire deterministically server-side: a GET with
+  any `annotation` value crashes the render on a vulnerable build ("Connection
+  closed"), while a patched build renders the typed-array summary. The shipped Nuclei
+  template detects this differential. Full command-execution weaponization (forging
+  Flight rows through the over-read to invoke a Server Action) additionally requires
+  matching the exact cache-stream chunk ids and resume offset of the target build;
+  that step is not included here.
+
+impact: |
+  Unauthenticated remote code execution on the server in the rare configurations
+  that meet the precondition (App Router + Cache Components returning multiple typed
+  arrays sharing a buffer plus an attacker-controlled value). CVSS 4.0 base 9.5.
+
+remediation:
+  - "Upgrade Next.js to 16.4.1 (or later)."
+  - "Upgrade react-server-dom-webpack/-parcel/-turbopack to 19.0.9 / 19.1.10 / 19.2.9 / 19.3.1 or later."
+  - "Audit `use cache` functions that return typed arrays; avoid transporting multiple views over one shared ArrayBuffer, or copy via view.slice() before returning."
+
+poc:
+  nuclei:
+    - "vt-2026-126187.nuclei.yaml"
+
+providers:
+  docker-compose:
+    path: "docker-compose.yaml"
+
+post-install:
+  - "Vulnerable lab: docker compose up -d then http://localhost:3100/ (Next.js 16.4.0 + React 19.3.0)"
+  - "Detect: nuclei -t vt-2026-126187.nuclei.yaml -u http://localhost:3100/"
