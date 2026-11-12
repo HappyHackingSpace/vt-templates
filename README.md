@@ -10,6 +10,7 @@
 
 | Type | ID | Name | Tech | Tags |
 |:----:|-----|------|------|------|
+| 🔴 | [vt-2026-126187](cves/vt-2026-126187) | React Server Components / Next.js - Flight Typed-Array Deserialization RCE | react-server-components, nextjs | `rce` `deserialization` |
 | 🔴 | [vt-2026-59726](cves/vt-2026-59726) | Ruflo < 3.16.3 - Unauthenticated RCE in MCP Bridge (terminal_execute via POST /mcp) | ruflo | `cve-2026` `ruflo` |
 | 🔴 | [vt-2026-117635](cves/vt-2026-117635) | Gitea <= 28.2.0 - Public-only Token Scope Bypass on Admin API (privilege escalation) | gitea | `cve-2026` `gitea` |
 | 🔴 | [vt-2026-87902](cves/vt-2026-87902) | WordPress Core - Unauthenticated Page Template Path Traversal to RCE | wordpress | `lfi` `path-traversal` |
@@ -53,4 +54,4 @@
 | 📊 | [vt-xbow-102](benchmarks/xbow/vt-xbow-102) | Email updates | web | `default_credentials` `business_logic` |
 | 📊 | ... | *101 more benchmarks* | | |
 
-> Currently tracking **142** security targets, including **28** CVEs, **8** labs, and **104** benchmarks.
+> Currently tracking **143** security targets, including **29** CVEs, **8** labs, and **104** benchmarks.
