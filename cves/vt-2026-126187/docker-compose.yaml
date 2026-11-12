@@ -1,0 +1,11 @@
+# VT-2026-126187 — React Server Components / Next.js RSC Flight typed-array
+# deserialization -> unauthenticated RCE (GHSA-xqc2-xf4c-x3h3 / GHSA-673q-mjm6-r5xr).
+# Affected: Next.js >=16.0.0 <=16.4.0 (App Router + Cache Components), react-server-dom 19.3.0.
+# WARNING: intentionally vulnerable. Bind to loopback only. Do not expose.
+# https://vulnerabletarget.com/VT-2026-126187
+services:
+  lab:
+    image: ghcr.io/happyhackingspace/vt-2026-126187:latest
+    ports:
+      - "127.0.0.1:3100:3100"
+    restart: unless-stopped
